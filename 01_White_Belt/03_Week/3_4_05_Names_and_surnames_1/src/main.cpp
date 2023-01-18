@@ -9,7 +9,6 @@ public:
 	void ChangeFirstName(int year, const string &first_name) {
 		// добавить факт изменения имени на first_name в год year
 		firstNames[year]=first_name;
-
 	}
 	void ChangeLastName(int year, const string &last_name) {
 		// добавить факт изменения фамилии на last_name в год year
@@ -20,63 +19,46 @@ public:
 		if(firstNames.count(year)){
 			return firstNames[year];	
 		}
-			else{
-
-			}
 	}
-
-
 
 	string GetFullName(int year) {
 		// получить имя и фамилию по состоянию на конец года year
 		string rezult;
 
-		int first_name_year = 0;
-		int last_name_year = 0;
+		string first_name = getNameForYear(year, firstNames);
+		string last_name = getNameForYear(year, lastNames);
 
-		for(const auto & item :firstNames){
-			if(item.first <= year){
-				first_name_year=item.first;
-			}
-		}
+		if(!first_name.empty() && !last_name.empty()){
+			rezult = first_name +" "+ last_name;
 
-		for(const auto & item :lastNames){
-			if(item.first <= year){
-				last_name_year=item.first;
-			}
-		}
+		}else if (first_name.empty() && !last_name.empty()){
+			rezult = last_name + " with unknown first name";
 
-
-
-		bool first_name_valid = firstNames.count(first_name_year);
-		bool last_name_valid = lastNames.count(last_name_year);
-
-		if(first_name_valid && last_name_valid){
-			cout << firstNames[first_name_year] << ' ' << lastNames[last_name_year];
-
-		}else if (!first_name_valid && last_name_valid){
-			cout << lastNames[last_name_year]<< " with unknown first name";
-
-		}else if(first_name_valid && !last_name_valid){
-
-			cout << firstNames[first_name_year] << " with unknown last name";
-		}else if(!first_name_valid && !last_name_valid){
-			cout << "Incognito" ;
+		}else if(!first_name.empty() && last_name.empty()){
+			rezult = first_name + " with unknown last name";
+		}else if(first_name.empty() && last_name.empty()){
+			rezult = "Incognito" ;
 		}
 
 		return rezult;
 	}
 
-
-
-
 private:
 	// приватные поля	
 	map<int, string> firstNames;
-	map<int, string> lastNames;
-	
-};
+	map<int, string> lastNames;	
 
+	string getNameForYear(int _year,map <int, string> _names ){
+		int __year;
+		for(const auto & item :_names){
+			if(item.first <= _year){
+				__year=item.first;
+			}
+		}
+		return _names[__year];	
+	}
+};
+/*
 int main() {
 	Person person;
 
@@ -98,3 +80,4 @@ int main() {
 
 	return 0;
 }
+*/
