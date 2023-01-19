@@ -8,17 +8,11 @@ class Person {
 public:
 	void ChangeFirstName(int year, const string &first_name) {
 		// добавить факт изменения имени на first_name в год year
-		firstNames[year]=first_name;
+		firstNames[year] = first_name;
 	}
 	void ChangeLastName(int year, const string &last_name) {
 		// добавить факт изменения фамилии на last_name в год year
-		lastNames[year]=last_name;
-	}
-
-	string GetFirstName(int year){
-		if(firstNames.count(year)){
-			return firstNames[year];	
-		}
+		lastNames[year] = last_name;
 	}
 
 	string GetFullName(int year) {
@@ -28,16 +22,16 @@ public:
 		string first_name = getNameForYear(year, firstNames);
 		string last_name = getNameForYear(year, lastNames);
 
-		if(!first_name.empty() && !last_name.empty()){
-			rezult = first_name +" "+ last_name;
+		if (!first_name.empty() && !last_name.empty()) {
+			rezult = first_name + " " + last_name;
 
-		}else if (first_name.empty() && !last_name.empty()){
+		} else if (first_name.empty() && !last_name.empty()) {
 			rezult = last_name + " with unknown first name";
 
-		}else if(!first_name.empty() && last_name.empty()){
+		} else if (!first_name.empty() && last_name.empty()) {
 			rezult = first_name + " with unknown last name";
-		}else if(first_name.empty() && last_name.empty()){
-			rezult = "Incognito" ;
+		} else if (first_name.empty() && last_name.empty()) {
+			rezult = "Incognito";
 		}
 
 		return rezult;
@@ -46,19 +40,19 @@ public:
 private:
 	// приватные поля	
 	map<int, string> firstNames;
-	map<int, string> lastNames;	
+	map<int, string> lastNames;
 
-	string getNameForYear(int _year,map <int, string> _names ){
+	string getNameForYear(int _year, map<int, string> _names) {
 		int __year;
-		for(const auto & item :_names){
-			if(item.first <= _year){
-				__year=item.first;
+		for (const auto &item : _names) {
+			if (item.first <= _year) {
+				__year = item.first;
 			}
 		}
-		return _names[__year];	
+		return _names[__year];
 	}
 };
-/*
+
 int main() {
 	Person person;
 
@@ -80,4 +74,3 @@ int main() {
 
 	return 0;
 }
-*/
