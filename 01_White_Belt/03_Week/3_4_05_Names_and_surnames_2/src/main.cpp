@@ -17,33 +17,25 @@ public:
 
 	string GetFullName(int year) {
 		// получить имя и фамилию по состоянию на конец года year
-		string rezult;
-
 		string first_name = getNameForYear(year, firstNames);
 		string last_name = getNameForYear(year, lastNames);
-
-		if (!first_name.empty() && !last_name.empty()) {
-			rezult = first_name + " " + last_name;
-
-		} else if (first_name.empty() && !last_name.empty()) {
-			rezult = last_name + " with unknown first name";
-
-		} else if (!first_name.empty() && last_name.empty()) {
-			rezult = first_name + " with unknown last name";
-		} else if (first_name.empty() && last_name.empty()) {
-			rezult = "Incognito";
-		}
-
-		return rezult;
+		return BuildNameString(first_name, last_name);
 	}
 
 	string GetFullNameWithHistory(int year) {
 		// получить все имена и фамилии по состоянию на конец года year
-		string rezult;
-
 		string first_name = GetNameWithHistory(year, firstNames);
 		string last_name = GetNameWithHistory(year, lastNames);
+		return BuildNameString(first_name, last_name);
+	}
 
+private:
+	// приватные поля
+	map<int, string> firstNames;
+	map<int, string> lastNames;
+
+	string BuildNameString(const string &first_name, const string &last_name) {
+		string rezult;
 		if (!first_name.empty() && !last_name.empty()) {
 			rezult = first_name + " " + last_name;
 
@@ -55,40 +47,24 @@ public:
 		} else if (first_name.empty() && last_name.empty()) {
 			rezult = "Incognito";
 		}
-
 		return rezult;
-
 	}
 
-private:
-	// приватные поля	
-	map<int, string> firstNames;
-	map<int, string> lastNames;
-
 	string GetNameWithHistory(int _year, map<int, string> _names) {
-		string rezult;
 		vector<string> names;
-
 		for (const auto &item : _names) {
-			if (item.first <= _year) {
+			if (item.first <= _year	&& (names.empty() || names.back() != item.second))
 				names.push_back(item.second);
-				if (names[names.size() - 1] == names[names.size() - 2]) {
-					names.pop_back();
-				}
-			}
 		}
 
+		string rezult;
 		if (names.size()) {
-
-			//int d1 = names.size();////
 			rezult = names[names.size() - 1];
 			names.pop_back();
 			string prevNames;
 
 			if (names.size()) {
-
 				rezult += " (";
-
 				while (names.size()) {
 					prevNames += names[names.size() - 1];
 					names.pop_back();
@@ -99,9 +75,7 @@ private:
 				rezult += prevNames;
 				rezult += ')';
 			}
-
 		}
-
 		return rezult;
 	}
 
@@ -114,28 +88,10 @@ private:
 		}
 		return _names[__year];
 	}
-}
-;
+};
 
 int main() {
 	Person person;
-	/*
-	 person.ChangeFirstName(1965, "Polina");
-	 person.ChangeLastName(1967, "Sergeeva");
-	 for (int year : { 1900, 1965, 1990 }) {
-	 cout << person.GetFullName(year) << endl;
-	 }
-
-	 person.ChangeFirstName(1970, "Appolinaria");
-	 for (int year : { 1969, 1970 }) {
-	 cout << person.GetFullName(year) << endl;
-	 }
-
-	 person.ChangeLastName(1968, "Volkova");
-	 for (int year : { 1969, 1970 }) {
-	 cout << person.GetFullName(year) << endl;
-	 }
-	 */
 
 	person.ChangeFirstName(1965, "Polina");
 	person.ChangeLastName(1967, "Sergeeva");
