@@ -37,7 +37,7 @@
 
 ### Eclipse ###
 .metadata
-.projects
+**/.projects
 bin/
 tmp/
 *.tmp
