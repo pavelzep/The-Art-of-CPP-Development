@@ -13,8 +13,13 @@ public:
 	double Apply(double source_value) const {
 		if (operation == '+') {
 			source_value += value;
-		} else if (operation == '-')
+		} else if (operation == '-') {
 			source_value -= value;
+		} else if (operation == '*') {
+			source_value *= value;
+		} else if (operation == '/') {
+			source_value /= value;
+		}
 		return source_value;
 	}
 	void Invert() {
@@ -22,13 +27,19 @@ public:
 			operation = '-';
 		} else if (operation == '-') {
 			operation = '+';
+		} else if (operation == '*') {
+			operation = '/';
+		} else if (operation == '/') {
+			operation = '*';
+
 		}
 	}
 
 private:
 	char operation;
 	double value;
-};
+}
+;
 
 class Function {
 public:
@@ -53,7 +64,7 @@ public:
 private:
 	vector<FunctionPart> parts;
 };
-
+/*
 struct Param {
 	int p1;
 	int p2;
@@ -92,3 +103,44 @@ int main() {
 
 	return 0;
 }
+*/struct Image {
+	  double quality;
+	  double freshness;
+	  double rating;
+	};
+
+	struct Params {
+	  double a;
+	  double b;
+	  double c;
+	};
+
+	Function MakeWeightFunction(const Params& params,
+	                            const Image& image) {
+	  Function function;
+	  function.AddPart('*', params.a);
+	  function.AddPart('-', image.freshness * params.b);
+	  function.AddPart('+', image.rating * params.c);
+	  return function;
+	}
+
+	double ComputeImageWeight(const Params& params, const Image& image) {
+	  Function function = MakeWeightFunction(params, image);
+	  return function.Apply(image.quality);
+	}
+
+	double ComputeQualityByWeight(const Params& params,
+	                              const Image& image,
+	                              double weight) {
+	  Function function = MakeWeightFunction(params, image);
+	  function.Invert();
+	  return function.Apply(weight);
+	}
+
+	int main() {
+	  Image image = {10, 2, 6};
+	  Params params = {4, 2, 6};
+	  cout << ComputeImageWeight(params, image) << endl;
+	  cout << ComputeQualityByWeight(params, image, 52) << endl;
+	  return 0;
+	}
