@@ -2,7 +2,6 @@
 #include <string>
 #include <algorithm>
 
-
 using namespace std;
 
 class ReversibleString {
@@ -15,7 +14,7 @@ public:
 	}
 
 	void Reverse() {
-		reverse(str.begin(),str.end());
+		reverse(str.begin(), str.end());
 	}
 
 	string ToString() const {
