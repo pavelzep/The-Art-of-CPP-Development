@@ -4,6 +4,7 @@
 makefile
 .project
 .vscode/
+**Debug/
 
 ### C++ ###
 # Prerequisites
@@ -41,6 +42,7 @@ makefile
 
 
 ### Eclipse ###
+
 .metadata
 bin/
 tmp/
