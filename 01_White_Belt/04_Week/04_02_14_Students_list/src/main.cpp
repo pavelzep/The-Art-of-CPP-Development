@@ -17,13 +17,11 @@ int main()
     int N;
     cin >> N;
     vector<Student> students;
-
     while (N)
     {
         Student student;
-        // getline(cin, student.name);
-        // getline(cin, student.surname);
         cin >> student.name >> student.surname >> student.day >> student.month >> student.year;
+        students.push_back(student);
         --N;
     }
 
@@ -35,25 +33,30 @@ int main()
         int number;
         cin >> request >> number;
 
-        if (request == "name")
+        if (number <= students.size() && number > 0)
         {
-            cout << students[number - 1].name << ' ' << students[number - 1].surname;
-            cout << endl;
-        }
-        else if (request == "date")
-        {
-            cout << students[number - 1].day << '.'
-                 << students[number - 1].month << '.'
-                 << students[number - 1].year << '.';
-            cout << endl;
+            if (request == "name")
+            {
+                cout << students[number - 1].name << ' ' << students[number - 1].surname;
+                cout << endl;
+            }
+            else if (request == "date")
+            {
+                cout << students[number - 1].day << '.'
+                     << students[number - 1].month << '.'
+                     << students[number - 1].year;
+                cout << endl;
+            }
+            else
+            {
+                cout << "bad request" << endl;
+            }
         }
         else
         {
             cout << "bad request" << endl;
         }
-
         --M;
     }
-
     return 0;
 }
