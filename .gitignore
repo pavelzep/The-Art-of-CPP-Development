@@ -6,6 +6,10 @@ makefile
 .vscode/
 **Debug/
 **/.project
+**/CMakeLists.txt
+**/build
+**/input.txt
+
 
 ### C++ ###
 # Prerequisites
