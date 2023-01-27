@@ -9,6 +9,7 @@ makefile
 **/CMakeLists.txt
 **/build
 **/input.txt
+**/output.txt
 
 
 ### C++ ###
