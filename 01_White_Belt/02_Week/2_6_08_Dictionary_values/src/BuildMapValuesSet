@@ -1,0 +1,9 @@
+set<string> BuildMapValuesSet(const map<int, string>& m) {
+
+	set<string> rezult;
+	for(const auto& [key, value]: m){
+		rezult.insert(value);
+	}
+
+	return rezult;
+}
