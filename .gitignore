@@ -6,9 +6,7 @@ makefile
 .vscode/
 **Debug/
 **/.project
-**/CMakeLists.txt
 **/build
-**/input.txt
 **/output.txt
 
 
