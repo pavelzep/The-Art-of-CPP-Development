@@ -42,13 +42,17 @@ private:
 };
 
 bool operator<(const Date& left, const Date& right) {
-  if (left.GetYear() < right.GetYear()) {
+  if (left.GetYear() < right.GetYear())
     return true;
-  } else if (left.GetMonth() < right.GetMonth()) {
+  else if (left.GetYear() > right.GetYear())
+    return false;
+  else if (left.GetMonth() < right.GetMonth())
     return true;
-  } else if (left.GetDay() <= right.GetDay()) {
+  else if (left.GetMonth() > right.GetMonth())
+    return false;
+  else if (left.GetDay() <= right.GetDay())
     return true;
-  } else
+  else
     return false;
 };
 
@@ -61,11 +65,39 @@ bool operator==(const Date& left, const Date& right) {
 
 class Database {
 public:
-  void AddEvent(const Date& date, const string& event);
-  bool DeleteEvent(const Date& date, const string& event);
-  int DeleteDate(const Date& date);
+  void AddEvent(const Date& date, const string& event) {
+    base[date] = event;
+  };
+  bool DeleteEvent(const Date& date, const string& event) {
+    if (!event.empty()) {
+      try {
+        if (base.at(date) == event) {
+          base.erase(date);
+          cout << "ok" << endl;
+          return 1;
+        }
+      }
+      catch (out_of_range& ex) {
+        cout << ex.what() << "not ok" << endl;
+        return 0;
+      }
+    } else {
+      DeleteDate(date);
+    }
 
-  /* ??? */ Find(const Date& date) const;
+
+  };
+
+  int DeleteDate(const Date& date) {
+    int c = base.count(date);
+    while (base.count(date)) {
+      base.erase(date);
+    }
+    cout << "fas del " << c << " events";
+    return c;
+  };
+
+  /* ??? */// Find(const Date& date) const;
 
   void Print() const;
 
@@ -73,12 +105,31 @@ private:
   map<Date, string> base;
 };
 
+struct Instruction{
+  string Intruction;
+  Date date;
+  string event;
+};
+
+bool ParsingCommand(string& const command, Instruction& instruction){
+
+}
+bool RunCommand (Instruction& instruction){}
+
 int main() {
   Database db;
 
   string command;
   while (getline(cin, command)) {
     // Считайте команды с потока ввода и обработайте каждую
+    Instruction instruction;
+    if(ParsingCommand(command, instruction)){
+      RunCommand(instruction);
+    };
+
+
+
+
   }
 
   return 0;
