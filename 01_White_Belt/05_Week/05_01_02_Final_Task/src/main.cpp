@@ -4,6 +4,7 @@
 #include <iostream>
 #include <exception>
 #include <sstream>
+#include <set>
 
 using namespace std;
 
@@ -65,7 +66,7 @@ bool operator<(const Date& left, const Date& right) {
         return true;
     else
         return false;
-};
+}
 
 bool operator==(const Date& left, const Date& right) {
     if ((left.GetYear() == right.GetYear()) && (left.GetMonth() == right.GetMonth()) && (left.GetDay() == right.GetDay())) {
@@ -78,7 +79,7 @@ class Database {
 public:
     void AddEvent(const Date& date, const string& event) {
         base[date] = event;
-    };
+    }
     bool DeleteEvent(const Date& date, const string& event) {
         if (!event.empty()) {
             try {
@@ -95,7 +96,7 @@ public:
         } else {
             DeleteDate(date);
         }
-    };
+    }
 
     int DeleteDate(const Date& date) {
         int c = base.count(date);
@@ -104,46 +105,84 @@ public:
         }
         cout << "fas del " << c << " events";
         return c;
+    }
+
+    set<string> Find(const Date& date) const {
+        
+        set<string> events; 
+        int c = base.count(date);
+        while (base.count(date)) {
+           events.insert(base.at(date));
+        }
+
+    }
+
+    void Print() const{
+
     };
-
-    /* ??? */// Find(const Date& date) const;
-
-    void Print() const;
 
 private:
     map<Date, string> base;
-};
+}
 
 struct Instruction {
     string intruction;
     Date date;
     string event;
-};
+}
 
-bool ParsingCommand(const string& command, Instruction& instruction) {
-    stringstream stream(command);
+
+stringstream& operator>>(stringstream& stream, Date& date) {
     int year;
     int month;
     int day;
-
-    stream >> instruction.intruction;
-
     stream >> year;
     if (stream.peek() != '-') {
         throw invalid_argument("wrong month format");
     }
     stream.ignore(1);
+
     stream >> month;
     if (stream.peek() != '-') {
         throw invalid_argument("wrong day formdat");
     }
     stream.ignore(1);
+
     stream >> day;
 
-    Date date(year, month, day);
-    instruction.date = date;
+    date.SetYear(year);
+    date.SetMonth(month);
+    date.SetDay(day);
 
-    stream >> instruction.event;
+    return stream;
+
+}
+
+bool ParsingCommand(const string& command, Instruction& instruction) {
+    stringstream stream(command);
+
+
+    stream >> instruction.intruction;
+
+    if (instruction.intruction == "Add") {
+
+        stream >> instruction.date;
+        stream >> instruction.event;
+
+    } else if (instruction.intruction == "Del") {
+
+        stream >> instruction.date;
+        stream >> instruction.event;
+
+    } else if (instruction.intruction == "Find") {
+        stream >> instruction.date;
+
+    } else if (instruction.intruction == "Print") {
+
+    } else {
+
+    }
+
     return true;
 }
 
@@ -157,12 +196,17 @@ int main() {
 
 
     string command1 = "Add 0-1-2 event1";
-    string command2 = "Find 0-1-2";
-    string command3 = "Print";
+    string command2 = "Add 1-2-3 event2";
+    string command3 = "Find 0-1-2";
+    string command4 = "Del 0-1-2";
+    string command5 = "Print";
+    string command6 = "Del 1-2-3 event2";
+    string command7 = "Del 1-2-3 event2";
+
 
     Instruction instruction;
     try {
-        ParsingCommand(command2, instruction);
+        ParsingCommand(command1, instruction);
     }
     catch (invalid_argument& except) {
         cout << except.what() << endl;
