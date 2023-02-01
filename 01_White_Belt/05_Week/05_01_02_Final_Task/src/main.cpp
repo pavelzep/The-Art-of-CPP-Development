@@ -5,6 +5,7 @@
 #include <exception>
 #include <sstream>
 #include <set>
+#include <fstream>
 
 using namespace std;
 
@@ -75,64 +76,13 @@ bool operator==(const Date& left, const Date& right) {
         return false;
 }
 
-class Database {
-public:
-    void AddEvent(const Date& date, const string& event) {
-        base[date] = event;
-    }
-    bool DeleteEvent(const Date& date, const string& event) {
-        if (!event.empty()) {
-            try {
-                if (base.at(date) == event) {
-                    base.erase(date);
-                    cout << "ok" << endl;
-                    return 1;
-                }
-            }
-            catch (out_of_range& ex) {
-                cout << ex.what() << "not ok" << endl;
-                return 0;
-            }
-        } else {
-            DeleteDate(date);
-        }
-    }
-
-    int DeleteDate(const Date& date) {
-        int c = base.count(date);
-        while (base.count(date)) {
-            base.erase(date);
-        }
-        cout << "fas del " << c << " events";
-        return c;
-    }
-
-    set<string> Find(const Date& date) const {
-        
-        set<string> events; 
-        int c = base.count(date);
-        while (base.count(date)) {
-           events.insert(base.at(date));
-        }
-
-    }
-
-    void Print() const{
-
-    };
-
-private:
-    map<Date, string> base;
-}
-
-struct Instruction {
-    string intruction;
-    Date date;
-    string event;
+ostream& operator<<(ostream& stream, const Date& date) {
+    stream << date.GetYear() << '-' << date.GetMonth() << '-' << date.GetDay();
+    return stream;
 }
 
 
-stringstream& operator>>(stringstream& stream, Date& date) {
+iostream& operator>>(iostream& stream, Date& date) {
     int year;
     int month;
     int day;
@@ -155,78 +105,121 @@ stringstream& operator>>(stringstream& stream, Date& date) {
     date.SetDay(day);
 
     return stream;
-
 }
+class Database {
+public:
+    void AddEvent(const Date& date, const string& event) {
+        base[date] = event;
+    }
+
+    bool DeleteEvent(const Date& date, const string& event) {
+        if (!event.empty()) {
+            try {
+                if (base.at(date) == event) {
+                    base.erase(date);
+                    cout << "ok" << endl;
+                    return 1;
+                }
+            }
+            catch (out_of_range& ex) {
+                cout << ex.what() << "not ok" << endl;
+                return 0;
+            }
+        } else {
+            return DeleteDate(date);
+        }
+    }
+
+    bool DeleteDate(const Date& date) {
+        int c = base.count(date);
+        while (base.count(date)) {
+            base.erase(date);
+        }
+        cout << "was del " << c << " events";
+        return 1;
+    }
+
+    set<string> Find(const Date& date) const {
+
+        set<string> events;
+        int c = base.count(date);
+        while (base.count(date)) {
+            events.insert(base.at(date));
+        }
+        return events;
+    }
+
+    void Print() const {
+        for (const auto& item : base) {
+            cout << item.first << ' ' << item.second;
+        }
+    }
+
+private:
+    map<Date, string> base;
+};
+
+struct Instruction {
+    string instruction;
+    Date date;
+    string event;
+};
 
 bool ParsingCommand(const string& command, Instruction& instruction) {
     stringstream stream(command);
+    stream >> instruction.instruction;
 
-
-    stream >> instruction.intruction;
-
-    if (instruction.intruction == "Add") {
-
+    if (instruction.instruction == "Add") {
         stream >> instruction.date;
         stream >> instruction.event;
-
-    } else if (instruction.intruction == "Del") {
-
+    } else if (instruction.instruction == "Del") {
         stream >> instruction.date;
         stream >> instruction.event;
-
-    } else if (instruction.intruction == "Find") {
+    } else if (instruction.instruction == "Find") {
         stream >> instruction.date;
-
-    } else if (instruction.intruction == "Print") {
+    } else if (instruction.instruction == "Print") {
 
     } else {
 
     }
-
     return true;
 }
 
 
-bool RunCommand(Instruction& instruction) {
+bool RunCommand(Database& base, const Instruction& instruction) {
+
+    if (instruction.instruction == "Add") {
+        base.AddEvent(instruction.date, instruction.event);
+    } else if (instruction.instruction == "Del") {
+        base.DeleteEvent(instruction.date, instruction.event);
+    } else if (instruction.instruction == "Find") {
+        set<string> events = base.Find(instruction.date);
+        for (const auto& item : events/*base.Find(instruction.date)*/) {
+            cout << item << endl;
+        };
+    } else if (instruction.instruction == "Print") {
+        base.Print();
+    }
+
     return true;
 }
 
 int main() {
     Database db;
 
+    ifstream input("test.txt");
 
-    string command1 = "Add 0-1-2 event1";
-    string command2 = "Add 1-2-3 event2";
-    string command3 = "Find 0-1-2";
-    string command4 = "Del 0-1-2";
-    string command5 = "Print";
-    string command6 = "Del 1-2-3 event2";
-    string command7 = "Del 1-2-3 event2";
-
-
-    Instruction instruction;
-    try {
-        ParsingCommand(command1, instruction);
-    }
-    catch (invalid_argument& except) {
-        cout << except.what() << endl;
-    }
-
-    RunCommand(instruction);
-
-
-    /*
-      string command;
-    while (getline(cin, command)) {
-      Instruction instruction;
-      if (ParsingCommand(command, instruction)) {
-        if (RunCommand(instruction)) {
+    string command;
+    while (getline(input, command)) {
+        Instruction instruction;
+        try {
+            ParsingCommand(command, instruction);
         }
-      };
-  }
-  */
-
-
+        catch (invalid_argument& except) {
+            cout << except.what() << endl;
+        }
+        RunCommand(db, instruction);
+    }
 
 
     return 0;
