@@ -6,6 +6,7 @@
 #include <sstream>
 #include <set>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -63,21 +64,23 @@ bool operator<(const Date& left, const Date& right) {
         return true;
     else if (left.GetMonth() > right.GetMonth())
         return false;
-    else if (left.GetDay() <= right.GetDay())
+    else if (left.GetDay() < right.GetDay())
         return true;
     else
         return false;
 }
 
+/*
 bool operator==(const Date& left, const Date& right) {
     if ((left.GetYear() == right.GetYear()) && (left.GetMonth() == right.GetMonth()) && (left.GetDay() == right.GetDay())) {
         return true;
     } else
         return false;
 }
+*/
 
 ostream& operator<<(ostream& stream, const Date& date) {
-    stream << date.GetYear() << '-' << date.GetMonth() << '-' << date.GetDay();
+    stream << setw(4) << setfill('0') << date.GetYear() << '-' << setw(2) << setfill('0') << date.GetMonth() << '-' << setw(2) << setfill('0') << date.GetDay();
     return stream;
 }
 
@@ -109,54 +112,65 @@ iostream& operator>>(iostream& stream, Date& date) {
 class Database {
 public:
     void AddEvent(const Date& date, const string& event) {
-        base[date] = event;
-    }
-
-    bool DeleteEvent(const Date& date, const string& event) {
-        if (!event.empty()) {
-            try {
-                if (base.at(date) == event) {
-                    base.erase(date);
-                    cout << "ok" << endl;
-                    return 1;
-                }
-            }
-            catch (out_of_range& ex) {
-                cout << ex.what() << "not ok" << endl;
-                return 0;
-            }
+        if (base.count(date)) {
+            base.at(date).insert(event);
         } else {
-            return DeleteDate(date);
+            base[date] = { event };
         }
+
     }
 
     bool DeleteDate(const Date& date) {
-        int c = base.count(date);
-        while (base.count(date)) {
+
+        int count = base.at(date).size();
+        if (count) {
             base.erase(date);
+            cout << "Deleted " << count << " events" << endl;
+            return 1;
+        } else {
+            cout << "nothing was del" << endl;
+            return 0;
         }
-        cout << "was del " << c << " events";
-        return 1;
     }
 
-    set<string> Find(const Date& date) const {
+    bool DeleteEvent(const Date& date, const string& event) {
+        if (base.count(date)) {
+            if (event.empty()) {
+                return DeleteDate(date);
+            } else {
+                base[date].erase(event);
 
-        set<string> events;
-        int c = base.count(date);
-        while (base.count(date)) {
-            events.insert(base.at(date));
+                //если теперь множество событий для даты стало пустым, то удаляем пустое множество
+                if (base[date].size() == 0) {
+                    base.erase(date);
+                }
+                return 1;
+            }
         }
-        return events;
+        return 0;
+    }
+
+    const set<string>& Find(const Date& date) const {
+        int count = base.count(date);
+        if (count) {
+            return base.at(date);
+        } else {
+            return {};
+        }
     }
 
     void Print() const {
         for (const auto& item : base) {
-            cout << item.first << ' ' << item.second;
+            cout << item.first << " ";
+            for (const auto& evt : item.second) {
+                cout << evt << ' ';
+            }
+            cout << endl;
         }
     }
 
 private:
-    map<Date, string> base;
+    map<Date, set<string>> base;
 };
 
 struct Instruction {
