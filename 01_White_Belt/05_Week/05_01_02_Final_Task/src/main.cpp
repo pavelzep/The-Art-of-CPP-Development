@@ -134,20 +134,31 @@ public:
     }
 
     bool DeleteEvent(const Date& date, const string& event) {
+        // если дата есть в базе событий
         if (base.count(date)) {
             if (event.empty()) {
                 return DeleteDate(date);
             } else {
-                base[date].erase(event);
-
-                //если теперь множество событий для даты стало пустым, то удаляем пустое множество
-                if (base[date].size() == 0) {
-                    base.erase(date);
+                if (base[date].count(event)) {
+                    base[date].erase(event);
+                    //если теперь множество событий для даты стало пустым, то удаляем пустое множество
+                    if (base[date].size() == 0) {
+                        base.erase(date);
+                    }
+                    cout << "Deleted successfully" << endl;
+                    return 1;
+                } else {
+                    cout << "Event not found" << endl;
+                    return 0;
                 }
-                return 1;
             }
+            //если даты нет в базе событий
+        } else {
+            cout << "Event not found" << endl;
+            return 0;
         }
-        return 0;
+
+
     }
 
     const set<string>& Find(const Date& date) const {
