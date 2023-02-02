@@ -117,11 +117,9 @@ public:
         } else {
             base[date] = { event };
         }
-
     }
 
     bool DeleteDate(const Date& date) {
-
         int count = base.at(date).size();
         if (count) {
             base.erase(date);
@@ -157,8 +155,6 @@ public:
             cout << "Event not found" << endl;
             return 0;
         }
-
-
     }
 
     const set<string>& Find(const Date& date) const {
@@ -204,7 +200,7 @@ bool ParsingCommand(const string& command, Instruction& instruction) {
         stream >> instruction.date;
     } else if (instruction.instruction == "Print") {
 
-    } else {
+    } else {cout << "Unknown command: " << instruction.instruction;  
 
     }
     return true;
