@@ -19,24 +19,24 @@ public:
     }
 
     Date(const int new_year, const int new_month, const int new_day) {
-        if (new_month < 1 && new_month > 12) {
-            throw exception();
-        }
-        if (new_day < 1 && new_day > 31) {
-            throw exception();
-        }
-        day = new_day;
-        month = new_month;
-        year = new_year;
+        SetDay(new_day);
+        SetMonth(new_month);
+        SetYear(new_year);
     }
 
     void SetYear(const int new_year) {
         year = new_year;
     }
     void SetMonth(const int new_month) {
+        if (new_month < 1 || new_month > 12) {
+            throw out_of_range("Month value is invalid: " + to_string(new_month));
+        }
         month = new_month;
     }
     void SetDay(const int new_day) {
+        if (new_day < 1 || new_day > 31) {
+            throw out_of_range("Day value is invalid: " + to_string(new_day));
+        }
         day = new_day;
     }
     int GetYear() const {
@@ -89,18 +89,29 @@ iostream& operator>>(iostream& stream, Date& date) {
     int year;
     int month;
     int day;
+
+    if (stream.peek() == '+')
+        stream.ignore(1);
+
     stream >> year;
+
     if (stream.peek() != '-') {
-        throw invalid_argument("wrong month format");
+        throw invalid_argument("Wrong date format");
     }
     stream.ignore(1);
 
+    if (stream.peek() == '+')
+        stream.ignore(1);
     stream >> month;
+
+
     if (stream.peek() != '-') {
-        throw invalid_argument("wrong day formdat");
+        throw invalid_argument("Wrong date format");
     }
     stream.ignore(1);
 
+    if (stream.peek() == '+')
+        stream.ignore(1);
     stream >> day;
 
     date.SetYear(year);
@@ -186,45 +197,100 @@ struct Instruction {
     string event;
 };
 
-bool ParsingCommand(const string& command, Instruction& instruction) {
+
+
+bool ParsingCommand(const string& command, Instruction& instruction, Database& base) {
+
+    if (command.empty()) {
+        return false;
+    }
+
+
     stringstream stream(command);
     stream >> instruction.instruction;
+    string date_string;
+
 
     if (instruction.instruction == "Add") {
-        stream >> instruction.date;
+
+        stream >> date_string;
+        stringstream date_stream(date_string);
+
+        try {
+            date_stream >> instruction.date;
+        }
+        catch (invalid_argument& ex) {
+            cout << ex.what() << ": " << date_string << endl;
+            return 0;
+        }
+        catch (out_of_range& ex) {
+            cout << ex.what() << endl;
+            return 0;
+        }
+
         stream >> instruction.event;
+
+
+        base.AddEvent(instruction.date, instruction.event);
+
     } else if (instruction.instruction == "Del") {
-        stream >> instruction.date;
+        stream >> date_string;
+        stringstream date_stream(date_string);
+        try {
+            date_stream >> instruction.date;
+        }
+        catch (invalid_argument& ex) {
+            cout << ex.what() << ": " << date_string;
+            return 0;
+        }
+        catch (out_of_range& ex) {
+            cout << ex.what() << endl;
+            return 0;
+        }
+
         stream >> instruction.event;
+
+        base.DeleteEvent(instruction.date, instruction.event);
     } else if (instruction.instruction == "Find") {
-        stream >> instruction.date;
+        stream >> date_string;
+        stringstream date_stream(date_string);
+        try {
+            date_stream >> instruction.date;
+        }
+        catch (invalid_argument& ex) {
+            cout << ex.what() << ": " << date_string;
+            return 0;
+        }
+        catch (out_of_range& ex) {
+            cout << ex.what() << endl;
+            return 0;
+        }
+
+        for (const auto& item : base.Find(instruction.date)) {
+            cout << item << endl;
+        };
+
     } else if (instruction.instruction == "Print") {
+        base.Print();
 
-    } else {cout << "Unknown command: " << instruction.instruction;  
-
+    } else {
+        cout << "Unknown command: " << instruction.instruction << endl;
+        return false;
     }
     return true;
 }
 
-
+/*
 bool RunCommand(Database& base, const Instruction& instruction) {
 
     if (instruction.instruction == "Add") {
-        base.AddEvent(instruction.date, instruction.event);
     } else if (instruction.instruction == "Del") {
-        base.DeleteEvent(instruction.date, instruction.event);
     } else if (instruction.instruction == "Find") {
-        set<string> events = base.Find(instruction.date);
-        for (const auto& item : events/*base.Find(instruction.date)*/) {
-            cout << item << endl;
-        };
     } else if (instruction.instruction == "Print") {
-        base.Print();
     }
-
     return true;
 }
-
+*/
 int main() {
     Database db;
 
@@ -234,12 +300,15 @@ int main() {
     while (getline(input, command)) {
         Instruction instruction;
         try {
-            ParsingCommand(command, instruction);
+            ParsingCommand(command, instruction, db);
+
         }
         catch (invalid_argument& except) {
             cout << except.what() << endl;
         }
-        RunCommand(db, instruction);
+       /* catch (exception& ex){
+
+        }*/
     }
 
 
