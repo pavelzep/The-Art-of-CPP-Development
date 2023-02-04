@@ -1,4 +1,3 @@
-// Реализуйте функции и методы классов и при необходимости добавьте свои
 #include <string>
 #include <map>
 #include <iostream>
@@ -71,6 +70,8 @@ ostream& operator<<(ostream& stream, const Date& date) {
     return stream;
 }
 
+
+
 iostream& operator>>(iostream& stream, Date& date) {
     int year;
     int month;
@@ -104,6 +105,12 @@ iostream& operator>>(iostream& stream, Date& date) {
         date_stream.ignore(1);
     date_stream >> day;
 
+    //char c = date_stream.get() ;
+
+    if (date_stream.peek() > 0) {
+        throw invalid_argument("Wrong date format: " + date_string);
+    }
+
     date.SetYear(year);
     date.SetMonth(month);
     date.SetDay(day);
@@ -120,7 +127,7 @@ public:
     }
 
     bool DeleteDate(const Date& date) {
-        if (base.size()==0) {
+        if (base.count(date) == 0) {
             cout << "Deleted " << '0' << " events" << endl;
             return 1;
         }
@@ -143,7 +150,7 @@ public:
         if (base.count(date)) {
             if (base[date].count(event)) {
                 base[date].erase(event);
-                //если теперь множество событий для даты стало пустым, то удаляем пустое множество
+
                 if (base[date].size() == 0) {
                     base.erase(date);
                 }
@@ -171,11 +178,9 @@ public:
 
     void Print() const {
         for (const auto& item : base) {
-            cout << item.first << " ";
             for (const auto& evt : item.second) {
-                cout << evt << ' ';
+                cout << item.first << ' ' << evt << endl;
             }
-            cout << endl;
         }
     }
 
@@ -188,11 +193,15 @@ struct Instruction {
     Date date;
     string event;
 };
+bool ParsingDate(const string& dateString,  Date& date){
+    
+}
+
 
 bool ParsingCommand(const string& command, Instruction& instruction, Database& base) {
 
     if (command.empty()) {
-        return false;
+        return true;
     }
 
     stringstream stream(command);
@@ -246,6 +255,9 @@ int main() {
     // ifstream input("test.txt");
     string command;
     while (getline(cin, command)) {
+
+
+
         Instruction instruction;
         try {
             if (ParsingCommand(command, instruction, db)) {
