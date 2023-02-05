@@ -151,26 +151,40 @@ struct Instruction {
 };
 
 
-int getNumfromString(string& str) {
+bool getNumfromString(string& str, int& val) {
     try {
-       return stoi(str);
+        val = stoi(str);
+        return 1;
     }
     catch (invalid_argument&) {
         throw invalid_argument("Wrong date format: ");
-        return -1;
+        return 0;
     }
-
 }
 
-void cutString(string& str) {
+bool cutString(string& str) {
     stringstream ss(str);
     int temp;
     ss >> temp;
-    if(ss.peek()!='-'){
+    if (ss.peek() != '-') {
         throw invalid_argument("Wrong date format: ");
+        return 0;
+    } else {
+        ss.ignore(1);
     }
     ss >> str;
+    return 1;
+}
 
+bool isEnd(string& str) {
+    stringstream ss(str);
+    int temp;
+    ss >> temp;
+    if (ss.peek() > 0) {
+        throw invalid_argument("Wrong date format: ");
+        return 0;
+    }
+    return 1;
 }
 
 Date ParsingDate(const string& dateString) {
@@ -180,24 +194,13 @@ Date ParsingDate(const string& dateString) {
     Date date;
 
     string temp_str = dateString;
-    year = getNumfromString(temp_str);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if (!getNumfromString(temp_str, year)) return date;
+    if (!cutString(temp_str)) return date;
+    if (!getNumfromString(temp_str, month)) return date;;
+    if (!cutString(temp_str)) return date;
+    if (!getNumfromString(temp_str, day)) return date;;
+    if (!isEnd(temp_str)) return date;
 
 
     date.SetYear(year);
@@ -280,7 +283,7 @@ bool ParsingCommand(const string& command, Instruction& instruction, Database& b
             instruction.date = ParsingDate(dateString);
         }
         catch (invalid_argument& except) {
-            cout << except.what() << endl;
+            cout << except.what() << dateString << endl;
             return false;
         }
         catch (out_of_range& except) {
@@ -317,7 +320,7 @@ void RunCommand(Database& base, const Instruction& instruction) {
 
 int main() {
     Database db;
-    // ifstream input("test.txt");
+   // ifstream input("test.txt");
     string command;
     while (getline(cin, command)) {
 
