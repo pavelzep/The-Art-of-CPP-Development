@@ -6,6 +6,7 @@
 #include <set>
 #include <fstream>
 #include <iomanip>
+#include <vector>
 
 using namespace std;
 
@@ -70,52 +71,6 @@ ostream& operator<<(ostream& stream, const Date& date) {
     return stream;
 }
 
-
-
-iostream& operator>>(iostream& stream, Date& date) {
-    int year;
-    int month;
-    int day;
-
-    string date_string;
-    stream >> date_string;
-    stringstream date_stream(date_string);
-
-    if (date_stream.peek() == '+')
-        date_stream.ignore(1);
-
-    date_stream >> year;
-
-    if (date_stream.peek() != '-') {
-        throw invalid_argument("Wrong date format: " + date_string);
-    }
-    date_stream.ignore(1);
-
-    if (date_stream.peek() == '+')
-        date_stream.ignore(1);
-    date_stream >> month;
-
-
-    if (date_stream.peek() != '-') {
-        throw invalid_argument("Wrong date format: " + date_string);
-    }
-    date_stream.ignore(1);
-
-    if (date_stream.peek() == '+')
-        date_stream.ignore(1);
-    date_stream >> day;
-
-    //char c = date_stream.get() ;
-
-    if (date_stream.peek() > 0) {
-        throw invalid_argument("Wrong date format: " + date_string);
-    }
-
-    date.SetYear(year);
-    date.SetMonth(month);
-    date.SetDay(day);
-    return stream;
-}
 class Database {
 public:
     void AddEvent(const Date& date, const string& event) {
@@ -188,13 +143,66 @@ private:
     map<Date, set<string>> base;
 };
 
+
 struct Instruction {
     string instruction;
     Date date;
     string event;
 };
-bool ParsingDate(const string& dateString,  Date& date){
-    
+
+set<char> validSymbols = { '-','+','0','1','2','3','4','5','6','7','8','9' };
+
+Date  ParsingDate(const string& dateString) {
+    int year;
+    int month;
+    int day;
+
+    stringstream date_stream(dateString);
+
+    if (date_stream.peek() == '+')
+        date_stream.ignore(1);
+
+    if (!validSymbols.count(date_stream.peek())) {
+        throw invalid_argument("Wrong date format: " + dateString);
+    }
+    date_stream >> year;
+
+    if (date_stream.peek() != '-') {
+        throw invalid_argument("Wrong date format: " + dateString);
+    }
+    date_stream.ignore(1);
+
+    if (date_stream.peek() == '+')
+        date_stream.ignore(1);
+
+    if (!validSymbols.count(date_stream.peek())) {
+        throw invalid_argument("Wrong date format: " + dateString);
+    }
+    date_stream >> month;
+
+
+    if (date_stream.peek() != '-') {
+        throw invalid_argument("Wrong date format: " + dateString);
+    }
+    date_stream.ignore(1);
+
+    if (date_stream.peek() == '+')
+        date_stream.ignore(1);
+
+    if (!validSymbols.count(date_stream.peek())) {
+        throw invalid_argument("Wrong date format: " + dateString);
+    }
+    date_stream >> day;
+
+    if (date_stream.peek() > 0) {
+        throw invalid_argument("Wrong date format: " + dateString);
+    }
+
+    Date date;
+    date.SetYear(year);
+    date.SetMonth(month);
+    date.SetDay(day);
+    return  date;
 }
 
 
@@ -211,8 +219,10 @@ bool ParsingCommand(const string& command, Instruction& instruction, Database& b
         instruction.instruction == "Del" ||
         instruction.instruction == "Find") {
 
+        string dateString;
+        stream >> dateString;
         try {
-            stream >> instruction.date;
+            instruction.date = ParsingDate(dateString);
         }
         catch (invalid_argument& except) {
             cout << except.what() << endl;
