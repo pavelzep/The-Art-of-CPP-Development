@@ -150,9 +150,64 @@ struct Instruction {
     string event;
 };
 
-set<char> validSymbols = { '-','+','0','1','2','3','4','5','6','7','8','9' };
 
-Date  ParsingDate(const string& dateString) {
+int getNumfromString(string& str) {
+    try {
+       return stoi(str);
+    }
+    catch (invalid_argument&) {
+        throw invalid_argument("Wrong date format: ");
+        return -1;
+    }
+
+}
+
+void cutString(string& str) {
+    stringstream ss(str);
+    int temp;
+    ss >> temp;
+    if(ss.peek()!='-'){
+        throw invalid_argument("Wrong date format: ");
+    }
+    ss >> str;
+
+}
+
+Date ParsingDate(const string& dateString) {
+    int year = -1;
+    int month = -1;
+    int day = -1;
+    Date date;
+
+    string temp_str = dateString;
+    year = getNumfromString(temp_str);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    date.SetYear(year);
+    date.SetMonth(month);
+    date.SetDay(day);
+    return  date;
+}
+
+set<char> validSymbols = { '-','+','0','1','2','3','4','5','6','7','8','9' };
+Date ParsingDate2(const string& dateString) {
     int year;
     int month;
     int day;
