@@ -10,6 +10,7 @@ class Matrix {
 public:
 
     Matrix() {
+        Reset(0, 0);
     }
 
     Matrix(int num_rows, int num_cols) {
@@ -136,7 +137,10 @@ int main() {
     // fstream fs("input.txt");
     // fs >> one >> two;
 
-    cin >> one >> two;
-    cout << one + two << endl;
+    one.Reset(1,1);
+    int temp = one.At(0,0);
+    
+    //cin >> one >> two;
+    //cout << one + two << endl;
     return 0;
 }
