@@ -29,14 +29,14 @@ public:
     }
 
     int At(int row, int column) const {
-        if (row >= GetNumRows() || column >= GetNumColumns()) {
+        if (row >= GetNumRows() || column >= GetNumColumns() || row < 0 || column < 0) {
             throw out_of_range("");
         }
         return store.at(row).at(column);
     }
 
     int& At(int row, int column) {
-        if (row >= GetNumRows() || column >= GetNumColumns()) {
+        if (row >= GetNumRows() || column >= GetNumColumns() || row < 0 || column < 0) {
             throw out_of_range("");
         }
         return store[row][column];
@@ -47,7 +47,8 @@ public:
     }
 
     int GetNumColumns() const {
-        return store.at(0).size();
+        if (GetNumRows()) return store.at(0).size();
+        return 0;
     }
 
 private:
@@ -128,10 +129,13 @@ int main() {
     Matrix one;
     Matrix two;
 
-    //fstream fs("input.txt");
+    fstream fs("input.txt");
     //fs >> one >> two;
 
-    cin >> one >> two;
+    //cin >> one >> two;
+
+  //one.Reset(2,2);
+  //two.Reset(2,2);
     cout << one + two << endl;
     return 0;
 }
