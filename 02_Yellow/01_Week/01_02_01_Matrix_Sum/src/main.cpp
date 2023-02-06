@@ -2,17 +2,9 @@
 #include <fstream>
 #include <stdexcept>
 #include <vector>
-
-
+#include <exception>
 
 using namespace std;
-
-// Реализуйте здесь
-// * класс Matrix
-// * оператор ввода для класса Matrix из потока istream
-// * оператор вывода класса Matrix в поток ostream
-// * оператор проверки на равенство двух объектов класса Matrix
-// * оператор сложения двух объектов класса Matrix
 
 class Matrix {
 public:
@@ -20,29 +12,34 @@ public:
     Matrix() {
     }
 
-    Matrix(int new_rows, int new_columns) {
-        store.resize(new_rows);
-        for (auto& item : store) {
-            item.resize(new_columns);
-        }
+    Matrix(int num_rows, int num_cols) {
+        Reset(num_rows, num_cols);
     }
 
-    void Reset(int new_rows, int new_columns) {
-        store.resize(new_rows);
-
-        for (auto& item : store) {
-            item.resize(0);
-
-            item.resize(new_columns);
+    void Reset(int num_rows, int num_cols) {
+        if (num_rows < 0 || num_cols < 0) {
+            throw out_of_range("");
+        } else {
+            store.resize(num_rows);
+            for (auto& item : store) {
+                item.resize(0);
+                item.resize(num_cols);
+            }
         }
     }
 
     int At(int row, int column) const {
-        return store.at(column).at(row);
+        if (row >= GetNumRows() || column >= GetNumColumns()) {
+            throw out_of_range("");
+        }
+        return store.at(row).at(column);
     }
 
     int& At(int row, int column) {
-        return store[column][row];
+        if (row >= GetNumRows() || column >= GetNumColumns()) {
+            throw out_of_range("");
+        }
+        return store[row][column];
     }
 
     int GetNumRows() const {
@@ -53,48 +50,88 @@ public:
         return store.at(0).size();
     }
 
-
 private:
     vector<vector<int>> store;
 };
 
 ostream& operator<<(ostream& stream, const Matrix& matrix) {
 
+    int mRows = matrix.GetNumRows();
+    int mCols = matrix.GetNumColumns();
+    stream << mRows << ' ' << mCols << endl;
 
-
+    for (int i = 0; i < mRows; i++) {
+        for (int j = 0; j < mCols; j++) {
+            stream << matrix.At(i, j);
+            if (j != mCols - 1) stream << " ";
+        }
+        if (i != mRows - 1) stream << endl;
+    }
     return stream;
 }
-
 
 istream& operator>>(istream& stream, Matrix& matrix) {
     int row, column;
     stream >> row >> column;
 
     matrix.Reset(row, column);
-    for (int i = 0; i < column; i++) {
+    for (int i = 0; i < row; i++) {
         for (int j = 0; j < column; j++) {
-           stream >> matrix.At(j,i) ;
+            stream >> matrix.At(i, j);
         }
     }
     return stream;
 }
 
-
-
 Matrix  operator+(const Matrix& matrix1, const Matrix& matrix2) {
 
-    return {};
+    int m1R = matrix1.GetNumRows();
+    int m1C = matrix1.GetNumColumns();
+    int m2R = matrix2.GetNumRows();
+    int m2C = matrix2.GetNumColumns();
+
+    bool flag = 1;
+    flag = flag && (m1R == m2R) && (m1C == m2C);
+    if (!flag) throw invalid_argument("");
+
+    Matrix sum(m1R, m1C);
+
+    for (int i = 0; i < m1R; i++) {
+        for (int j = 0; j < m1C; j++) {
+            sum.At(i, j) = matrix1.At(i, j) + matrix2.At(i, j);
+        }
+    }
+    return sum;
 }
 
+bool  operator==(const Matrix& matrix1, const Matrix& matrix2) {
+
+    int m1R = matrix1.GetNumRows();
+    int m1C = matrix1.GetNumColumns();
+    int m2R = matrix2.GetNumRows();
+    int m2C = matrix2.GetNumColumns();
+
+    bool flag = 1;
+    flag = flag && (m1R == m2R) && (m1C == m2C);
+    if (!flag) return flag;
+
+    for (int i = 0; i < m1R; i++) {
+        for (int j = 0; j < m1C; j++) {
+            flag = flag && (matrix1.At(i, j) == matrix2.At(i, j));
+            if (!flag) return flag;
+        }
+    }
+    return flag;
+}
 
 int main() {
     Matrix one;
     Matrix two;
 
-    fstream fs("input.txt");
+    //fstream fs("input.txt");
+    //fs >> one >> two;
 
-    fs >> one >> two;
- //   cin >> one >> two;
- //   cout << one + two << endl;
+    cin >> one >> two;
+    cout << one + two << endl;
     return 0;
 }
