@@ -20,6 +20,9 @@ public:
         if (num_rows < 0 || num_cols < 0) {
             throw out_of_range("");
         } else {
+            rows = num_rows;
+            columns = num_cols;
+            if (!(rows > 1 && columns > 1)) return;
             store.resize(num_rows);
             for (auto& item : store) {
                 item.resize(0);
@@ -43,16 +46,17 @@ public:
     }
 
     int GetNumRows() const {
-        return store.size();
+        return rows;
     }
 
     int GetNumColumns() const {
-        if (GetNumRows()) return store.at(0).size();
-        return 0;
+        return columns;
     }
 
 private:
     vector<vector<int>> store;
+    int rows;
+    int columns;
 };
 
 ostream& operator<<(ostream& stream, const Matrix& matrix) {
@@ -129,13 +133,10 @@ int main() {
     Matrix one;
     Matrix two;
 
-    fstream fs("input.txt");
+    //fstream fs("input.txt");
     //fs >> one >> two;
 
-    //cin >> one >> two;
-
-  //one.Reset(2,2);
-  //two.Reset(2,2);
+    cin >> one >> two;
     cout << one + two << endl;
     return 0;
 }
