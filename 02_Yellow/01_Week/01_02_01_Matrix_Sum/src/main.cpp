@@ -63,7 +63,7 @@ ostream& operator<<(ostream& stream, const Matrix& matrix) {
 
     int mRows = matrix.GetNumRows();
     int mCols = matrix.GetNumColumns();
-    stream << mRows << ' ' << mCols << endl;
+    stream << mRows << " " << mCols << endl;
 
     for (int i = 0; i < mRows; i++) {
         for (int j = 0; j < mCols; j++) {
@@ -133,8 +133,8 @@ int main() {
     Matrix one;
     Matrix two;
 
-    //fstream fs("input.txt");
-    //fs >> one >> two;
+    // fstream fs("input.txt");
+    // fs >> one >> two;
 
     cin >> one >> two;
     cout << one + two << endl;
