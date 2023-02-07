@@ -8,6 +8,7 @@ makefile
 **/.project
 **/build
 **/output.txt
+**/.projects
 
 
 ### C++ ###
@@ -46,16 +47,7 @@ makefile
 
 
 ### Eclipse ###
-
 .metadata
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-**/.projects
->>>>>>> 3aed112db1061d4e3eb4afb932da155a709b57b8
-=======
-**/.projects
->>>>>>> 3aed112db1061d4e3eb4afb932da155a709b57b8
 bin/
 tmp/
 *.tmp
