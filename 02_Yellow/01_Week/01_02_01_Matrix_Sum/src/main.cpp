@@ -18,12 +18,17 @@ public:
     }
 
     void Reset(int num_rows, int num_cols) {
+
+
         if (num_rows < 0 || num_cols < 0) {
             throw out_of_range("");
         } else {
+            if (num_rows == 0 || num_cols == 0) {
+                num_rows = 0, num_cols = 0;
+            }
             rows = num_rows;
             columns = num_cols;
-            if (!(rows > 1 && columns > 1)) return;
+            if (!(rows > 0 && columns > 0)) return;
             store.resize(num_rows);
             for (auto& item : store) {
                 item.resize(0);
@@ -38,6 +43,8 @@ public:
         }
         return store.at(row).at(column);
     }
+
+
 
     int& At(int row, int column) {
         if (row >= GetNumRows() || column >= GetNumColumns() || row < 0 || column < 0) {
@@ -131,16 +138,12 @@ bool  operator==(const Matrix& matrix1, const Matrix& matrix2) {
 }
 
 int main() {
+
     Matrix one;
     Matrix two;
 
-    // fstream fs("input.txt");
-    // fs >> one >> two;
-
-    one.Reset(1,1);
-    int temp = one.At(0,0);
-    
-    //cin >> one >> two;
-    //cout << one + two << endl;
+    cin >> one >> two;
+    cout << one + two << endl;
     return 0;
 }
+
