@@ -1,56 +1,37 @@
 #include <iostream>
 #include <vector>
+
 using namespace std;
 
-void printIntVect(vector<int> v) {
-	//cout << "size: " << v.size() << endl;
-
-	for (const auto &val : v) {
-		cout << val << ' ';
-	}
-	cout << endl;
-}
-
-int calcAverageTemp(const vector<int> &temp) {
-	int rez = 0;
-	for (const auto &val : temp) {
-		rez += val;
-	}
-	rez /= temp.size();
-	return rez;
-}
-
-vector<int> HighTempDayNumbers(const vector<int> &temp) {
-	vector<int> highTempDayNumbers;
-	int avrTemp = calcAverageTemp(temp);
-
-	for (int i = 0; i < temp.size(); ++i) {
-		if (temp[i] > avrTemp) {
-			highTempDayNumbers.push_back(i);
-		}
-	}
-
-	return highTempDayNumbers;
-}
-
 int main() {
+    uint32_t number;
+    cin >> number;
 
-	int number;
-	cin >> number;
-	vector<int> temperature(number);
+    vector<int64_t> temp(number);
+    int64_t sum = 0;
+    for (auto& t : temp) {
+        cin >> t;
+        sum += t;
+    }
 
-	for (auto &t : temperature) {
-		cin >> t;
-	}
+    int64_t avr = sum / number;
+    //cout << avr << endl;
+    uint32_t count = 0;
 
-	//vector<int> temperature = { 1, 2, 3, 4, 5, 6 };
-	//printVect(temperature);
-	//cout << "avr temp: " << calcAverageTemp(temperature) << endl;
+    vector<uint32_t> above_average_numb;
+    for (uint32_t i = 0; i < number;++i) {
+        if (temp.at(i) > avr) {
+            count++;
+            above_average_numb.push_back(i);
+        }
+    }
 
-	vector<int> highTempDayNumbers = HighTempDayNumbers(temperature);
+    cout << count << endl;
 
-	cout << highTempDayNumbers.size() << endl;
-	printIntVect(highTempDayNumbers);
+    for (uint32_t i = 0; i < count;++i) {
+        cout << above_average_numb[i];
+        if(i!=count-1) cout << " ";
+    }
 
-	return 0;
+    return 0;
 }
