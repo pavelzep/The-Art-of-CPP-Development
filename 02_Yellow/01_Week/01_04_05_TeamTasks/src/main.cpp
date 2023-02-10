@@ -20,10 +20,11 @@ class TeamTasks {
 public:
     // Получить статистику по статусам задач конкретного разработчика
     const TasksInfo& GetPersonTasksInfo(const string& person) const {
-        if (store.count(person) == 0) {
+        /*if (store.count(person) == 0) {
 
             return {};
         }
+        */
         return store.at(person);
     };
 
@@ -68,7 +69,7 @@ public:
         ClearInfo(updatedTask);
         ClearInfo(old_task);
         ClearDone(old_task);
-        
+
         ClearInfo(store[person]);
         return { updatedTask, old_task };
 
