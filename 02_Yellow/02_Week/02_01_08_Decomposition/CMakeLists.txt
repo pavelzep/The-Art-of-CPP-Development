@@ -5,4 +5,4 @@ set(SOURCE_PATH src)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
-add_executable(${PROJECT_NAME} ${SOURCE_PATH}/main.cpp)
+add_executable(${PROJECT_NAME} ${SOURCE_PATH}/starter.cpp)
