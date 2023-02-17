@@ -22,11 +22,8 @@ struct Query {
 };
 
 istream& operator >> (istream& is, Query& q) {
-    // Реализуйте эту функцию
-
     string operation_code;
     is >> operation_code;
-
     if (operation_code == "NEW_BUS") {
         q.type = QueryType::NewBus;
         is >> q.bus;
@@ -35,7 +32,7 @@ istream& operator >> (istream& is, Query& q) {
         q.stops.resize(stop_count);
         for (string& stop : q.stops) {
             is >> stop;
-            q.stops.push_back(q.bus);
+            q.stops.push_back(stop);
         }
     } else if (operation_code == "BUSES_FOR_STOP") {
         q.type = QueryType::BusesForStop;
@@ -47,23 +44,24 @@ istream& operator >> (istream& is, Query& q) {
     } else if (operation_code == "ALL_BUSES") {
         q.type = QueryType::AllBuses;
     }
-
-
-
     return is;
 }
 
 struct BusesForStopResponse {
-    // Наполните полями эту структуру
+    string stop;
+    vector<string> buses;
 };
 
 ostream& operator << (ostream& os, const BusesForStopResponse& r) {
     // Реализуйте эту функцию
+
+
     return os;
 }
 
 struct StopsForBusResponse {
-    // Наполните полями эту структуру
+    string bus;
+    vector<string> stops;
 };
 
 ostream& operator << (ostream& os, const StopsForBusResponse& r) {
@@ -73,6 +71,8 @@ ostream& operator << (ostream& os, const StopsForBusResponse& r) {
 
 struct AllBusesResponse {
     // Наполните полями эту структуру
+
+
 };
 
 ostream& operator << (ostream& os, const AllBusesResponse& r) {
@@ -83,27 +83,42 @@ ostream& operator << (ostream& os, const AllBusesResponse& r) {
 class BusManager {
 public:
     void AddBus(const string& bus, const vector<string>& stops) {
-        // Реализуйте этот метод
+
+        buses_to_stops[bus] = stops;
+
+        for (const auto& stop : stops) {
+            stops_to_buses[stop].push_back(bus);
+        }
     }
 
     BusesForStopResponse GetBusesForStop(const string& stop) const {
-        // Реализуйте этот метод
+
+
+        BusesForStopResponse rez;
+        rez.stop = stop;
+        for (const auto& bus : this->stops_to_buses.at(stop))
+            rez.buses.push_back(bus);
+        return rez;
     }
 
     StopsForBusResponse GetStopsForBus(const string& bus) const {
-        // Реализуйте этот метод
+
+        StopsForBusResponse rez;
+        rez.bus = bus;
+        rez.stops = this->buses_to_stops.at(bus);
+        return rez;
+
     }
 
     AllBusesResponse GetAllBuses() const {
-        // Реализуйте этот метод
+
     }
 
 private:
     store buses_to_stops, stops_to_buses;
-
 };
 
-// Не меняя тела функции main, реализуйте функции и классы выше
+
 
 int main() {
     int query_count;
