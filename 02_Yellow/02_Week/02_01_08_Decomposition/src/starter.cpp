@@ -55,6 +55,14 @@ struct BusesForStopResponse {
 ostream& operator << (ostream& os, const BusesForStopResponse& r) {
     // Реализуйте эту функцию
 
+    if (r.buses.size() == 0) {
+        os << "No stop" << endl;
+    } else {
+        for (const string& bus : r.buses) {
+            cout << bus << " ";
+        }
+        cout << endl;
+    }
 
     return os;
 }
@@ -62,21 +70,41 @@ ostream& operator << (ostream& os, const BusesForStopResponse& r) {
 struct StopsForBusResponse {
     string bus;
     vector<string> stops;
+    store stopsForBus;
+
 };
 
 ostream& operator << (ostream& os, const StopsForBusResponse& r) {
-    // Реализуйте эту функцию
+
+    if (r.stops.size() == 0) {
+        os << "No bus" << endl;
+    } else {
+        for (const string& stop : r.stops) {
+            os << "Stop " << stop << ": ";
+            if (r.stops.size() == 1) {
+                os << "no interchange";
+            } else {
+                for (const string& other_bus : r.stopsForBus.at(stop)) {
+
+                    if (r.bus != other_bus) {
+                        os << other_bus << " ";
+                    }
+                }
+            }
+            os << endl;
+        }
+    }
+
     return os;
 }
 
 struct AllBusesResponse {
-    // Наполните полями эту структуру
 
-
+    store buses;
 };
 
 ostream& operator << (ostream& os, const AllBusesResponse& r) {
-    // Реализуйте эту функцию
+
     return os;
 }
 
@@ -92,26 +120,39 @@ public:
     }
 
     BusesForStopResponse GetBusesForStop(const string& stop) const {
-
-
         BusesForStopResponse rez;
         rez.stop = stop;
-        for (const auto& bus : this->stops_to_buses.at(stop))
-            rez.buses.push_back(bus);
+        if (stops_to_buses.count(stop)) {
+            for (const auto& bus : this->stops_to_buses.at(stop)) {
+                rez.buses.push_back(bus);
+            }
+        }
         return rez;
     }
 
     StopsForBusResponse GetStopsForBus(const string& bus) const {
-
         StopsForBusResponse rez;
         rez.bus = bus;
-        rez.stops = this->buses_to_stops.at(bus);
-        return rez;
 
+
+
+        if (buses_to_stops.count(bus)) {
+            for (const auto& stop : buses_to_stops.at(bus)) {
+                rez.stops.push_back(stop);
+            }
+            for (const auto& stop : rez.stops) {
+                rez.stopsForBus[stop] = stops_to_buses.at(stop);
+            }
+        }
+
+
+        return rez;
     }
 
     AllBusesResponse GetAllBuses() const {
-
+        AllBusesResponse rez;
+        rez.buses = this->buses_to_stops;
+        return rez;
     }
 
 private:
