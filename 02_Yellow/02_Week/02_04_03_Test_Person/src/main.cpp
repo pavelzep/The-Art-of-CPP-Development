@@ -165,11 +165,28 @@ void add_name_to_empty() {
     AssertEqual(person.GetFullName(999999), "a with unknown last name", "name for 999999 not 'a'");
 
     }
+
     { Person person;
     person.ChangeFirstName(-99999, "b");
-    AssertEqual(person.GetFullName(-99999), "b", "name for -99999 not 'b'");
+    AssertEqual(person.GetFullName(-99999), "b with unknown last name", "name for -99999 not 'b'");
+    AssertEqual(person.GetFullName(-9), "b with unknown last name", "name for -9 not 'b'");
+    AssertEqual(person.GetFullName(99999), "b with unknown last name", "name for 99999 not 'b'");
     }
 }
+
+void change_name() {
+
+    Person person;
+
+    person.ChangeFirstName(-99999, "b");
+
+    person.ChangeFirstName(999, "c");
+    AssertEqual(person.GetFullName(-99999), "b with unknown last name", "name for -99999 not 'b'");
+    AssertEqual(person.GetFullName(-9), "b with unknown last name", "name for -9 not 'b'");
+    AssertEqual(person.GetFullName(99999), "c with unknown last name", "name for 99999 not 'c'");
+
+}
+
 
 void TestAll() {
     TestRunner runner;
@@ -177,6 +194,8 @@ void TestAll() {
 
     runner.RunTest(test_empty, "test_empty");
     runner.RunTest(add_name_to_empty, "add_name_to_empty");
+    runner.RunTest(change_name, "change_name");
+
 
 
 
