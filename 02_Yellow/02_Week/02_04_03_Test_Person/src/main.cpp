@@ -107,7 +107,9 @@ public:
     string GetFullName(int year) {
     }
 };
+
 */
+/*
 class Person {
 public:
     void ChangeFirstName(int year, const string& first_name) {
@@ -147,6 +149,7 @@ private:
     }
 };
 
+*/
 void test_empty() {
     Person person;
     AssertEqual(person.GetFullName(1999), "Incognito", "empty don t return 'Incognito'");
@@ -172,8 +175,6 @@ void add_name_to_empty() {
     AssertEqual(person.GetFullName(-9), "b with unknown last name", "name for -9 not 'b with unknown last name'");
     AssertEqual(person.GetFullName(99999), "b with unknown last name", "name for 99999 not 'b with unknown last name'");
     }
-
-
 }
 
 void change_name() {
@@ -181,21 +182,70 @@ void change_name() {
     Person person;
 
     person.ChangeFirstName(-99999, "b");
+    AssertEqual(person.GetFullName(-99999), "b with unknown last name", "name for -99999 not 'b with unknown last name'");
+    AssertEqual(person.GetFullName(-9), "b with unknown last name", "name for -9 not 'b with unknown last name'");
+    AssertEqual(person.GetFullName(999), "b with unknown last name", "name for 99999 not 'b with unknown last name'");
+    AssertEqual(person.GetFullName(99999), "b with unknown last name", "name for 99999 not 'b with unknown last name'");
 
     person.ChangeFirstName(999, "c");
     AssertEqual(person.GetFullName(-99999), "b with unknown last name", "name for -99999 not 'b with unknown last name'");
     AssertEqual(person.GetFullName(-9), "b with unknown last name", "name for -9 not 'b with unknown last name'");
+    AssertEqual(person.GetFullName(999), "c with unknown last name", "name for 99999 not 'c with unknown last name'");
     AssertEqual(person.GetFullName(99999), "c with unknown last name", "name for 99999 not 'c with unknown last name'");
+}
 
+void add_last_name_to_empty() {
+    { Person person;
+    person.ChangeLastName(1, "a");
+    AssertEqual(person.GetFullName(1), "a with unknown first name", "name for 1 not 'a with unknown first name'");
+    AssertEqual(person.GetFullName(0), "Incognito", "name for 0 not 'Incognito'");
+    AssertEqual(person.GetFullName(-99999), "Incognito", "name for -99999 not 'Incognito'");
+    AssertEqual(person.GetFullName(2), "a with unknown first name", "name for 2 not 'a with unknown first name'");
+    AssertEqual(person.GetFullName(999999), "a with unknown first name", "name for 999999 not 'a with unknown first name'");
+    }
 
-
-
-
-    
-
+    { Person person;
+    person.ChangeLastName(-99999, "b");
+    AssertEqual(person.GetFullName(-199999), "Incognito", "name for -199999 not 'Incognito'");
+    AssertEqual(person.GetFullName(-99999), "b with unknown first name", "name for -99999 not 'b with unknown first name'");
+    AssertEqual(person.GetFullName(-9), "b with unknown first name", "name for -9 not 'b with unknown first name'");
+    AssertEqual(person.GetFullName(99999), "b with unknown first name", "name for 99999 not 'b with unknown first name'");
+    }
 }
 
 
+void change_last_name() {
+
+    Person person;
+
+    person.ChangeLastName(-99999, "b");
+    AssertEqual(person.GetFullName(-99999), "b with unknown first name", "name for -99999 not 'b with unknown first name'");
+    AssertEqual(person.GetFullName(-9), "b with unknown first name", "name for -9 not 'b with unknown first name'");
+    AssertEqual(person.GetFullName(999), "b with unknown first name", "name for 99999 not 'b with unknown first name'");
+    AssertEqual(person.GetFullName(99999), "b with unknown first name", "name for 99999 not 'b with unknown first name'");
+
+    person.ChangeLastName(999, "c");
+    AssertEqual(person.GetFullName(-99999), "b with unknown first name", "name for -99999 not 'b with unknown first name'");
+    AssertEqual(person.GetFullName(-9), "b with unknown first name", "name for -9 not 'b with unknown first name'");
+    AssertEqual(person.GetFullName(999), "c with unknown first name", "name for 99999 not 'c with unknown first name'");
+    AssertEqual(person.GetFullName(99999), "c with unknown first name", "name for 99999 not 'c with unknown first name'");
+}
+
+
+void change_name_and_last_name() {
+    Person person;
+    person.ChangeFirstName(-99999, "a");
+    person.ChangeLastName(-99999, "b");
+    AssertEqual(person.GetFullName(-99999), "a b", "name and last name for -99999 not 'a b'");
+    person.ChangeFirstName(0, "A");
+    AssertEqual(person.GetFullName(0), "A b", "name and last name for 0 not 'A b'");
+    AssertEqual(person.GetFullName(-10), "a b", "name and last name for -10 not 'a b'");
+    AssertEqual(person.GetFullName(10), "A b", "name and last name for 10 not 'A b'");
+    person.ChangeLastName(20, "B");
+    AssertEqual(person.GetFullName(10), "A b", "name and last name for 10 not 'A b'");
+    AssertEqual(person.GetFullName(20), "A B", "name and last name for 20 not 'A B'");
+    AssertEqual(person.GetFullName(30), "A B", "name and last name for 30 not 'A B'");
+}
 void TestAll() {
     TestRunner runner;
 
@@ -203,9 +253,9 @@ void TestAll() {
     runner.RunTest(test_empty, "test_empty");
     runner.RunTest(add_name_to_empty, "add_name_to_empty");
     runner.RunTest(change_name, "change_name");
-
-
-
+    runner.RunTest(add_last_name_to_empty, "add_last_name_to_empty");
+    runner.RunTest(change_last_name, "change_last_name");
+    runner.RunTest(change_name_and_last_name, "change_name_and_last_name");
 
 
 }
@@ -216,7 +266,7 @@ int main() {
     // добавьте сюда свои тесты
     TestAll();
 
-
+/*
     Person person;
 
     person.ChangeFirstName(1965, "Polina");
@@ -235,6 +285,6 @@ int main() {
         cout << person.GetFullName(year) << endl;
     }
 
-
+*/
     return 0;
 }
