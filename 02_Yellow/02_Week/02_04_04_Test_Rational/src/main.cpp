@@ -95,6 +95,7 @@ private:
     int fail_count = 0;
 };
 
+/*
 class Rational {
 public:
     Rational() {
@@ -125,7 +126,7 @@ private:
         return b ? GCD(b, a % b) : a;
     }
 };
-
+*/
 
 void test1() {
     Rational r;
