@@ -4,14 +4,14 @@
 #include <string> 
 #include <iostream>
 
+using namespace std;
+
 enum class QueryType {
     NewBus,
     BusesForStop,
     StopsForBus,
     AllBuses
 };
-
-
 
 struct Query {
     QueryType type;

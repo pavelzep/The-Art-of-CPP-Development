@@ -7,11 +7,9 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
 
 add_executable(
-    ${PROJECT_NAME}  
+    ${PROJECT_NAME} 
     ${SOURCE_PATH}/main.cpp 
-    ${SOURCE_PATH}/bus_manager.cpp
+    ${SOURCE_PATH}/bus_manager.cpp 
     ${SOURCE_PATH}/query.cpp 
-    ${SOURCE_PATH}/responses.cpp
-    ${SOURCE_PATH}/starter.cpp
-    
+    ${SOURCE_PATH}/responses.cpp 
     )
