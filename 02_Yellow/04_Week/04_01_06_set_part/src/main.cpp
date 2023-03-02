@@ -16,10 +16,10 @@ vector<T> FindGreaterElements(const set<T>& elements, const T& border);
 template <typename T>
 vector<T> FindGreaterElements(const set<T>& elements, const T& border) {
     auto it = find_if(elements.begin(), elements.end(), [&border](T element) {return element > border; });
-    vector<T> rez(it, elements.end());
-    return rez;
-
+    return {it, elements.end()};
 };
+
+
 
 
 int main() {
