@@ -3,22 +3,23 @@
 // в возрастающем порядке
 
 #include <iostream>
+
 #include <set>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
 
-
 template <typename T>
 vector<T> FindGreaterElements(const set<T>& elements, const T& border);
 
 template <typename T>
 vector<T> FindGreaterElements(const set<T>& elements, const T& border) {
+    auto it = find_if(elements.begin(), elements.end(), [&border](T element) {return element > border; });
+    vector<T> rez(it, elements.end());
+    return rez;
 
 };
-
-
 
 
 int main() {
