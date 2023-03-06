@@ -1,0 +1,19 @@
+#include <vector>
+#include <algorithm>
+#include <iterator>
+
+using namespace std;
+
+template <typename RandomIt>
+void MergeSort(RandomIt range_begin, RandomIt range_end) {
+    if ((range_end - range_begin) < 2) return;
+    vector<typename RandomIt::value_type> elements(range_begin, range_end);
+    auto it12 = elements.begin() + (elements.end() - elements.begin()) / 3;
+    auto it23 = it12 + (elements.end() - elements.begin()) / 3;
+    MergeSort(elements.begin(), it12);
+    MergeSort(it12, it23);
+    MergeSort(it23, elements.end());
+    vector<typename RandomIt::value_type> temp_vect;
+    merge(elements.begin(), it12, it12, it23, back_inserter(temp_vect));
+    merge(temp_vect.begin(), temp_vect.end(), it23, elements.end(), range_begin);
+}
