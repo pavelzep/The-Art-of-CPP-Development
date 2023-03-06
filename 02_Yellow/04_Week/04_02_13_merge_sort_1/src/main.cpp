@@ -46,6 +46,8 @@
 
 #include <vector>
 #include <iostream>
+#include <algorithm>
+//#include <iterator>
 
 using namespace std;
 
@@ -54,19 +56,20 @@ void MergeSort(RandomIt range_begin, RandomIt range_end);
 
 template <typename RandomIt>
 void MergeSort(RandomIt range_begin, RandomIt range_end) {
-    if (range_begin == range_end) return;
+    if ((range_end - range_begin) < 2) return;
     vector<typename RandomIt::value_type> elements(range_begin, range_end);
-
-    
-
-
-
-
+    auto it = elements.begin() + (elements.end() - elements.begin()) / 2;
+    vector<typename RandomIt::value_type> v1(elements.begin(), it);
+    vector<typename RandomIt::value_type> v2(it, elements.end());
+    MergeSort(v1.begin(), v1.end());
+    MergeSort(v2.begin(), v2.end());
+    merge(v1.begin(), v1.end(), v2.begin(), v2.end(), range_begin);
 }
 
 
 int main() {
     vector<int> v = { 6, 4, 7, 6, 4, 4, 0, 1 };
+    //vector<int> v = {1};
     MergeSort(begin(v), end(v));
     for (int x : v) {
         cout << x << " ";
