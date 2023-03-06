@@ -30,19 +30,59 @@
 // 30
 #include <iostream>
 #include <algorithm>
-//#include <algorithm>
+#include <numeric>
+#include <string>
 
 using namespace std;
 
 
+enum class QueryType {
+    ComputeIncome,
+    Earn
+};
 
+struct Date {
+    int year;
+    int month;
+    int day;
+};
 
+struct Query {
+    QueryType type;
+    Date from;
+    Date to;
+};
 
+istream& operator >> (istream& is, Date& d){
+
+    is >> d.year;
+    //пропуск символа.
+    is >> d.month;
+   //пропуск символа.
+    is >> d.day;
+
+}
+
+istream& operator >> (istream& is, Query& q) {
+    string operation_code;
+    is >> operation_code;
+
+    if (operation_code == "ComputeIncome") {
+        q.type = QueryType::ComputeIncome;
+
+    } else if ((operation_code == "Earn") {
+        q.type = QueryType::Earn;
+    }
+
+    
+
+    return is;
+}
 
 int main() {
 
     int q;
-    cin >> q;
+        cin >> q;
 
 
     while (q) {
