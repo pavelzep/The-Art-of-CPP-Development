@@ -11,3 +11,4 @@ void MergeSort(RandomIt range_begin, RandomIt range_end) {
     MergeSort(elements.begin(), it);
     MergeSort(it, elements.end());
     merge(elements.begin(), it, it, elements.end(), range_begin);
+}

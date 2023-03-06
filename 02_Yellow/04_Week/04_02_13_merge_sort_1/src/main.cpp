@@ -55,17 +55,13 @@ template <typename RandomIt>
 void MergeSort(RandomIt range_begin, RandomIt range_end);
 
 template <typename RandomIt>
+
 void MergeSort(RandomIt range_begin, RandomIt range_end) {
     if ((range_end - range_begin) < 2) return;
     vector<typename RandomIt::value_type> elements(range_begin, range_end);
     auto it = elements.begin() + (elements.end() - elements.begin()) / 2;
-    // vector<typename RandomIt::value_type> v1(elements.begin(), it);
-    // vector<typename RandomIt::value_type> v2(it, elements.end());
-    // MergeSort(v1.begin(), v1.end());
-    // MergeSort(v2.begin(), v2.end());
     MergeSort(elements.begin(), it);
     MergeSort(it, elements.end());
-
     merge(elements.begin(), it, it, elements.end(), range_begin);
 }
 
