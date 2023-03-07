@@ -45,7 +45,7 @@ enum class QueryType {
 };
 
 tm start = { 0,0,0,1,0,100 };
-tm fin = { 0,0,0,31,11,199 };
+tm fin = { 0,0,0,1,1,200 };
 
 struct Query {
     QueryType type;
@@ -53,7 +53,6 @@ struct Query {
     tm to = {};
     double money;
 };
-
 
 istream& operator >> (istream& is, tm& from) {
     int temp;
@@ -100,28 +99,28 @@ void Response(Query& q, vector<double>& in) {
     auto end_it = in.begin() + position_from_date(q.to);
 
     switch (q.type) {
-    case QueryType::Earn: {
+        case QueryType::Earn: {
 
-        // сколько дней между датами включая крайние даты
-        int days = difftime(mktime(&q.to), mktime(&q.from)) / (60 * 60 * 24) + 1;
-        // доход в день
-        double earn_for_day = q.money / days;
-        for (auto it = start_it; it != next(end_it); ++it) {
-            *it += earn_for_day;
+            // сколько дней между датами включая крайние даты
+            int days = difftime(mktime(&q.to), mktime(&q.from)) / (60 * 60 * 24) + 1;
+            // доход в день
+            double earn_for_day = q.money / days;
+            for (auto it = start_it; it != next(end_it); ++it) {
+                *it += earn_for_day;
+            }
+            break;
         }
-        break;
-    }
-    case QueryType::ComputeIncome: {
-        cout << setprecision(25) << accumulate(start_it, end_it + 1, 0.) << endl;
+        case QueryType::ComputeIncome: {
+            cout << setprecision(25) << accumulate(start_it, end_it + 1, 0.) << endl;
 
-        break;
-    }
+            break;
+        }
     }
 }
 
 int main() {
 
-    vector<double> income(difftime(mktime(&fin), mktime(&start)) / (60 * 60 * 24) + 1);
+    vector<double> income(difftime(mktime(&fin), mktime(&start)) / (60 * 60 * 24));
 
     int query_count;
     cin >> query_count;
