@@ -39,13 +39,45 @@
 #include <numeric>
 #include <fstream>
 
-
-
-
 using namespace std;
+
+
+enum date_cat {
+    year,
+    month,
+    day
+};
+
+vector<int> days_from_month{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+vector<int> sum_of_days;
+
+partial_sum(days_from_month.begin(), prev(days_from_month.end()), back_inserter(sum_of_days));
+
+string min_date_str = "1900-01-01";
+string max_date_str = "2099-12-31";
+
+int position_from_date(const string& date_) {
+    stringstream ss(date_);
+    vector<int> date(3);
+    ss >> date[date_cat::year];
+    ss.ignore(1);
+    ss >> date[date_cat::month];
+    ss.ignore(1);
+    ss >> date[date_cat::day];
+
+    int q = 0;
+    for (int i = 1901; i < date[date_cat::year];++i) {
+        if ((date[date_cat::year] % 4 == 0)) {
+            ++q;
+        }
+    }
+    int result = year * 365 + month * 12 + day + q;
+    return result;
+}
 
 tm string_to_date(const string& date_) {
     stringstream ss(date_);
+
     tm date = {};
     ss >> date.tm_year;
     date.tm_year -= 1900;
@@ -54,11 +86,12 @@ tm string_to_date(const string& date_) {
     date.tm_mon -= 1;
     ss.ignore(1);
     ss >> date.tm_mday;
-    date.tm_hour = 12;
+    date.tm_hour = 5;
+    date.tm_min = 1;
     return date;
 }
 
-tm MIN_DATE = string_to_date("1900-01-01");
+tm MIN_DATE = string_to_date("1970-01-01");
 tm MAX_DATE = string_to_date("2099-12-31");
 
 // tm MIN_DATE = { 0,0,0,1,0,0 };
@@ -108,6 +141,15 @@ int main() {
 
     // int sec = difftime(time_max, time_min) / (60 * 60 * 24);
     // cout << sec << endl;
+
+
+
+    time_t temp = 0;
+    cout << std::asctime(std::localtime(&temp)) << endl;
+    cout << std::asctime(std::gmtime(&temp)) << endl;
+
+
+
 
     cout << size_v << endl;
 
