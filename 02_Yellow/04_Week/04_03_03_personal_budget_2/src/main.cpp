@@ -36,6 +36,10 @@
 #include <sstream>
 #include <ctime>
 #include <vector>
+#include <numeric>
+#include <fstream>
+
+
 
 
 using namespace std;
@@ -50,53 +54,80 @@ tm string_to_date(const string& date_) {
     date.tm_mon -= 1;
     ss.ignore(1);
     ss >> date.tm_mday;
+    date.tm_hour = 12;
     return date;
 }
 
-tm MIN_DATE = { 0,0,0,1,0,100 };
-tm MAX_DATE = { 0,0,0,1,1,200 };
+tm MIN_DATE = string_to_date("1900-01-01");
+tm MAX_DATE = string_to_date("2099-12-31");
+
+// tm MIN_DATE = { 0,0,0,1,0,0 };
+// tm MAX_DATE = { 0,0,0,31,12,199 };
 
 int position_from_date(tm& date) {
     return difftime(mktime(&date), mktime(&MIN_DATE)) / (60 * 60 * 24);
 }
 
-void Processing_request(const string& date_, const int value_, vector<double>& store_) {
+void Processing_request(const string& date_, const int value_, vector<uint32_t>& store_) {
     tm date = string_to_date(date_);
     int pos = position_from_date(date);
     store_[pos] += value_;
 }
 
-void Processing_request(const string& from_, const string& to_, vector<double>& store) {
+void Processing_request(const string& from_, const string& to_, vector<uint32_t>& store) {
+    int result;
     tm tm_from = string_to_date(from_);
     int pos_from = position_from_date(tm_from);
 
     tm tm_to = string_to_date(to_);
     int pos_to = position_from_date(tm_to);
 
-    
+    vector<int> sum_vect1;
+    vector<int> sum_vect2;
 
+    auto it_start = store.begin() + pos_from;
+    auto it_fin = store.begin() + pos_to;
 
+    partial_sum(store.begin(), it_start + 1, back_inserter(sum_vect1));
+    partial_sum(store.begin(), it_fin + 1, back_inserter(sum_vect2));
+
+    result = sum_vect2.back() - sum_vect1.back() + store[pos_from];
+    cout << result << endl;
 }
 
-
 int main() {
-    vector<double> store(position_from_date(MAX_DATE));
+
+    vector<uint32_t> store(position_from_date(MAX_DATE));
+    int size_v = store.size();
+
+    tm tm_min = MIN_DATE;
+    tm tm_max = MAX_DATE;
+
+    time_t time_min = mktime(&tm_min);
+    time_t time_max = mktime(&tm_max);
+
+    // int sec = difftime(time_max, time_min) / (60 * 60 * 24);
+    // cout << sec << endl;
+
+    cout << size_v << endl;
 
     int e_count, q_count;
-    cin >> e_count;
+
+    fstream fs("input.txt");
+    //cin >> e_count;
 
     while (e_count) {
         string date;
         int value;
-        cin >> date >> value;
+        fs >> date >> value;
         Processing_request(date, value, store);
         --e_count;
     }
 
-    cin >> q_count;
+    fs >> q_count;
     while (q_count) {
         string from, to;
-        cin >> from >> to;
+        fs >> from >> to;
         Processing_request(from, to, store);
         --q_count;
     }
