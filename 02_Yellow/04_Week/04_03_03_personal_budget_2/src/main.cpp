@@ -41,79 +41,55 @@
 
 using namespace std;
 
+int position_from_date(const string& date_, vector<int>& sum_of_days_);
 
-enum date_cat {
-    year,
-    month,
-    day
+void Processing_request_1(const string& date_, const int value_, vector<uint32_t>& store_, vector<int>& sum_of_days_);
+void Processing_request_2(const string& from_, const string& to_, vector<uint32_t>& store, vector<int>& sum_of_days_);
+
+void init();
+
+void init(vector<int>& days_from_month_, vector<int>& sum_of_days_) {
+
+    partial_sum(days_from_month_.begin(), prev(days_from_month_.end()), back_inserter(sum_of_days_));
+}
+
+struct Date {
+    int year;
+    int month;
+    int day;
+
 };
 
-vector<int> days_from_month{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-vector<int> sum_of_days;
-
-partial_sum(days_from_month.begin(), prev(days_from_month.end()), back_inserter(sum_of_days));
-
-string min_date_str = "1900-01-01";
-string max_date_str = "2099-12-31";
-
-int position_from_date(const string& date_) {
+int position_from_date(const string& date_, vector<int>& sum_of_days_) {
     stringstream ss(date_);
-    vector<int> date(3);
-    ss >> date[date_cat::year];
+    Date date;
+    ss >> date.year;
     ss.ignore(1);
-    ss >> date[date_cat::month];
+    ss >> date.month;
     ss.ignore(1);
-    ss >> date[date_cat::day];
+    ss >> date.day;
 
     int q = 0;
-    for (int i = 1901; i < date[date_cat::year];++i) {
-        if ((date[date_cat::year] % 4 == 0)) {
+    for (int i = 1901; i < date.year;++i) {
+        if ((i % 4 == 0)) {
             ++q;
         }
     }
-    int result = year * 365 + month * 12 + day + q;
+    int result = (date.year - 1900) * 365 + sum_of_days_[date.month - 1] + date.day + q;
     return result;
 }
 
-tm string_to_date(const string& date_) {
-    stringstream ss(date_);
+void Processing_request_1(const string& date_, const int value_, vector<uint32_t>& store_, vector<int>& sum_of_days_) {
 
-    tm date = {};
-    ss >> date.tm_year;
-    date.tm_year -= 1900;
-    ss.ignore(1);
-    ss >> date.tm_mon;
-    date.tm_mon -= 1;
-    ss.ignore(1);
-    ss >> date.tm_mday;
-    date.tm_hour = 5;
-    date.tm_min = 1;
-    return date;
-}
-
-tm MIN_DATE = string_to_date("1970-01-01");
-tm MAX_DATE = string_to_date("2099-12-31");
-
-// tm MIN_DATE = { 0,0,0,1,0,0 };
-// tm MAX_DATE = { 0,0,0,31,12,199 };
-
-int position_from_date(tm& date) {
-    return difftime(mktime(&date), mktime(&MIN_DATE)) / (60 * 60 * 24);
-}
-
-void Processing_request(const string& date_, const int value_, vector<uint32_t>& store_) {
-    tm date = string_to_date(date_);
-    int pos = position_from_date(date);
+    int pos = position_from_date(date_, sum_of_days_);
     store_[pos] += value_;
 }
 
-void Processing_request(const string& from_, const string& to_, vector<uint32_t>& store) {
+void Processing_request_2(const string& from_, const string& to_, vector<uint32_t>& store, vector<int>& sum_of_days_) {
     int result;
-    tm tm_from = string_to_date(from_);
-    int pos_from = position_from_date(tm_from);
 
-    tm tm_to = string_to_date(to_);
-    int pos_to = position_from_date(tm_to);
+    int pos_from = position_from_date(from_, sum_of_days_);
+    int pos_to = position_from_date(to_, sum_of_days_);
 
     vector<int> sum_vect1;
     vector<int> sum_vect2;
@@ -130,47 +106,38 @@ void Processing_request(const string& from_, const string& to_, vector<uint32_t>
 
 int main() {
 
-    vector<uint32_t> store(position_from_date(MAX_DATE));
+    string min_date_str = "1900-01-01";
+    string max_date_str = "2099-12-31";
+
+    vector<int> days_from_month{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    vector<int> sum_of_days = { 0 };
+
+    init(days_from_month, sum_of_days);
+
+    vector<uint32_t> store(position_from_date(max_date_str, sum_of_days));
     int size_v = store.size();
 
-    tm tm_min = MIN_DATE;
-    tm tm_max = MAX_DATE;
-
-    time_t time_min = mktime(&tm_min);
-    time_t time_max = mktime(&tm_max);
-
-    // int sec = difftime(time_max, time_min) / (60 * 60 * 24);
-    // cout << sec << endl;
-
-
-
-    time_t temp = 0;
-    cout << std::asctime(std::localtime(&temp)) << endl;
-    cout << std::asctime(std::gmtime(&temp)) << endl;
-
-
-
-
-    cout << size_v << endl;
+    int temp = position_from_date("1900-01-31", sum_of_days);
 
     int e_count, q_count;
 
-    fstream fs("input.txt");
-    //cin >> e_count;
+    fstream cin("../input.txt");
+
+    cin >> e_count;
 
     while (e_count) {
         string date;
         int value;
-        fs >> date >> value;
-        Processing_request(date, value, store);
+        cin >> date >> value;
+        Processing_request_1(date, value, store, sum_of_days);
         --e_count;
     }
 
-    fs >> q_count;
+    cin >> q_count;
     while (q_count) {
         string from, to;
-        fs >> from >> to;
-        Processing_request(from, to, store);
+        cin >> from >> to;
+        Processing_request_2(from, to, store, sum_of_days);
         --q_count;
     }
     return 0;
