@@ -38,6 +38,8 @@
 #include <vector>
 #include <numeric>
 #include <fstream>
+#include <exception>
+
 
 using namespace std;
 
@@ -87,13 +89,13 @@ int position_from_date(const Date& date_) {
         }
     }
 
-    int position = (date_.year - min_date.year) * 365 + sum_of_days[date_.month - 1] + date_.day + leap_year_correction - 1;
+    int position = (date_.year - min_date.year) * 365 + sum_of_days.at(date_.month - 1) + date_.day + leap_year_correction - 1;
     return position;
 }
 
 void Processing_request_1(const string& date_, const int value_, vector<uint32_t>& store_) {
     int pos = position_from_date(date_from_string(date_));
-    store_[pos] += value_;
+    store_.at(pos) += value_;
 }
 
 void Processing_request_2(const string& from_, const string& to_, vector<uint32_t>& store_) {
@@ -110,7 +112,7 @@ void Processing_request_2(const string& from_, const string& to_, vector<uint32_
     partial_sum(store_.begin(), it_start + 1, back_inserter(sum_vect1));
     partial_sum(store_.begin(), it_fin + 1, back_inserter(sum_vect2));
 
-    int result = sum_vect2.back() - sum_vect1.back() + store_[pos_from];
+    int result = sum_vect2.back() - sum_vect1.back() + store_.at(pos_from);
     cout << result << endl;
 }
 
@@ -122,8 +124,7 @@ int main() {
 
     init();
 
-    vector<uint32_t> store(position_from_date(date_from_string(max_date_str)) + 1);
-
+    vector<uint32_t> store(position_from_date(date_from_string(max_date_str)) + 1);////
 
     // Debug:
 
@@ -133,7 +134,7 @@ int main() {
     // debug_ = position_from_date(date_from_string("1900-01-01"));
     // debug_ = position_from_date(date_from_string("2000-01-01"));
     // debug_ = position_from_date(date_from_string("2099-12-31"));
-    
+
     // fstream cin("../input.txt");
 
     int e_count, q_count;
@@ -141,19 +142,36 @@ int main() {
     cin >> e_count;
 
     while (e_count) {
-        string date;
-        int value;
-        cin >> date >> value;
-        Processing_request_1(date, value, store);
-        --e_count;
+        ostringstream out;
+        try {
+            string date;
+            int value;
+            cin >> date >> value;
+            out << date << ' ' << value;
+            Processing_request_1(date, value, store);
+            --e_count;
+        }
+        catch (const std::exception& e) {
+            std::cerr << "err1: " << e.what() << '\n';
+            //std::cerr << "err1: " << out.str() << endl;
+        }
     }
 
     cin >> q_count;
     while (q_count) {
-        string from, to;
-        cin >> from >> to;
-        Processing_request_2(from, to, store);
-        --q_count;
+        ostringstream out;
+        try {
+            string from, to;
+            cin >> from >> to;
+            out << from << ' ' << to;
+            Processing_request_2(from, to, store);
+            --q_count;
+        }
+        catch (const std::exception& e) {
+            std::cerr << "err2: " << e.what() << '\n';
+            
+            //std::cerr << "err2: " << out.str() << endl;
+        }
     }
     return 0;
 }
