@@ -97,7 +97,7 @@ uint32_t position_from_date(const Date& date_) {
 void Processing_request_1(const string& date_, const uint32_t value_, vector<uint32_t>& store_) {
     uint32_t size = store_.size();
     uint32_t pos = position_from_date(date_from_string(date_));
-    store_.at(pos) += value_;
+    store_.at(pos + 1) += value_;
 }
 
 void Processing_request_2(const string& from_, const string& to_, vector<uint32_t>& store_) {
@@ -108,12 +108,12 @@ void Processing_request_2(const string& from_, const string& to_, vector<uint32_
     uint32_t pos_to = position_from_date(date_from_string(to_));
     uint32_t pos_from = position_from_date(date_from_string(from_));
 
-    uint32_t value_to = store_.at(pos_to);
+    uint32_t value_to = store_.at(pos_to + 1);
     uint32_t value_from = store_.at(pos_from);
 
-    uint32_t value_from_next = store_.at(pos_from + 1);
 
-    result = value_to - value_from_next;
+
+    result = value_to - value_from;
 
     // if ((pos_from > 0) && (pos_from < pos_to)) {
     //     result = value_to - value_from + store_.at(pos_from - 1);;
@@ -144,6 +144,7 @@ int main() {
         // debug_ = position_from_date(max_date);
 
         vector<uint32_t> store(position_from_date(max_date) + 100);////
+
         int store_size = store.size();
 
         // fstream cin("../input.txt");

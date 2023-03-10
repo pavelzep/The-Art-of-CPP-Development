@@ -5,7 +5,7 @@ set(SOURCE_PATH src)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wsign-conversion")
+#set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wsign-conversion")
 
 add_executable(${PROJECT_NAME} 
     ${SOURCE_PATH}/main.cpp
