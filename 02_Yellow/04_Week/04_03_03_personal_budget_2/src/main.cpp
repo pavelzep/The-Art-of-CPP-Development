@@ -34,7 +34,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <ctime>
+#include <chrono>
 #include <vector>
 #include <numeric>
 #include <fstream>
@@ -48,16 +48,18 @@ struct Date {
     int day;
 };
 
-Date min_date = { 1900,01,01 };
-Date max_date = { 2099,12,31 };
+//Date min_date = { 1900,01,01 };
+Date min_date = { 1970,01,01 };
+Date max_date = { 2100,01,01 };
 
 Date date_from_string(const string& date_);
 
 uint32_t position_from_date(const Date& date_);
+uint32_t position_from_date2(const Date& date_);
 
-void Processing_request_1(const string& date_, const uint32_t value_, vector<uint32_t>& store_);
+void Add_money(const string& date_, const uint32_t value_, vector<uint32_t>& store_);
 
-void Processing_request_2(const string& from_, const string& to_, vector<uint32_t>& store_);
+void Count_money(const string& from_, const string& to_, vector<uint32_t>& store_);
 
 Date date_from_string(const string& date_) {
     stringstream ss(date_);
@@ -82,6 +84,14 @@ uint32_t day_of_year(const Date& date_) {
     return day_of_year;
 }
 
+uint32_t position_from_date2(const Date& date_) {
+    tm min_tm{ 0,0,0,min_date.day,min_date.month - 1,min_date.year - 1900 };
+    tm date_tm{ 0,0,0,date_.day,date_.month - 1,date_.year - 1900 };
+    
+    int day_diff = difftime(mktime(&date_tm), mktime(&min_tm)) / (24 * 60 * 60);
+    return day_diff;
+}
+
 uint32_t position_from_date(const Date& date_) {
 
     uint32_t leap_year_correction = 0;
@@ -94,13 +104,14 @@ uint32_t position_from_date(const Date& date_) {
     return position;
 }
 
-void Processing_request_1(const string& date_, const uint32_t value_, vector<uint32_t>& store_) {
+void Add_money(const string& date_, const uint32_t value_, vector<uint32_t>& store_) {
     uint32_t size = store_.size();
     uint32_t pos = position_from_date(date_from_string(date_));
-    store_.at(pos + 1) += value_;
+    uint32_t pos2 = position_from_date2(date_from_string(date_));
+    store_.at(pos + 1) += value_;//
 }
 
-void Processing_request_2(const string& from_, const string& to_, vector<uint32_t>& store_) {
+void Count_money(const string& from_, const string& to_, vector<uint32_t>& store_) {
     uint32_t size = store_.size();
 
     uint32_t result;
@@ -111,43 +122,20 @@ void Processing_request_2(const string& from_, const string& to_, vector<uint32_
     uint32_t value_to = store_.at(pos_to + 1);
     uint32_t value_from = store_.at(pos_from);
 
-
-
     result = value_to - value_from;
-
-    // if ((pos_from > 0) && (pos_from < pos_to)) {
-    //     result = value_to - value_from + store_.at(pos_from - 1);;
-    // } else if ((pos_from == 0) && (pos_from < pos_to)) {
-    //     result = value_to;
-    // } else if ((pos_from == 0) && (pos_to == 0)) {
-    //     result = value_to;
-    // } else if ((pos_from == pos_to) && (pos_to != 0)) {
-    //     result = value_to - value_from + store_.at(pos_from - 1);
-    // }
 
     cout << result << endl;
 }
 
 int main() {
-
-
-
     ostringstream out;
     try {
 
-
-        // uint32_t debug_ = 0;
-        // debug_ = position_from_date(min_date);
-        // debug_ = position_from_date(date_from_string("2024-02-29"));
-        // debug_ = position_from_date(date_from_string("2024-03-01"));
-        // debug_ = position_from_date(date_from_string("2024-02-20"));
-        // debug_ = position_from_date(max_date);
-
-        vector<uint32_t> store(position_from_date(max_date) + 100);////
+        vector<uint32_t> store(position_from_date(max_date) + 100);
 
         int store_size = store.size();
 
-        // fstream cin("../input.txt");
+        //fstream cin("../input.txt");
 
         int e_count, q_count;
         cin >> e_count;
@@ -157,9 +145,8 @@ int main() {
             uint32_t value;
             cin >> date >> value;
             out << date << ' ' << value << std::endl;
-            Processing_request_1(date, value, store);
+            Add_money(date, value, store);
             --e_count;
-
         }
 
         partial_sum(store.begin(), store.end(), store.begin());
@@ -170,12 +157,13 @@ int main() {
             string from, to;
             cin >> from >> to;
             out << from << ' ' << to << std::endl;
-            Processing_request_2(from, to, store);
+            Count_money(from, to, store);
             --q_count;
         }
     }
     catch (const std::exception& e) {
-        std::cerr << "err1: " << out.str() << endl;
+        std::cerr << "err: " << out.str() << endl;
     }
     return 0;
 }
+
