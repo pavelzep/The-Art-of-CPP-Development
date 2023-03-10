@@ -40,7 +40,6 @@
 #include <fstream>
 #include <exception>
 
-
 using namespace std;
 
 struct Date {
@@ -49,27 +48,18 @@ struct Date {
     int day;
 };
 
-const string min_date_str = "1900-01-01";
-const string max_date_str = "2099-12-31";
-
-vector<int> days_from_month = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-vector<int> sum_of_days = { 0 };
+Date min_date = { 1900,01,01 };
+Date max_date = { 2099,12,31 };
 
 Date date_from_string(const string& date_);
 
-Date min_date = date_from_string(min_date_str);
-Date max_date = date_from_string(max_date_str);
+uint32_t position_from_date(const Date& date_);
 
-int position_from_date(const Date& date_);
-
-void Processing_request_1(const string& date_, const int value_, vector<uint32_t>& store_);
+void Processing_request_1(const string& date_, const uint32_t value_, vector<uint32_t>& store_);
 
 void Processing_request_2(const string& from_, const string& to_, vector<uint32_t>& store_);
 
-void init();
-
 Date date_from_string(const string& date_) {
-
     stringstream ss(date_);
     Date date;
     ss >> date.year;
@@ -80,98 +70,111 @@ Date date_from_string(const string& date_) {
     return date;
 }
 
-int position_from_date(const Date& date_) {
+bool IsLeap(int year) {
+    return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
+}
 
-    int leap_year_correction = 0;
-    for (int i = min_date.year; i <= date_.year;++i) {
-        if ((i % 4 == 0) && (i != 1700) && (i != 1800) && (i != 1900)) {
-            ++leap_year_correction;
-        }
+vector<int> sum_day_before_current_month = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+
+uint32_t day_of_year(const Date& date_) {
+    uint32_t day_of_year = sum_day_before_current_month.at(date_.month - 1) + date_.day - 1;
+    if (IsLeap(date_.year) && date_.month > 2) day_of_year += 1;
+    return day_of_year;
+}
+
+uint32_t position_from_date(const Date& date_) {
+
+    uint32_t leap_year_correction = 0;
+    for (int i = min_date.year; i < date_.year;++i) {
+        if (IsLeap(i))  ++leap_year_correction;
     }
 
-    int position = (date_.year - min_date.year) * 365 + sum_of_days.at(date_.month - 1) + date_.day + leap_year_correction - 1;
+    uint32_t day_of_year_ = day_of_year(date_);
+    uint32_t position = 365 * (date_.year - min_date.year) + leap_year_correction + day_of_year_;
     return position;
 }
 
-void Processing_request_1(const string& date_, const int value_, vector<uint32_t>& store_) {
-    int pos = position_from_date(date_from_string(date_));
+void Processing_request_1(const string& date_, const uint32_t value_, vector<uint32_t>& store_) {
+    uint32_t size = store_.size();
+    uint32_t pos = position_from_date(date_from_string(date_));
     store_.at(pos) += value_;
 }
 
 void Processing_request_2(const string& from_, const string& to_, vector<uint32_t>& store_) {
+    uint32_t size = store_.size();
 
-    int pos_from = position_from_date(date_from_string(from_));
-    int pos_to = position_from_date(date_from_string(to_));
+    uint32_t result;
 
-    vector<int> sum_vect1;
-    vector<int> sum_vect2;
+    uint32_t pos_to = position_from_date(date_from_string(to_));
+    uint32_t pos_from = position_from_date(date_from_string(from_));
 
-    auto it_start = store_.begin() + pos_from;
-    auto it_fin = store_.begin() + pos_to;
+    uint32_t value_to = store_.at(pos_to);
+    uint32_t value_from = store_.at(pos_from);
 
-    partial_sum(store_.begin(), it_start + 1, back_inserter(sum_vect1));
-    partial_sum(store_.begin(), it_fin + 1, back_inserter(sum_vect2));
+    uint32_t value_from_next = store_.at(pos_from + 1);
 
-    int result = sum_vect2.back() - sum_vect1.back() + store_.at(pos_from);
+    result = value_to - value_from_next;
+
+    // if ((pos_from > 0) && (pos_from < pos_to)) {
+    //     result = value_to - value_from + store_.at(pos_from - 1);;
+    // } else if ((pos_from == 0) && (pos_from < pos_to)) {
+    //     result = value_to;
+    // } else if ((pos_from == 0) && (pos_to == 0)) {
+    //     result = value_to;
+    // } else if ((pos_from == pos_to) && (pos_to != 0)) {
+    //     result = value_to - value_from + store_.at(pos_from - 1);
+    // }
+
     cout << result << endl;
-}
-
-void init() {
-    partial_sum(days_from_month.begin(), prev(days_from_month.end()), back_inserter(sum_of_days));
 }
 
 int main() {
 
-    init();
 
-    vector<uint32_t> store(position_from_date(date_from_string(max_date_str)) + 1);////
 
-    // Debug:
+    ostringstream out;
+    try {
 
-    // int size = store.size();
-    // int debug_ = 0;
 
-    // debug_ = position_from_date(date_from_string("1900-01-01"));
-    // debug_ = position_from_date(date_from_string("2000-01-01"));
-    // debug_ = position_from_date(date_from_string("2099-12-31"));
+        // uint32_t debug_ = 0;
+        // debug_ = position_from_date(min_date);
+        // debug_ = position_from_date(date_from_string("2024-02-29"));
+        // debug_ = position_from_date(date_from_string("2024-03-01"));
+        // debug_ = position_from_date(date_from_string("2024-02-20"));
+        // debug_ = position_from_date(max_date);
 
-    // fstream cin("../input.txt");
+        vector<uint32_t> store(position_from_date(max_date) + 100);////
+        int store_size = store.size();
 
-    int e_count, q_count;
+        // fstream cin("../input.txt");
 
-    cin >> e_count;
+        int e_count, q_count;
+        cin >> e_count;
 
-    while (e_count) {
-        ostringstream out;
-        try {
+        while (e_count) {
             string date;
-            int value;
+            uint32_t value;
             cin >> date >> value;
-            out << date << ' ' << value;
+            out << date << ' ' << value << std::endl;
             Processing_request_1(date, value, store);
             --e_count;
-        }
-        catch (const std::exception& e) {
-            std::cerr << "err1: " << e.what() << '\n';
-            //std::cerr << "err1: " << out.str() << endl;
-        }
-    }
 
-    cin >> q_count;
-    while (q_count) {
-        ostringstream out;
-        try {
+        }
+
+        partial_sum(store.begin(), store.end(), store.begin());
+
+        cin >> q_count;
+        while (q_count) {
+
             string from, to;
             cin >> from >> to;
-            out << from << ' ' << to;
+            out << from << ' ' << to << std::endl;
             Processing_request_2(from, to, store);
             --q_count;
         }
-        catch (const std::exception& e) {
-            std::cerr << "err2: " << e.what() << '\n';
-            
-            //std::cerr << "err2: " << out.str() << endl;
-        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "err1: " << out.str() << endl;
     }
     return 0;
 }
