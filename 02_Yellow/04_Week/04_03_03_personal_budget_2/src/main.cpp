@@ -55,11 +55,11 @@ Date max_date = { 2100,01,01 };
 Date date_from_string(const string& date_);
 
 int position_from_date(const Date& date_);
-// int position_from_date2(const Date& date_);
+//  int position_from_date2(const Date& date_);
 
-void Add_money(const string& date_, const int value_, vector<int>& store_);
+void Add_money(const string& date_, const int value_, vector<uint64_t>& store_);
 
-void Count_money(const string& from_, const string& to_, vector<int>& store_);
+void Count_money(const string& from_, const string& to_, vector<uint64_t>& store_);
 
 Date date_from_string(const string& date_) {
     stringstream ss(date_);
@@ -72,28 +72,18 @@ Date date_from_string(const string& date_) {
     return date;
 }
 
+
+vector<uint64_t> sum_day_before_current_month = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+
 bool IsLeap(int year) {
     return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
 }
-
-vector<int> sum_day_before_current_month = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
 
 int day_of_year(const Date& date_) {
     int day_of_year = sum_day_before_current_month.at(date_.month - 1) + date_.day - 1;
     if (IsLeap(date_.year) && date_.month > 2) day_of_year += 1;
     return day_of_year;
 }
-
-// int position_from_date2(const Date& date_) {
-//     tm date_tm{ 0,0,12,date_.day,date_.month - 1, date_.year - 1900 };
-//     time_t date_time = mktime(&date_tm);
-
-//     tm min_tm{ 0,0,12,min_date.day,min_date.month - 1, min_date.year - 1900 };
-//     time_t min_time = mktime(&min_tm);
-
-//     double day_diff = difftime(date_time, min_time) / (24 * 60 * 60);
-//     return day_diff;
-// }
 
 int position_from_date(const Date& date_) {
 
@@ -107,17 +97,31 @@ int position_from_date(const Date& date_) {
     return position;
 }
 
-void Add_money(const string& date_, const int value_, vector<int>& store_) {
+
+int position_from_date2(const Date& date_) {
+    tm date_tm{ 0,0,12,date_.day,date_.month - 1, date_.year - 1900 };
+    time_t date_time = mktime(&date_tm);
+
+    tm min_tm{ 0,0,12,min_date.day,min_date.month - 1, min_date.year - 1900 };
+    time_t min_time = mktime(&min_tm);
+
+    double day_diff = difftime(date_time, min_time) / (24 * 60 * 60);
+    return day_diff;
+}
+
+
+
+void Add_money(const string& date_, const int value_, vector<uint64_t>& store_) {
     // int size = store_.size();
     int pos = position_from_date(date_from_string(date_));
     // int pos2 = position_from_date2(date_from_string(date_));
     store_.at(pos + 1) += value_;//
 }
 
-void Count_money(const string& from_, const string& to_, vector<int>& store_) {
+void Count_money(const string& from_, const string& to_, vector<uint64_t>& store_) {
     // int size = store_.size();
 
-    int result;
+    uint64_t result;
 
     int pos_to = position_from_date(date_from_string(to_));
     // int pos_to2 = position_from_date2(date_from_string(to_));
@@ -126,8 +130,8 @@ void Count_money(const string& from_, const string& to_, vector<int>& store_) {
     // int pos_from2 = position_from_date2(date_from_string(from_));
 
 
-    int value_to = store_.at(pos_to + 1);
-    int value_from = store_.at(pos_from);
+    uint64_t value_to = store_.at(pos_to + 1);
+    uint64_t value_from = store_.at(pos_from);
 
     result = value_to - value_from;
 
@@ -145,12 +149,21 @@ int main() {
     // int debug3 = position_from_date2({ 2000,01,01 });
     // int debug_3 = position_from_date({ 2000,01,01 });
 
+
     // int debug4 = position_from_date2({ 2099,01,01 });
     // int debug_4 = position_from_date({ 2099,01,01 });
 
+    // int debug5 = position_from_date2({ 2050,01,01 });
+    // int debug_5 = position_from_date({ 2050,01,01 });
+
+    // int debug6 = position_from_date2({ 2037,02,28 });
+    // int debug_6 = position_from_date({ 2037,02,28 });
+
+
+
     ostringstream out;
     try {
-        vector<int> store(position_from_date(max_date) + 1);
+        vector<uint64_t> store(position_from_date(max_date) + 1);
 
         //int store_size = store.size();
 
@@ -161,7 +174,7 @@ int main() {
 
         while (e_count) {
             string date;
-            int value;
+            uint64_t value;
             cin >> date >> value;
             out << date << ' ' << value << std::endl;
             Add_money(date, value, store);
