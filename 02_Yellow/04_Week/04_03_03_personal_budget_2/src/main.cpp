@@ -48,14 +48,14 @@ struct Date {
     int day;
 };
 
-//Date min_date = { 1900,01,01 };
-Date min_date = { 1970,01,01 };
+Date min_date = { 1700,01,01 };
+//Date min_date = { 1970,01,01 };
 Date max_date = { 2100,01,01 };
 
 Date date_from_string(const string& date_);
 
 int position_from_date(const Date& date_);
-int position_from_date2(const Date& date_);
+// int position_from_date2(const Date& date_);
 
 void Add_money(const string& date_, const int value_, vector<int>& store_);
 
@@ -84,16 +84,16 @@ int day_of_year(const Date& date_) {
     return day_of_year;
 }
 
-int position_from_date2(const Date& date_) {
-    tm date_tm{ 0,0,12,date_.day,date_.month - 1, date_.year - 1900 };
-    time_t date_time = mktime(&date_tm);
+// int position_from_date2(const Date& date_) {
+//     tm date_tm{ 0,0,12,date_.day,date_.month - 1, date_.year - 1900 };
+//     time_t date_time = mktime(&date_tm);
 
-    tm min_tm{ 0,0,12,min_date.day,min_date.month - 1, min_date.year - 1900 };
-    time_t min_time = mktime(&min_tm);
+//     tm min_tm{ 0,0,12,min_date.day,min_date.month - 1, min_date.year - 1900 };
+//     time_t min_time = mktime(&min_tm);
 
-    double day_diff = difftime(date_time, min_time) / (24 * 60 * 60);
-    return day_diff;
-}
+//     double day_diff = difftime(date_time, min_time) / (24 * 60 * 60);
+//     return day_diff;
+// }
 
 int position_from_date(const Date& date_) {
 
