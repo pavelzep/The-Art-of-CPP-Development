@@ -17,24 +17,18 @@
 
 using namespace std;
 
-
 set<int>::const_iterator FindNearestElement(const set<int>& numbers, int border);
 
 set<int>::const_iterator FindNearestElement(const set<int>& numbers, int border) {
 
+    if (numbers.begin() == numbers.end()) return numbers.end();
     auto range = equal_range(begin(numbers), end(numbers), border);
 
+    if ((border - *prev(range.first)) >= (*range.second - border)) return prev(range.first);
+    else return range.second;
 
-    set<int>::const_iterator result;
-
-    auto it = find(begin(numbers), end(numbers), border);
-
-    //auto a = it - range.first;
-
-    cout << "aaaa: " << min(*prev(range.first), *range.second);
-
-    return result;
 }
+
 
 
 int main() {
