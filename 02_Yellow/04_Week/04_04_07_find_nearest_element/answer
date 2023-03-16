@@ -1,7 +1,7 @@
 #include <set>
-#include <iostream>
 #include <algorithm>
-#include <utility>
+#include <iostream>
+
 
 
 using namespace std;
@@ -10,10 +10,26 @@ set<int>::const_iterator FindNearestElement(const set<int>& numbers, int border)
 
 set<int>::const_iterator FindNearestElement(const set<int>& numbers, int border) {
 
-    if (numbers.begin() == numbers.end()) return numbers.end();
-    auto range = equal_range(begin(numbers), end(numbers), border);
+    //сначала найдем первый не меньше чем бордер
+    //то есть тот что первым справа от него или его самого
+    auto right = numbers.lower_bound(border);
 
-    if ((border - *prev(range.first)) > (*range.second - border)) return prev(range.first);
-    else return range.second;
+    //если найденный элемент равен началу то его и вернем
+    if (right == numbers.begin()) return numbers.begin();
+
+    //найдем первый элемент меньше чем бордер, это и будет предыдушщий 
+    //от предыдущего найденного, то есть первый слева
+    auto left = prev(right);
+
+    //если первый не меньший чем бордер оказался правее чем конец хранилища,
+    //то вернем предыдущий от него, то есть тот что первый не меньший чем бордер
+
+    if (right == numbers.end()) return left;
+
+    // посчитаем какой ближе к бордер, тот и вернем.
+    if (border - *right <= *left - border)
+        return left;
+    else
+        return right;
 
 }
