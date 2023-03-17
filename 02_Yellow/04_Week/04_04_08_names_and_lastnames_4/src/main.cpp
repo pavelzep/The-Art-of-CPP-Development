@@ -18,7 +18,9 @@
 //   // приватные поля
 // };
 
-// Считайте, что в каждый год может произойти не более одного изменения фамилии и не более одного изменения имени. При этом с течением времени могут открываться всё новые факты из прошлого человека, поэтому года́ в последовательных вызовах методов ChangeLastName и ChangeFirstName не обязаны возрастать.
+// Считайте, что в каждый год может произойти не более одного изменения фамилии и не более одного изменения имени. 
+// При этом с течением времени могут открываться всё новые факты из прошлого человека, поэтому года́ в последовательных 
+// вызовах методов ChangeLastName и ChangeFirstName не обязаны возрастать.
 // Гарантируется, что все имена и фамилии непусты.
 // Строка, возвращаемая методом GetFullName, должна содержать разделённые одним пробелом имя и фамилию человека по состоянию на конец данного года.
 // Если к данному году не случилось ни одного изменения фамилии и имени, верните строку "Incognito".
@@ -63,71 +65,104 @@ using namespace std;
 
 class Person {
 public:
-	void ChangeFirstName(int year, const string &first_name) {
-		// добавить факт изменения имени на first_name в год year
-		firstNames[year] = first_name;
-	}
-	void ChangeLastName(int year, const string &last_name) {
-		// добавить факт изменения фамилии на last_name в год year
-		lastNames[year] = last_name;
-	}
+    void ChangeFirstName(int year, const string& first_name) {
+        // добавить факт изменения имени на first_name в год year
+        firstNames[year] = first_name;
+    }
+    void ChangeLastName(int year, const string& last_name) {
+        // добавить факт изменения фамилии на last_name в год year
+        lastNames[year] = last_name;
+    }
 
-	string GetFullName(int year) {
-		// получить имя и фамилию по состоянию на конец года year
-		string rezult;
+    // string GetFullName(int year) {
 
-		string first_name = getNameForYear(year, firstNames);
-		string last_name = getNameForYear(year, lastNames);
+    // }
 
-		if (!first_name.empty() && !last_name.empty()) {
-			rezult = first_name + " " + last_name;
+    string GetFullName(int year) {
+        // получить имя и фамилию по состоянию на конец года year
+        string rezult;
 
-		} else if (first_name.empty() && !last_name.empty()) {
-			rezult = last_name + " with unknown first name";
+        string first_name = getNameForYear(year, firstNames);
+        string last_name = getNameForYear(year, lastNames);
 
-		} else if (!first_name.empty() && last_name.empty()) {
-			rezult = first_name + " with unknown last name";
-		} else if (first_name.empty() && last_name.empty()) {
-			rezult = "Incognito";
-		}
+        if (!first_name.empty() && !last_name.empty()) {
+            rezult = first_name + " " + last_name;
 
-		return rezult;
-	}
+        } else if (first_name.empty() && !last_name.empty()) {
+            rezult = last_name + " with unknown first name";
+
+        } else if (!first_name.empty() && last_name.empty()) {
+            rezult = first_name + " with unknown last name";
+        } else if (first_name.empty() && last_name.empty()) {
+            rezult = "Incognito";
+        }
+
+        return rezult;
+    }
 
 private:
-	// приватные поля	
-	map<int, string> firstNames;
-	map<int, string> lastNames;
+    // приватные поля	
+    map<int, string> firstNames;
+    map<int, string> lastNames;
 
-	string getNameForYear(int _year, map<int, string> _names) {
-		int __year;
-		for (const auto &item : _names) {
-			if (item.first <= _year) {
-				__year = item.first;
-			}
-		}
-		return _names[__year];
-	}
+    // string getNameForYear(int _year, map<int, string> _names) {
+    //     int __year;
+    //     for (const auto& item : _names) {
+    //         if (item.first <= _year) {
+    //             __year = item.first;
+    //         }
+    //     }
+    //     return _names[__year];
+    // }
+
+    string getNameForYear(int _year, map<int, string> _names) {
+
+
+        int __year;
+        string res;
+        for (const auto& item : _names) {
+            if (item.first <= _year) {
+                __year = item.first;
+            }
+        }
+        res = _names[__year];
+
+
+
+        auto low = _names.lower_bound(_year + 1);
+        auto up = _names.upper_bound(_year + 1);
+        if (low == up) {
+            return "";
+        } else {
+            auto pair = *low;
+            auto result = pair.second;
+            return result;
+        }
+
+
+
+        // return (*(_names.lower_bound(_year + 1))).second;
+    }
 };
 
 int main() {
-	Person person;
+    Person person;
 
-	person.ChangeFirstName(1965, "Polina");
-	person.ChangeLastName(1967, "Sergeeva");
-	for (int year : { 1900, 1965, 1990 }) {
-		cout << person.GetFullName(year) << endl;
-	}
+    person.ChangeFirstName(1965, "Polina");
+    person.ChangeLastName(1967, "Sergeeva");
+    for (int year : { 1900, 1965, 1990 }) {
+        cout << person.GetFullName(year) << endl;
+    }
 
-	person.ChangeFirstName(1970, "Appolinaria");
-	for (int year : { 1969, 1970 }) {
-		cout << person.GetFullName(year) << endl;
-	}
+    person.ChangeFirstName(1970, "Appolinaria");
+    for (int year : { 1969, 1970 }) {
+        cout << person.GetFullName(year) << endl;
+    }
 
-	person.ChangeLastName(1968, "Volkova");
-	for (int year : { 1969, 1970 }) {
-		cout << person.GetFullName(year) << endl;
-	}
+    person.ChangeLastName(1968, "Volkova");
+    for (int year : { 1969, 1970 }) {
+        cout << person.GetFullName(year) << endl;
+    }
 
-	return 0;
+    return 0;
 }
