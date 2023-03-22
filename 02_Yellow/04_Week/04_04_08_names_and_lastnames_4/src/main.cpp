@@ -61,6 +61,7 @@
 #include <map>
 #include <vector>
 #include <set> 
+#include <algorithm>
 using namespace std;
 
 class Person {
@@ -118,26 +119,49 @@ private:
     string getNameForYear(int _year, map<int, string> _names) {
 
 
-        int __year;
-        string res;
-        for (const auto& item : _names) {
-            if (item.first <= _year) {
-                __year = item.first;
-            }
+        // int __year;
+        // string res;
+        // for (const auto& item : _names) {
+        //     if (item.first <= _year) {
+        //         __year = item.first;
+        //     }
+        // }
+        // res = _names[__year];
+
+
+
+        auto l = _names.lower_bound(_year);
+
+        if((*l).first == _year){
+            
         }
-        res = _names[__year];
 
-
-
-        auto low = _names.lower_bound(_year + 1);
-        auto up = _names.upper_bound(_year + 1);
-        if (low == up) {
+        if (l == _names.begin()) {
+            
             return "";
-        } else {
-            auto pair = *low;
-            auto result = pair.second;
-            return result;
+
         }
+
+
+
+
+
+
+        // auto f = _names.find(_year + 1);
+        // // auto f = std::find(_names.begin(), _names.end(), _year);
+        // // auto bs = binary_search(_names.begin(), _names.end(), _year);
+        // // auto low = _names.lower_bound(_year);
+        // // auto up = _names.upper_bound(_year);
+        // if (f == _names.end()) {
+        //     return "";
+        // } else {
+        //     auto pair = *f;
+        //     auto result = pair.second;
+        //     return result;
+        // }
+
+
+
 
 
 
