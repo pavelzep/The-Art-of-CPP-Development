@@ -116,11 +116,14 @@ private:
     //     return _names[__year];
     // }
 
-    string getNameForYear(int _year, map<int, string> _names) {
+    string getNameForYear(int _year, map<int, string>& _names) {
 
         auto low = _names.lower_bound(_year);
+
         if ((*low).first == _year) return (*low).second;
+
         if (low == _names.begin()) return "";
+
         return (*prev(low)).second;
 
     }
