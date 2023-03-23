@@ -118,10 +118,8 @@ private:
 
     string getNameForYear(int _year, map<int, string> _names) {
 
-        auto f = _names.find(_year);
-        if (f != _names.end())return (*f).second;
-
         auto low = _names.lower_bound(_year);
+        if ((*low).first == _year) return (*low).second;
         if (low == _names.begin()) return "";
         return (*prev(low)).second;
 
