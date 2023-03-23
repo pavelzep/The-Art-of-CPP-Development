@@ -118,54 +118,13 @@ private:
 
     string getNameForYear(int _year, map<int, string> _names) {
 
+        auto f = _names.find(_year);
+        if (f != _names.end())return (*f).second;
 
-        // int __year;
-        // string res;
-        // for (const auto& item : _names) {
-        //     if (item.first <= _year) {
-        //         __year = item.first;
-        //     }
-        // }
-        // res = _names[__year];
+        auto low = _names.lower_bound(_year);
+        if (low == _names.begin()) return "";
+        return (*prev(low)).second;
 
-
-
-        auto l = _names.lower_bound(_year);
-
-        if((*l).first == _year){
-            
-        }
-
-        if (l == _names.begin()) {
-            
-            return "";
-
-        }
-
-
-
-
-
-
-        // auto f = _names.find(_year + 1);
-        // // auto f = std::find(_names.begin(), _names.end(), _year);
-        // // auto bs = binary_search(_names.begin(), _names.end(), _year);
-        // // auto low = _names.lower_bound(_year);
-        // // auto up = _names.upper_bound(_year);
-        // if (f == _names.end()) {
-        //     return "";
-        // } else {
-        //     auto pair = *f;
-        //     auto result = pair.second;
-        //     return result;
-        // }
-
-
-
-
-
-
-        // return (*(_names.lower_bound(_year + 1))).second;
     }
 };
 
