@@ -1,0 +1,18 @@
+
+#include <string>
+#include <utility>
+#include <algorithm>
+
+
+using namespace std;
+
+template <typename RandomIt>
+pair<RandomIt, RandomIt> FindStartsWith(RandomIt range_begin, RandomIt range_end, char prefix);
+
+template <typename RandomIt>
+pair<RandomIt, RandomIt> FindStartsWith(RandomIt range_begin, RandomIt range_end, char prefix) {
+
+    auto low = lower_bound(range_begin, range_end, string(1, prefix));
+    auto up = lower_bound(range_begin, range_end, string(1, static_cast<char>(prefix + 1)));
+    return { low, up };
+}

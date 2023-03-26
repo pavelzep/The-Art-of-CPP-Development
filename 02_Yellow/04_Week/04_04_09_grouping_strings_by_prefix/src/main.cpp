@@ -45,6 +45,8 @@
 #include <string>
 #include <iostream>
 #include <utility>
+#include <algorithm>
+
 
 using namespace std;
 
@@ -54,8 +56,9 @@ pair<RandomIt, RandomIt> FindStartsWith(RandomIt range_begin, RandomIt range_end
 template <typename RandomIt>
 pair<RandomIt, RandomIt> FindStartsWith(RandomIt range_begin, RandomIt range_end, char prefix) {
 
-    return { range_begin, range_end };
-    
+    auto low = lower_bound(range_begin, range_end, string(1, prefix));
+    auto up = lower_bound(range_begin, range_end, string(1, static_cast<char>(prefix + 1)));
+    return { low, up };
 }
 
 int main() {
