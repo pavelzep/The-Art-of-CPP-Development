@@ -44,6 +44,9 @@
 
 
 #include <iostream>
+#include <deque>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -52,16 +55,38 @@ int main() {
     int x;
     int n;
 
+
+
     cin >> x >> n;
 
+    int count = n;
     string result;
+
+    int y;
+    char op;
+
+    deque<int> values;
+    deque<char> operations;
+
     while (n) {
-
-
-
+        cin >> op >> y;
+        operations.push_back(op);
+        values.push_back(y);
         --n;
     }
 
-    cout << result;
+    if (!count) {
+        cout << to_string(x);
+        return 0;
+    }
+
+    stringstream ss;
+    while (!operations.empty()) {
+        ss << ")" << " " << operations.front() << " " + to_string(values.front());
+        values.pop_front();
+        operations.pop_front();
+    }
+    cout << string(count, '(') + to_string(x) + ss.str();
+
     return 0;
 }
