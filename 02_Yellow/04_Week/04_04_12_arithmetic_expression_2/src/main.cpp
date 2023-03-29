@@ -70,6 +70,11 @@ struct operation {
     int number = 0;
 };
 
+
+bool isPriority(char a, char b) {
+    return (a == '*' || a == '/') && (b == '+' || b == '-');
+}
+
 int main() {
 
     int init_value;
@@ -82,13 +87,20 @@ int main() {
         cin >> operations[i].number;
     }
 
-    
 
-    for(const auto &op: operations){
+    deque <string> expression;
+    expression.push_back(to_string(init_value));
 
+    auto it = operations.begin();
+    while (it != operations.end()) {
+        if (isPriority(it->type, next(it)->type)) {
+
+        } else {
+            expression.push_back(" " + it->type);
+        }
+
+
+        it = next(it);
     }
-
-
-
     return 0;
 }
