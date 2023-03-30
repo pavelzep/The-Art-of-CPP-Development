@@ -72,7 +72,7 @@ struct Operation {
 
 
 bool isPriority(char a, char b) {
-    return (a == '*' || a == '/') ^ (b == '+' || b == '-');
+    return (a == '*' || a == '/') || (b == '+' || b == '-');
 }
 
 int main() {
@@ -81,8 +81,8 @@ int main() {
     int operations_count;
 
     vector<Operation> operations;
-    // stringstream cin("8 3 * 3 - 6 / 1");
-    stringstream cin ("6 3 * -1 / -1 + -3");
+   // stringstream cin("8 3 *  3 -  6 /  1");
+    //stringstream cin("6 3 * -1 / -1 + -3");
     cin >> init_value >> operations_count;
 
     Operation op;
@@ -103,16 +103,16 @@ int main() {
         expression.push_back(" ");
         expression.push_back(to_string(it->number));
 
-        if (!isPriority(it->type, next(it)->type)) {
-            expression.push_front("(");
-            expression.push_back(")");
-
+        if (next(it) != operations.end()) {
+            if (!isPriority(it->type, next(it)->type)) {
+                expression.push_front("(");
+                expression.push_back(")");
+            }
         }
-
         it = next(it);
     }
-    expression.pop_back();
-    expression.pop_front();
+    // expression.pop_back();
+    // expression.pop_front();
     for (const auto& str : expression) {
         cout << str;
     }
