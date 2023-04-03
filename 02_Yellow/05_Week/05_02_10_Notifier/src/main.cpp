@@ -58,21 +58,34 @@ void SendEmail(const string& email, const string& message) {
     cout << "Send '" << message << "' to e-mail " << email << endl;
 }
 
-/*
- Реализуйте здесь классы INotifier, SmsNotifier, EmailNotifier
- */
-
 class INotifier {
-
-}
+public:
+    virtual void Notify(const string& message) = 0;
+};
 
 class SmsNotifier: public INotifier {
+public:
+    SmsNotifier(const string& phone_number): phone_number_(phone_number) {
 
-}
+    }
+    void Notify(const string& message) override {
+        SendSms(phone_number_, message);
+    }
+private:
+    const string phone_number_;
+};
 
-class EmailNotifier: 
+class EmailNotifier: public INotifier {
+public:
+    EmailNotifier(const string& email_adress): email_adress_(email_adress) {
 
-
+    }
+    void Notify(const string& message) override {
+        SendEmail(email_adress_, message);
+    }
+private:
+    const string email_adress_;
+};
 
 
 
