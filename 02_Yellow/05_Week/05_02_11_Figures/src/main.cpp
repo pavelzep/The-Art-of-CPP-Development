@@ -4,16 +4,85 @@
 #include <vector>
 #include <memory>
 #include <iomanip>
+#include <string>
 
+using namespace std;
 
 class Figure {
+public:
+    Figure(string& name): name_(name) {
+
+    };
+    virtual string Name() const = 0;
+    virtual int Perimeter() const = 0;
+    virtual int Area() const = 0;
+protected:
+    string name_;
+
 
 };
 
+class Triangle: public Figure {
+public:
+    Triangle(string& name, int a, int b, int c): Figure(name), a_(a), b_(b), c_(c) {
 
+    };
 
+    string Name() const override {
 
-using namespace std;
+    };
+    int Perimeter()const override {
+
+    };
+    int Area() const override {
+
+    };
+private:
+    int a_;
+    int b_;
+    int c_;
+};
+
+class Rect: public Figure {
+public:
+    Rect(string& name, int a, int b): Figure(name), a_(a), b_(b) {
+
+    };
+    string Name() const override {
+
+    };
+    int Perimeter() const override {
+
+    };
+    int Area() const override {
+
+    };
+private:
+    int a_;
+    int b_;
+};
+
+class Circle: public Figure {
+public:
+    Circle(string& name, int a): Figure(name), a_(a) {
+
+    };
+    string Name() const override {
+
+    };
+    int Perimeter() const override {
+
+    };
+    int Area() const  override {
+
+    };
+private:
+    int a_;
+};
+
+shared_ptr<Figure> CreateFigure(istringstream& _is) {
+    return {};
+}
 
 int main() {
     vector<shared_ptr<Figure>> figures;
