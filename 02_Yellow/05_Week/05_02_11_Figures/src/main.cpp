@@ -37,7 +37,7 @@ public:
         return  params_.at(0) + params_.at(1) + params_.at(2);
     };
     double Area() const override {
-        double p = (params_.at(0) + params_.at(1) + params_.at(2)) / 2;
+        double p = (params_.at(0) + params_.at(1) + params_.at(2)) / 2.;
         return sqrt(p * (p - params_.at(0)) * (p - params_.at(1)) * (p - params_.at(2)));
     };
 private:
