@@ -6,33 +6,34 @@ using namespace std;
 
 class Person {
 public:
-    virtual void Walk(string& destination) = 0;
+    Person(const string& name):Name(name) {
 
+    }
+    virtual void Walk(const string& destination) = 0;
+    string Name;
 };
 
 class Student: public Person {
 public:
 
-    Student(string name, string favouriteSong) {
-        Name = name;
+    Student(const string& name, const string& favouriteSong): Person(name) {
         FavouriteSong = favouriteSong;
+    }
+
+    void Walk(const string& destination) override {
+        cout << "Student: " << Name << " walks to: " << destination << endl;
+        cout << "Student: " << Name << " sings a song: " << FavouriteSong << endl;
     }
 
     void Learn() {
         cout << "Student: " << Name << " learns" << endl;
     }
 
-    void Walk(string& destination) override {
-        cout << "Student: " << Name << " walks to: " << destination << endl;
-        cout << "Student: " << Name << " sings a song: " << FavouriteSong << endl;
-    }
-
     void SingSong() {
         cout << "Student: " << Name << " sings a song: " << FavouriteSong << endl;
     }
 
-public:
-    string Name;
+private:
     string FavouriteSong;
 };
 
@@ -40,65 +41,60 @@ public:
 class Teacher: public Person {
 public:
 
-    Teacher(string name, string subject) {
-        Name = name;
+    Teacher(const string& name, const string& subject):Person(name) {
+
         Subject = subject;
+    }
+
+    void Walk(const string& destination) override {
+        cout << "Teacher: " << Name << " walks to: " << destination << endl;
     }
 
     void Teach() {
         cout << "Teacher: " << Name << " teaches: " << Subject << endl;
     }
 
-    void Walk(string& destination) override {
-        cout << "Teacher: " << Name << " walks to: " << destination << endl;
-    }
-
-public:
-    string Name;
+private:
     string Subject;
 };
 
 
 class Policeman: public Person {
 public:
-    Policeman(string name) {
-        Name = name;
+    Policeman(const string& name):Person(name) {
     }
 
-    void Check(Teacher t) {
+    void Check(Teacher& t) {
         cout << "Policeman: " << Name << " checks Teacher. Teacher's name is: " << t.Name << endl;
     }
 
-    void Check(Student s) {
+    void Check(Student& s) {
         cout << "Policeman: " << Name << " checks Student. Student's name is: " << s.Name << endl;
     }
 
-    void Check(Policeman p) {
+    void Check(Policeman& p) {
         cout << "Policeman: " << Name << " checks Policeman. Policeman's name is: " << p.Name << endl;
     }
 
-    void Walk(string& destination) override {
+    void Walk(const string& destination) override {
         cout << "Policeman: " << Name << " walks to: " << destination << endl;
     }
-
-public:
-    string Name;
 };
 
 
-void VisitPlaces(Teacher t, vector<string> places) {
+void VisitPlaces(Teacher& t, const vector<string>& places) {
     for (auto p : places) {
         t.Walk(p);
     }
 }
 
-void VisitPlaces(Student s, vector<string> places) {
+void VisitPlaces(Student& s, const vector<string>& places) {
     for (auto p : places) {
         s.Walk(p);
     }
 }
 
-void VisitPlaces(Policeman pol, vector<string> places) {
+void VisitPlaces(Policeman& pol, const vector<string>& places) {
     for (auto p : places) {
         pol.Walk(p);
     }
