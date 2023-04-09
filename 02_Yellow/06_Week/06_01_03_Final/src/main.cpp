@@ -1,5 +1,6 @@
-#include "database.h"
 #include "date.h"
+#include "database.h"
+
 #include "condition_parser.h"
 #include "node.h"
 #include "test_runner.h"
