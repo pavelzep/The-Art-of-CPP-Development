@@ -9,5 +9,8 @@ public:
     void Add(const Date& date, const string& event);
     void Print(ostream& cout);
 
+int FindIf();
+int RemoveIf();
+
     string Last(Date& date);
 };
