@@ -1,3 +1,4 @@
+#include "date.h"
 
 #pragma once
 enum class Comparison {
@@ -9,12 +10,18 @@ enum class Comparison {
     NotEqual
 };
 
+enum class LogicalOperation {
+    Or,
+    And
+};
 
 
 
 class Node {
 public:
-    void Evaluate();
+    bool Evaluate(const Date& date, const string& str) {
+        return bool();
+    }
 };
 
 class EmptyNode: public Node {
@@ -31,5 +38,12 @@ class DateComparisonNode: public Node {
 public:
 
 };
+
+class LogicalOperationNode: public Node {
+public:
+
+};
+
+
 
 
