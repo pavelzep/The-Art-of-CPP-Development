@@ -17,3 +17,5 @@ private:
 };
 
 Date ParseDate(istream& is);
+
+ostream& operator << (ostream& out, pair<Date&, string&>);

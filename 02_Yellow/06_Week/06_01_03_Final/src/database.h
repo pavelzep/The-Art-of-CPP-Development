@@ -10,8 +10,21 @@ public:
     void Add(const Date& date, const string& event);
     void Print(ostream& cout);
 
-    vector<pair<Date&, string&>&> FindIf();
-    int RemoveIf();
+    vector<pair<Date&, string&>> FindIf(auto) {
+        return {};
+    }
 
-    string Last(Date& date);
+    int RemoveIf(auto) {
+        return {};
+    }
+
+
+
+    string Last(const Date& date) {
+        return {};
+    };
+
+
 };
+
+
