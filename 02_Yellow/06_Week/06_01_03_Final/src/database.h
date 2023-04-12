@@ -2,6 +2,7 @@
 #include "date.h"
 
 #include <vector>
+#include <functional>
 
 
 
@@ -10,13 +11,14 @@ public:
     void Add(const Date& date, const string& event);
     void Print(ostream& cout);
 
-    vector<pair<Date&, string&>> FindIf(auto) {
+    vector<pair<Date&, string&>> FindIf(function<bool(const Date&, const string&)> predicate) {
         return {};
     }
 
-    int RemoveIf(auto) {
+    int RemoveIf(function<bool(const Date&, const string&)> predicate) {
         return {};
     }
+
 
 
 
