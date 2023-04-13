@@ -19,9 +19,6 @@ public:
         return {};
     }
 
-
-
-
     string Last(const Date& date) {
         return {};
     };
