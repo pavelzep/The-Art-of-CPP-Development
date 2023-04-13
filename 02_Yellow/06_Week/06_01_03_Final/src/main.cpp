@@ -1,18 +1,14 @@
-#include "date.h"
-#include "database.h"
-
-#include "condition_parser.h"
-#include "node.h"
 #include "test_runner.h"
 
-#include <iostream>
+#include "database.h"
+#include "condition_parser.h"
 #include <stdexcept>
 
 using namespace std;
 
 string ParseEvent(istream& is) {
     // Реализуйте эту функцию
-    return string();
+    return {};
 }
 
 void TestAll();
