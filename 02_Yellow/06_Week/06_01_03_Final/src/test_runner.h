@@ -19,6 +19,9 @@ ostream& operator << (ostream& os, const set<T>& s);
 template <class K, class V>
 ostream& operator << (ostream& os, const map<K, V>& m);
 
+void Assert(bool b, const string& hint);
+
+
 template<class T, class U>
 void AssertEqual(const T& t, const U& u, const string& hint = {}) {
     if (t != u) {
@@ -30,9 +33,6 @@ void AssertEqual(const T& t, const U& u, const string& hint = {}) {
         throw runtime_error(os.str());
     }
 }
-
-
-void Assert(bool b, const string& hint);
 
 class TestRunner {
 public:
@@ -48,10 +48,6 @@ public:
 private:
     int fail_count = 0;
 };
-
-
-
-
 
 template <class T>
 ostream& operator << (ostream& os, const vector<T>& s) {
@@ -94,13 +90,6 @@ ostream& operator << (ostream& os, const map<K, V>& m) {
     }
     return os << "}";
 }
-
-
-
-void Assert(bool b, const string& hint) {
-    AssertEqual(b, true, hint);
-}
-
 
 template<class TestFunc>
 inline void TestRunner::RunTest(TestFunc func, const string& test_name) {
