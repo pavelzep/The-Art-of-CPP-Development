@@ -7,14 +7,16 @@
 using namespace std;
 
 string ParseEvent(istream& is) {
-    // Реализуйте эту функцию
+    
+    
+
     return {};
 }
 
 void TestAll();
 
 int main() {
-    TestAll();
+    // TestAll();
 
     Database db;
 
