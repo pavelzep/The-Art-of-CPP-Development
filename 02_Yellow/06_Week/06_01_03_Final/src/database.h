@@ -3,7 +3,8 @@
 
 #include <vector>
 #include <functional>
-
+#include <map>
+#include <set>
 
 
 class Database {
@@ -22,6 +23,9 @@ public:
     string Last(const Date& date) {
         return {};
     };
+
+private:
+    map<Date, set<string>> store;
 
 
 };

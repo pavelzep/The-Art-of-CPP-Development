@@ -7,16 +7,19 @@
 using namespace std;
 
 string ParseEvent(istream& is) {
-    
-    
 
-    return {};
+    while (is.peek() == ' ')
+        is.ignore(1);
+    string event;
+    getline(is, event);
+
+    return event;
 }
 
 void TestAll();
 
 int main() {
-    // TestAll();
+    TestAll();
 
     Database db;
 
