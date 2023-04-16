@@ -43,18 +43,27 @@ public:
     LogicalOperationNode(
         const LogicalOperation& logical_operation,
         const shared_ptr<Node> left, const shared_ptr<Node> right);
+
+    const LogicalOperation logical_operation_;
+    const shared_ptr<Node> left_;
+    const shared_ptr<Node> right_;
 };
 
 class DateComparisonNode: public Node {
 public:
     DateComparisonNode(const Comparison& cmd, const Date& date);
 
+    const Comparison cmd_;
+    const Date date_;
+
+
 };
 
 class EventComparisonNode: public Node {
 public:
     EventComparisonNode(const Comparison& cmd, const string& value);
-
+    const Comparison cmd_;
+    const string value_;
 };
 
 
