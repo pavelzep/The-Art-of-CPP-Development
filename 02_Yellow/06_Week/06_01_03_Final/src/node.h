@@ -24,18 +24,24 @@ enum class LogicalOperation {
     And
 };
 
-
+enum class NodeType {
+    EmptyNode_,
+    LogicalOperationNode_,
+    DateComparisonNode_,
+    EventComparisonNode_
+};
 
 class Node {
 public:
-    bool Evaluate(const Date& date, const string& str) {
-        return bool();
-    }
+    bool Evaluate(const Date& date, const string& str);
+    Node();
+    Node(NodeType node_type_);
+    const NodeType node_type;
 };
 
 class EmptyNode: public Node {
 public:
-
+    EmptyNode();
 };
 
 class LogicalOperationNode: public Node {
