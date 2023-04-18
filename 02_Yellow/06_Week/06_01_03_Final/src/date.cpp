@@ -14,18 +14,22 @@ Date ParseDate(istream& is) {
 
 bool operator<(const Date& left, const Date& right) {
     auto left_key = tie(left.year_, left.month_, left.day_);
-    auto right_key = tie(left.year_, left.month_, left.day_);
+    auto right_key = tie(right.year_, right.month_, right.day_);
     return left_key < right_key;
 }
 
+bool operator==(const Date& left, const Date& right) {
+    return !(left < right) && !(right < left);
+}
+
+bool operator!=(const Date& left, const Date& right) {
+    return !(left == right);
+}
+
 ostream& operator<<(ostream& out, const Date& date) {
-
-
     return out;
 }
 
 ostream& operator<<(ostream& out, const pair<Date&, string&>) {
-
-
     return out;
 }

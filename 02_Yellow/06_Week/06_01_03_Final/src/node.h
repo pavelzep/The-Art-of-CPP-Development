@@ -24,31 +24,36 @@ enum class LogicalOperation {
     And
 };
 
-enum class NodeType {
-    EmptyNode_,
-    LogicalOperationNode_,
-    DateComparisonNode_,
-    EventComparisonNode_
-};
+// enum class NodeType {
+//     EmptyNode_,
+//     LogicalOperationNode_,
+//     DateComparisonNode_,
+//     EventComparisonNode_
+// };
 
 class Node {
 public:
-    bool Evaluate(const Date& date, const string& str);
+
+    virtual bool Evaluate(const Date& date, const string& str) = 0;
     Node();
-    Node(NodeType node_type_);
-    const NodeType node_type;
+    // Node(NodeType node_type_);
+    // const NodeType node_type;
 };
 
 class EmptyNode: public Node {
 public:
     EmptyNode();
+    bool Evaluate(const Date& date, const string& str) override;
 };
 
 class LogicalOperationNode: public Node {
 public:
     LogicalOperationNode(
         const LogicalOperation& logical_operation,
-        const shared_ptr<Node> left, const shared_ptr<Node> right);
+        const shared_ptr<Node> left,
+        const shared_ptr<Node> right);
+
+    bool Evaluate(const Date& date, const string& str) override;
 
     const LogicalOperation logical_operation_;
     const shared_ptr<Node> left_;
@@ -59,6 +64,8 @@ class DateComparisonNode: public Node {
 public:
     DateComparisonNode(const Comparison& cmd, const Date& date);
 
+    bool Evaluate(const Date& date, const string& str) override;
+
     const Comparison cmd_;
     const Date date_;
 
@@ -68,6 +75,8 @@ public:
 class EventComparisonNode: public Node {
 public:
     EventComparisonNode(const Comparison& cmd, const string& value);
+
+    bool Evaluate(const Date& date, const string& str) override;
     const Comparison cmd_;
     const string value_;
 };

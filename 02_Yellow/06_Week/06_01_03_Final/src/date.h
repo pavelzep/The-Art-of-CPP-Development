@@ -17,6 +17,9 @@ public:
 Date ParseDate(istream& is);
 
 bool operator<(const Date& left, const Date& right);
+bool operator==(const Date& left, const Date& right);
+bool operator!=(const Date& left, const Date& right);
+
 
 ostream& operator<<(ostream& out, const Date& date);
 
