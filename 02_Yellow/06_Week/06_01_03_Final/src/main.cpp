@@ -3,6 +3,7 @@
 #include "database.h"
 #include "condition_parser.h"
 #include <stdexcept>
+#include <fstream>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ int main() {
     TestAll();
 
     Database db;
-
+    fstream cin("../input_1.txt");
     for (string line; getline(cin, line); ) {
         istringstream is(line);
 

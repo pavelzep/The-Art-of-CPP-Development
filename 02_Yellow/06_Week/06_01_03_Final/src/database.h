@@ -12,17 +12,9 @@ public:
     void Add(const Date& date, const string& event);
     void Print(ostream& cout);
 
-    vector<pair<Date&, string&>> FindIf(function<bool(const Date&, const string&)> predicate) {
-        return {};
-    }
-
-    int RemoveIf(function<bool(const Date&, const string&)> predicate) {
-        return {};
-    }
-
-    string Last(const Date& date) {
-        return {};
-    };
+    vector<pair<Date&, string&>> FindIf(function<bool(const Date&, const string&)> predicate);
+    int RemoveIf(function<bool(const Date&, const string&)> predicate);
+    string Last(const Date& date);
 
 private:
     map<Date, set<string>> store;

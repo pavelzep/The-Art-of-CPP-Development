@@ -1,12 +1,7 @@
 #include "date.h"
 #include <memory>
 
-
-
-
-
 #pragma once
-
 
 using namespace std;
 
@@ -24,20 +19,10 @@ enum class LogicalOperation {
     And
 };
 
-// enum class NodeType {
-//     EmptyNode_,
-//     LogicalOperationNode_,
-//     DateComparisonNode_,
-//     EventComparisonNode_
-// };
-
 class Node {
 public:
-
     virtual bool Evaluate(const Date& date, const string& str) = 0;
-    Node();
-    // Node(NodeType node_type_);
-    // const NodeType node_type;
+    // Node();
 };
 
 class EmptyNode: public Node {
@@ -68,7 +53,6 @@ public:
 
     const Comparison cmd_;
     const Date date_;
-
 
 };
 
