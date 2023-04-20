@@ -16,7 +16,9 @@ vector<pair<Date&, string&>> Database::FindIf(function<bool(const Date&, const s
 
 int Database::RemoveIf(function<bool(const Date& date, const string& str)> predicate) {
     for (auto& item : this->store) {
-        for (auto& evt : item.)
+        for (auto& evt : item.first()){
+            predicate(date, str);
+        }
     }
     return 0;
 }
