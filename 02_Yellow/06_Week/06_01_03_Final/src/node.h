@@ -22,7 +22,7 @@ enum class LogicalOperation {
 class Node {
 public:
     virtual bool Evaluate(const Date& date, const string& str) = 0;
-    // Node();
+    
 };
 
 class EmptyNode: public Node {

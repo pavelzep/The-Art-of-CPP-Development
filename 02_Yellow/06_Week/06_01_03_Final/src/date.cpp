@@ -27,9 +27,14 @@ bool operator!=(const Date& left, const Date& right) {
 }
 
 ostream& operator<<(ostream& out, const Date& date) {
+
+    out << date.year_ << '-' << date.month_ << '-' << date.day_;
     return out;
 }
 
-ostream& operator<<(ostream& out, const pair<Date&, string&>) {
+ostream& operator<<(ostream& out, const pair < Date, set<string>>& record) {
+
+    // out << record.first << ' ' << record.second;
+
     return out;
 }

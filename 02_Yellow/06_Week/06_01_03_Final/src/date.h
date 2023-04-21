@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <iostream>
+#include <set>
 
 using namespace std;
 
@@ -21,6 +22,5 @@ bool operator==(const Date& left, const Date& right);
 bool operator!=(const Date& left, const Date& right);
 
 
-ostream& operator<<(ostream& out, const Date& date);
-
-ostream& operator << (ostream& out, pair<Date&, string&>);
+ostream& operator << (ostream& out, const Date& date);
+ostream& operator << (ostream& out, const pair < Date, set<string>>& record);
