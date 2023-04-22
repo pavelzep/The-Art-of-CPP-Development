@@ -12,7 +12,7 @@ public:
     void Add(const Date& date, const string& event);
     void Print(ostream& out);
 
-    vector<pair<Date&, string&>> FindIf(function<bool(const Date&, const string&)> predicate);
+    vector<pair<Date, string>> FindIf(function<bool(const Date&, const string&)> predicate);
     int RemoveIf(function<bool(const Date&, const string&)> predicate);
     string Last(const Date& date);
 
@@ -20,5 +20,6 @@ private:
     map<Date, set<string>> store;
 };
 
-ostream& operator<<(ostream& out, map<const Date, const set<string>>& store);
+//ostream& operator<<(ostream& out, map<const Date, const set<string>>& store);
+ostream& operator<<(ostream& out, const map<Date, set<string>>& store);
 

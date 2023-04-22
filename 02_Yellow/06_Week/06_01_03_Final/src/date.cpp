@@ -1,5 +1,6 @@
 #include "date.h"
 #include <tuple>
+#include <iomanip>
 
 
 Date ParseDate(istream& is) {
@@ -27,14 +28,18 @@ bool operator!=(const Date& left, const Date& right) {
 }
 
 ostream& operator<<(ostream& out, const Date& date) {
+    out << setw(4) << setfill('0') << date.year_ << '-' << setw(2) << setfill('0') << date.month_ << '-' << setw(2) << setfill('0') << date.day_;
+    return out;
+}
 
-    out << date.year_ << '-' << date.month_ << '-' << date.day_;
+ostream& operator << (ostream& out, const pair < Date, string>& record) {
+    out << record.first << ' ' << record.second;
     return out;
 }
 
 ostream& operator<<(ostream& out, const pair < Date, set<string>>& record) {
-
-    // out << record.first << ' ' << record.second;
-
+    for (const auto& item : record.second) {
+        out << record.first << ' ' << item << endl;
+    }
     return out;
 }

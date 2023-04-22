@@ -23,4 +23,5 @@ bool operator!=(const Date& left, const Date& right);
 
 
 ostream& operator << (ostream& out, const Date& date);
+ostream& operator << (ostream& out, const pair < Date, string>& record);
 ostream& operator << (ostream& out, const pair < Date, set<string>>& record);
