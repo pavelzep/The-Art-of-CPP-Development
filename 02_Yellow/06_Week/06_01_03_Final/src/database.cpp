@@ -1,5 +1,5 @@
 #include "database.h"
-
+#include <algorithm>
 
 
 
@@ -35,21 +35,8 @@ vector<pair<Date, string>> Database::FindIf(function<bool(const Date&, const str
 int Database::RemoveIf(function<bool(const Date&, const string&)> predicate) {
     int count;
     for (auto& item : this->store) {
-        bool flag = 0;
-        for (auto& evt : item.second) {
-            if (predicate(item.first, evt)) {
-                // item.second.erase(evt);
-                flag = 1;
-                ++count;
-            };
-            if (flag) {
-                item.second.erase(evt);
-                flag = 0;
-            }
-        }
-
+        remove_if(item.second.begin(), item.second.end(), [&]( string event) {return predicate(item.first, event);});
     }
-
     return count;
 }
 
