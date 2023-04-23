@@ -18,4 +18,5 @@ add_executable(${PROJECT_NAME}
     ${SOURCE_PATH}/date.cpp
     ${SOURCE_PATH}/node.cpp
     ${SOURCE_PATH}/test_runner.cpp
+    ${SOURCE_PATH}/events.cpp
     )
