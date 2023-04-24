@@ -66,7 +66,6 @@ int main() {
             throw logic_error("Unknown command: " + command);
         }
     }
-
     return 0;
 }
 

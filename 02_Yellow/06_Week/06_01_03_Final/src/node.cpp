@@ -3,7 +3,7 @@
 DateComparisonNode::DateComparisonNode(const Comparison& cmd, const Date& date): cmd_(cmd), date_(date) {
 }
 
-bool DateComparisonNode::Evaluate(const Date& date, const string& str) {
+bool DateComparisonNode::Evaluate(const Date& date, const string& str) const {
     switch (this->cmd_) {
         case  Comparison::Less:
             return date < this->date_;
@@ -32,7 +32,7 @@ bool DateComparisonNode::Evaluate(const Date& date, const string& str) {
 EventComparisonNode::EventComparisonNode(const Comparison& cmd, const string& value): cmd_(cmd), value_(value) {
 }
 
-bool EventComparisonNode::Evaluate(const Date& date, const string& str) {
+bool EventComparisonNode::Evaluate(const Date& date, const string& str)const {
 
     switch (this->cmd_) {
         case Comparison::Equal:
@@ -55,7 +55,7 @@ LogicalOperationNode::LogicalOperationNode(
     const shared_ptr<Node> right): logical_operation_(logical_operation), left_(left), right_(right) {
 }
 
-bool LogicalOperationNode::Evaluate(const Date& date, const string& str) {
+bool LogicalOperationNode::Evaluate(const Date& date, const string& str) const {
 
     bool left_ = this->left_->Evaluate(date, str);
     bool right_ = this->right_->Evaluate(date, str);
@@ -74,9 +74,9 @@ bool LogicalOperationNode::Evaluate(const Date& date, const string& str) {
 };
 
 EmptyNode::EmptyNode() {
-
 }
-bool EmptyNode::Evaluate(const Date& date, const string& str) {
+
+bool EmptyNode::Evaluate(const Date& date, const string& str)const {
     return true;
 };
 

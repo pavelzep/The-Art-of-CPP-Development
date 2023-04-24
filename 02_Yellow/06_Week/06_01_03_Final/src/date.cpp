@@ -2,7 +2,6 @@
 #include <tuple>
 #include <iomanip>
 
-
 Date ParseDate(istream& is) {
     int y, m, d;
     is >> y;
@@ -42,17 +41,9 @@ ostream& operator << (ostream& out, const pair < Date, shared_ptr<string>>& reco
     return out;
 }
 
-// ostream& operator<<(ostream& out, const pair < Date, set<string>>& record) {
-//     for (const auto& item : record.second) {
-//         out << record.first << ' ' << item << endl;
-//     }
-//     return out;
-// }
-
 ostream& operator << (ostream& out, const pair < Date, Events>& record){
          for (const auto& item : record.second.sortedEvents) {
         out << record.first << ' ' << item << endl;
     }
-     
      return out;
 }

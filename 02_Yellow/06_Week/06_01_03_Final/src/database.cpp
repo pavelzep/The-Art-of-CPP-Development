@@ -4,19 +4,17 @@
 #include <sstream>
 
 void Database::Add(const Date& date, const string& event) {
-    // store[date].insert(event);
-
     if (storage[date].sortedEvents.insert(event).second) {
         storage[date].lastEvents.push_back(event);
     }
 
 }
 
-void Database::Print(ostream& out) {
+void Database::Print(ostream& out) const {
     out << this->storage;
 }
 
-vector<pair<Date, shared_ptr<string>>> Database::FindIf(function<bool(const Date&, const string&)> predicate) {
+vector<pair<Date, shared_ptr<string>>> Database::FindIf(function<bool(const Date&, const string&)> predicate) const {
     vector<pair<Date, shared_ptr<string>>> result;
     for (auto& item : this->storage) {
         for (auto& evt : item.second.sortedEvents) {
@@ -54,7 +52,7 @@ int Database::RemoveIf(function<bool(const Date&, const string&)> predicate) {
     return count;
 }
 
-string Database::Last(const Date& date) {
+string Database::Last(const Date& date) const {
     stringstream ss;
     auto date_pair = make_pair(date, Events{});
     auto func = [](const pair<Date, Events>& left, const pair<Date, Events>& right) {
@@ -72,13 +70,6 @@ string Database::Last(const Date& date) {
 
     return  ss.str();
 }
-
-// ostream& operator<<(ostream& out, const map<Date, set<string>>& store) {
-//     for (auto& item : store) {
-//         out << item;
-//     }
-//     return out;
-// }
 
 ostream& operator<<(ostream& out, const map<Date, Events>& store) {
     for (auto& item : store) {

@@ -21,7 +21,6 @@ ostream& operator << (ostream& os, const map<K, V>& m);
 
 void Assert(bool b, const string& hint);
 
-
 template<class T, class U>
 void AssertEqual(const T& t, const U& u, const string& hint = {}) {
     if (t != u) {

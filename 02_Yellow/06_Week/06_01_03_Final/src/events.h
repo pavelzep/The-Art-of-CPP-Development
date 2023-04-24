@@ -5,7 +5,6 @@
 #include <set>
 #include <iostream>
 
-
 using namespace std;
 
 struct Events {
