@@ -36,11 +36,22 @@ bool EventComparisonNode::Evaluate(const Date& date, const string& str)const {
 
     switch (this->cmd_) {
         case Comparison::Equal:
-            return this->value_ == str;
+            return  str == this->value_;
             break;
-
         case Comparison::NotEqual:
-            return this->value_ != str;
+            return str != this->value_;
+            break;
+        case  Comparison::Less:
+            return str < this->value_;
+            break;
+        case  Comparison::LessOrEqual:
+            return  str <= value_;
+            break;
+        case  Comparison::Greater:
+            return  str > value_;
+            break;
+        case  Comparison::GreaterOrEqual:
+            return str >= value_;
             break;
 
         default:
@@ -59,7 +70,7 @@ bool LogicalOperationNode::Evaluate(const Date& date, const string& str) const {
 
     bool left_ = this->left_->Evaluate(date, str);
     bool right_ = this->right_->Evaluate(date, str);
-    bool res;
+    bool res = true;
     switch (this->logical_operation_) {
         case LogicalOperation::Or:
             res = left_ || right_;
@@ -79,5 +90,3 @@ EmptyNode::EmptyNode() {
 bool EmptyNode::Evaluate(const Date& date, const string& str)const {
     return true;
 };
-
-

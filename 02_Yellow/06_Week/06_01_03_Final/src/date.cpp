@@ -42,7 +42,7 @@ ostream& operator << (ostream& out, const pair < Date, shared_ptr<string>>& reco
 }
 
 ostream& operator << (ostream& out, const pair < Date, Events>& record){
-         for (const auto& item : record.second.sortedEvents) {
+         for (const auto& item : record.second.lastEvents) {
         out << record.first << ' ' << item << endl;
     }
      return out;

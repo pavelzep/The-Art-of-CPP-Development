@@ -17,7 +17,7 @@ void Database::Print(ostream& out) const {
 vector<pair<Date, shared_ptr<string>>> Database::FindIf(function<bool(const Date&, const string&)> predicate) const {
     vector<pair<Date, shared_ptr<string>>> result;
     for (auto& item : this->storage) {
-        for (auto& evt : item.second.sortedEvents) {
+        for (auto& evt : item.second.lastEvents) {
             if (predicate(item.first, evt)) {
                 auto t = make_pair(item.first, make_shared<string>(evt));
                 result.push_back(t);
@@ -28,7 +28,7 @@ vector<pair<Date, shared_ptr<string>>> Database::FindIf(function<bool(const Date
 }
 
 int Database::RemoveIf(function<bool(const Date&, const string&)> predicate) {
-    int count;
+    int count = 0;
 
     for (auto it_map = storage.begin(); it_map != storage.end();) {
         for (auto it = it_map->second.sortedEvents.begin();it != it_map->second.sortedEvents.end();) {
@@ -58,15 +58,13 @@ string Database::Last(const Date& date) const {
     auto func = [](const pair<Date, Events>& left, const pair<Date, Events>& right) {
         return left.first < right.first;
     };
-    auto pair = equal_range(storage.begin(), storage.end(), date_pair, func);
-    if (pair.first == storage.end())
-        ss << storage.rbegin()->first << ' ' << storage.rbegin()->second.lastEvents.back();
+    if (date < storage.begin()->first) ss << "No entries";
+    else if (storage.size() == 0) ss << "No entries";
+    else {
 
-    else if (pair.first == pair.second)
-        ss << "No entries";
-
-    else
-        ss << pair.first->first << ' ' << pair.first->second.lastEvents.back();
+        auto it = --upper_bound(storage.begin(), storage.end(), date_pair, func);
+        ss << storage.rbegin()->first << ' ' << it->second.lastEvents.back();
+    }
 
     return  ss.str();
 }
