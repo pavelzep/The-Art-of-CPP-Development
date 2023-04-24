@@ -23,7 +23,7 @@ int main() {
     TestAll();
 
     Database db;
-    fstream cin("../_print");
+    // fstream cin("../_test");
     for (string line; getline(cin, line); ) {
         istringstream is(line);
 

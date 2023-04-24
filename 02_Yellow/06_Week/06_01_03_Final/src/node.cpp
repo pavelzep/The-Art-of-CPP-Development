@@ -77,7 +77,7 @@ EmptyNode::EmptyNode() {
 
 }
 bool EmptyNode::Evaluate(const Date& date, const string& str) {
-    return false;
+    return true;
 };
 
 

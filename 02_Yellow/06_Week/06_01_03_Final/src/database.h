@@ -18,11 +18,11 @@ public:
 
 private:
     map<Date, Events> storage;
-    map<Date, set<string>> store;
+    // map<Date, set<string>> store;
 };
 
 
-ostream& operator<<(ostream& out, const map<Date, set<string>>& store);
+// ostream& operator<<(ostream& out, const map<Date, set<string>>& store);
 ostream& operator<<(ostream& out, const map<Date, Events>& store);
 
 
