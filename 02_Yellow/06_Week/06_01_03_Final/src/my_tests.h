@@ -10,14 +10,14 @@
 /*
 Вставить в main
 ------------------------------------------------------
-  tr.RunTest(TestEmptyNode, "Тест 2 из Coursera");
-  tr.RunTest(TestDbAdd, "Тест 3(1) из Coursera");
-  tr.RunTest(TestDbFind, "Тест 3(2) из Coursera");
-  tr.RunTest(TestDbLast, "Тест 3(3) из Coursera");
-  tr.RunTest(TestDbRemoveIf, "Тест 3(4) из Coursera");
-  tr.RunTest(TestInsertionOrder, "Тест на порядок вывода");
-  tr.RunTest(TestsMyCustom, "Мои тесты");
-  tr.RunTest(TestDatabase, "Тест базы данных с GitHub");
+    tr.RunTest(TestEmptyNode, "Test 2 from Coursera");
+    tr.RunTest(TestDbAdd, "Test 3(1) from Coursera");
+    tr.RunTest(TestDbFind, "Test 3(2) from Coursera");
+    tr.RunTest(TestDbLast, "Test 3(3) from Coursera");
+    tr.RunTest(TestDbRemoveIf, "Test 3(4) from Coursera");
+    tr.RunTest(TestInsertionOrder, "Test output");
+    tr.RunTest(TestsMyCustom, "My tests");
+    tr.RunTest(TestDatabase, "Test BD from GitHub");
  -------------------------------------------------------
  */
 
@@ -130,7 +130,9 @@ void TestDbLast(){
     }
     {
         ostringstream os;
-        os << db.Last({2017, 1, 2});
+        string str_;
+        str_ = db.Last({2017, 1, 2});
+        os << str_;
         AssertEqual("2017-01-01 new year", os.str(), "greater than date");
     }
     {

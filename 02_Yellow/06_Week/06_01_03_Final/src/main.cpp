@@ -4,7 +4,7 @@
 #include "condition_parser.h"
 #include <stdexcept>
 #include <fstream>
-#include "my_tests.h"
+// #include "my_tests.h"
 
 using namespace std;
 
@@ -23,7 +23,7 @@ int main() {
     TestAll();
 
     Database db;
-    fstream cin("../_find3");
+    // fstream cin("../_find3");
     for (string line; getline(cin, line); ) {
         istringstream is(line);
 
@@ -93,13 +93,6 @@ void TestAll() {
     tr.RunTest(TestParseCondition, "TestParseCondition");
 
 
-    tr.RunTest(TestEmptyNode, "Test 2 from Coursera");
-    tr.RunTest(TestDbAdd, "Test 3(1) from Coursera");
-    tr.RunTest(TestDbFind, "Test 3(2) from Coursera");
-    tr.RunTest(TestDbLast, "Test 3(3) from Coursera");
-    tr.RunTest(TestDbRemoveIf, "Test 3(4) from Coursera");
-    tr.RunTest(TestInsertionOrder, "Test output");
-    tr.RunTest(TestsMyCustom, "My tests");
-    tr.RunTest(TestDatabase, "Test BD from GitHub");
+
 
 }

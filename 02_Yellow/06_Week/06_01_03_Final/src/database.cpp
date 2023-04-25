@@ -63,7 +63,7 @@ string Database::Last(const Date& date) const {
     else {
 
         auto it = --upper_bound(storage.begin(), storage.end(), date_pair, func);
-        ss << storage.rbegin()->first << ' ' << it->second.lastEvents.back();
+        ss << it->first << ' ' << it->second.lastEvents.back();
     }
 
     return  ss.str();
