@@ -38,8 +38,6 @@ vector<string> Database::FindIf(function<bool(const Date&, const string&)> predi
 int Database::RemoveIf(function<bool(const Date&, const string&)> predicate) {
     int count = 0;
 
-
-
     for (auto it_map = storage.begin(); it_map != storage.end();) {
         for (auto it = it_map->second.sortedEvents.begin();it != it_map->second.sortedEvents.end();) {
             if (predicate(it_map->first, *it)) {
@@ -64,20 +62,22 @@ int Database::RemoveIf(function<bool(const Date&, const string&)> predicate) {
 
 string Database::Last(const Date& date) const {
     stringstream ss;
-    auto date_pair = make_pair(date, Events{});
-    auto func = [](const pair<Date, Events>& left, const pair<Date, Events>& right) {
-        return left.first < right.first;
-    };
+    // auto date_pair = make_pair(date, Events{});
+    // auto func = [](const pair<Date, Events>& left, const pair<Date, Events>& right) {
+        // return left.first < right.first;
+    // };
     if (date < storage.begin()->first) ss << "No entries";
     else if (storage.size() == 0) ss << "No entries";
     else {
 
-        auto it = --upper_bound(storage.begin(), storage.end(), date_pair, func);
+        auto it = --storage.upper_bound(date);
+        // auto it = --upper_bound(storage.begin(), storage.end(), date_pair, func);
         ss << it->first << ' ' << it->second.lastEvents.back();
     }
 
     return  ss.str();
 }
+
 
 ostream& operator<<(ostream& out, const map<Date, Events>& store) {
     for (auto& item : store) {
