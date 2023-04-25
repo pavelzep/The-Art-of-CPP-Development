@@ -6,18 +6,27 @@
 #include <forward_list>
 #include <numeric>
 #include <iterator>
-
+#include <algorithm>
 using namespace std;
 
 template<typename ForwardIterator, typename UnaryPredicate>
 ForwardIterator max_element_if(ForwardIterator first, ForwardIterator last, UnaryPredicate pred) {
-    // Реализуйте эту функцию
-    ForwardIterator result;
+    if (first == last)
+        return last;
+
+    ForwardIterator largest = first;
 
 
+    bool flag = 0;
+    for (; first != last; ++first)
+        if (pred(*first)) {
+            flag = 1;
+            if ((*largest) < (*first))
+                largest = first;
+        }
+    if (!flag) largest = last;
 
-
-    return result;
+    return largest;
 }
 
 void TestUniqueMax() {
@@ -39,7 +48,7 @@ void TestUniqueMax() {
       неопределенное поведение, если функция max_element_if, к примеру,
       вернула итератор, указывающий на конец контейнера.
     */
-   
+
     Assert(
         max_element_if(numbers.begin(), numbers.end(), IsEven) == --numbers.end(),
         "Expect the last element"
