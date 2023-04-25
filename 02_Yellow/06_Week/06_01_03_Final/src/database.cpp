@@ -10,22 +10,25 @@
 //   map<Date, Events> storage;
 
 void Database::Add(const Date& date, const string& event) {
-    if (storage[date].sortedEvents.insert(event).second) {
-        storage[date].lastEvents.push_back(event);
-    }
+    if (storage[date].sortedEvents.count(event)) return;
+
+    storage[date].sortedEvents.insert(event).second;
+    storage[date].lastEvents.push_back(event);
 }
 
 void Database::Print(ostream& out) const {
     out << this->storage;
 }
 
-vector<pair<Date, shared_ptr<string>>> Database::FindIf(function<bool(const Date&, const string&)> predicate) const {
-    vector<pair<Date, shared_ptr<string>>> result;
+vector<string> Database::FindIf(function<bool(const Date&, const string&)> predicate) const {
+    vector<string> result;
+
     for (auto& item : this->storage) {
         for (auto& evt : item.second.lastEvents) {
             if (predicate(item.first, evt)) {
-                auto t = make_pair(item.first, make_shared<string>(evt));
-                result.push_back(t);
+                stringstream ss;
+                ss << item.first << ' ' << evt;
+                result.push_back(ss.str());
             };
         }
     }
@@ -35,7 +38,7 @@ vector<pair<Date, shared_ptr<string>>> Database::FindIf(function<bool(const Date
 int Database::RemoveIf(function<bool(const Date&, const string&)> predicate) {
     int count = 0;
 
-    
+
 
     for (auto it_map = storage.begin(); it_map != storage.end();) {
         for (auto it = it_map->second.sortedEvents.begin();it != it_map->second.sortedEvents.end();) {

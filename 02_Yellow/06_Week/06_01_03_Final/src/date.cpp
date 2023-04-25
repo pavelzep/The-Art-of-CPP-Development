@@ -36,10 +36,10 @@ ostream& operator << (ostream& out, const pair < Date, string>& record) {
     return out;
 }
 
-ostream& operator << (ostream& out, const pair < Date, shared_ptr<string>>& record) {
-    out << record.first << ' ' << *record.second;
-    return out;
-}
+// ostream& operator << (ostream& out, const pair < Date, shared_ptr<string>>& record) {
+//     out << record.first << ' ' << *record.second;
+//     return out;
+// }
 
 ostream& operator << (ostream& out, const pair < Date, Events>& record){
          for (const auto& item : record.second.lastEvents) {

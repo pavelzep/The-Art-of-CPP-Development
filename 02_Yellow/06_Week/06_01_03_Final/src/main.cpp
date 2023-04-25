@@ -4,7 +4,14 @@
 #include "condition_parser.h"
 #include <stdexcept>
 #include <fstream>
-// #include "my_tests.h"
+
+// #define WITH_MY_TESTS
+
+#ifdef WITH_MY_TESTS
+
+#include "my_tests.h"
+
+#endif
 
 using namespace std;
 
@@ -20,10 +27,13 @@ string ParseEvent(istream& is) {
 void TestAll();
 
 int main() {
+
+
     TestAll();
 
+
     Database db;
-    // fstream cin("../_find3");
+    //  fstream cin("../_find3");
     for (string line; getline(cin, line); ) {
         istringstream is(line);
 
@@ -92,7 +102,7 @@ void TestAll() {
     tr.RunTest(TestParseEvent, "TestParseEvent");
     tr.RunTest(TestParseCondition, "TestParseCondition");
 
-
-
-
+#ifdef WITH_MY_TESTS
+    MyTests();
+#endif
 }

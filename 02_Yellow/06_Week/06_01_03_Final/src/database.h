@@ -12,7 +12,7 @@ public:
     void Add(const Date& date, const string& event);
     void Print(ostream& out) const;
 
-    vector<pair<Date, shared_ptr<string>>> FindIf(function<bool(const Date&, const string&)> predicate) const;
+    vector<string> FindIf(function<bool(const Date&, const string&)> predicate) const;
     int RemoveIf(function<bool(const Date&, const string&)> predicate);
     string Last(const Date& date) const;
 

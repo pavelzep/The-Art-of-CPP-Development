@@ -23,6 +23,8 @@
 
 using namespace std;
 
+
+
 class AlwaysFalseNode : public Node {
 	bool Evaluate(const Date&, const std::string& event) const override {
 		return false;
@@ -688,4 +690,17 @@ void TestEmptyNode() {
 	Assert(en.Evaluate(Date{2017, 11, 18}, "def"), "EmptyNode 2");
 	Assert(en.Evaluate(Date{9999, 12, 31}, "ghi"), "EmptyNode 3");
   }
+}
+
+
+void MyTests(){
+     TestRunner tr_;
+    tr_.RunTest(TestEmptyNode, "Test 2 from Coursera");
+    tr_.RunTest(TestDbAdd, "Test 3(1) from Coursera");
+    tr_.RunTest(TestDbFind, "Test 3(2) from Coursera");
+    tr_.RunTest(TestDbLast, "Test 3(3) from Coursera");
+    tr_.RunTest(TestDbRemoveIf, "Test 3(4) from Coursera");
+    tr_.RunTest(TestInsertionOrder, "Test output");
+    tr_.RunTest(TestsMyCustom, "My tests");
+    tr_.RunTest(TestDatabase, "Test BD from GitHub");
 }
