@@ -24,6 +24,11 @@
 using namespace std;
 
 
+struct Entry {
+  Date date;
+  string event;
+};
+
 
 class AlwaysFalseNode : public Node {
 	bool Evaluate(const Date&, const std::string& event) const override {
