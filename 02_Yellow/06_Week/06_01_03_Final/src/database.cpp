@@ -66,8 +66,8 @@ string Database::Last(const Date& date) const {
     // auto func = [](const pair<Date, Events>& left, const pair<Date, Events>& right) {
         // return left.first < right.first;
     // };
-    if (date < storage.begin()->first) ss << "No entries";
-    else if (storage.size() == 0) ss << "No entries";
+    if (storage.size() == 0) ss << "No entries";
+    else if (date < storage.begin()->first) ss << "No entries";
     else {
 
         auto it = --storage.upper_bound(date);

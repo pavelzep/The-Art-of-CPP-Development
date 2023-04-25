@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <fstream>
 
-//  #define WITH_MY_TESTS
+//   #define WITH_MY_TESTS
 
 #ifdef WITH_MY_TESTS
 
