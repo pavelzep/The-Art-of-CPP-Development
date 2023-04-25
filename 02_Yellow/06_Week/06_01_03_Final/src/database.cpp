@@ -3,11 +3,16 @@
 #include <algorithm>
 #include <sstream>
 
+// struct Events {
+//     vector<string> lastEvents;
+//     set<string> sortedEvents;
+// };
+//   map<Date, Events> storage;
+
 void Database::Add(const Date& date, const string& event) {
     if (storage[date].sortedEvents.insert(event).second) {
         storage[date].lastEvents.push_back(event);
     }
-
 }
 
 void Database::Print(ostream& out) const {
@@ -29,6 +34,8 @@ vector<pair<Date, shared_ptr<string>>> Database::FindIf(function<bool(const Date
 
 int Database::RemoveIf(function<bool(const Date&, const string&)> predicate) {
     int count = 0;
+
+    
 
     for (auto it_map = storage.begin(); it_map != storage.end();) {
         for (auto it = it_map->second.sortedEvents.begin();it != it_map->second.sortedEvents.end();) {
