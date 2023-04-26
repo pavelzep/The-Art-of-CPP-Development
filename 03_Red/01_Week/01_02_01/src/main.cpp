@@ -14,17 +14,14 @@ ForwardIterator max_element_if(ForwardIterator first, ForwardIterator last, Unar
     if (first == last)
         return last;
 
-    ForwardIterator largest = first;
+    ForwardIterator largest = find_if(first, last, pred);
 
-
-    bool flag = 0;
     for (; first != last; ++first)
         if (pred(*first)) {
-            flag = 1;
+
             if ((*largest) < (*first))
                 largest = first;
         }
-    if (!flag) largest = last;
 
     return largest;
 }
