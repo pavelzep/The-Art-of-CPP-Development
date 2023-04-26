@@ -12,7 +12,18 @@ public:
     void SetLogLine(bool value) { log_line = value; }
     void SetLogFile(bool value) { log_file = value; }
 
-    void Log(const string& message);
+    void Log(const string& message) {
+        int a = 0;
+
+        if (!log_file && !log_line)
+            os << message << '\n';
+        else if (log_file && log_line)
+            os << __FILE__ << ':' << __LINE__ << ' ' << message << '\n';
+        else if (log_file && !log_line)
+            os << __FILE__ << ' ' << message << '\n';
+        else if (!log_file && log_line)
+            os << "line " << __LINE__ << ' ' << message << '\n';
+    }
 
 private:
     ostream& os;
@@ -20,7 +31,8 @@ private:
     bool log_file = false;
 };
 
-#define LOG(logger, message) {                     \
+#define LOG(logger, message) {          \
+    logger.Log(message);                \
 }
 
 void TestLog() {
