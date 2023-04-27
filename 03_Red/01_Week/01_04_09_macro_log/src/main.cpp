@@ -12,28 +12,32 @@ public:
     void SetLogLine(bool value) { log_line = value; }
     void SetLogFile(bool value) { log_file = value; }
 
-    void Log(const string& message) {
-        int a = 0;
-
-        if (!log_file && !log_line)
-            os << message << '\n';
-        else if (log_file && log_line)
-            os << __FILE__ << ':' << __LINE__ << ' ' << message << '\n';
-        else if (log_file && !log_line)
-            os << __FILE__ << ' ' << message << '\n';
-        else if (!log_file && log_line)
-            os << "line " << __LINE__ << ' ' << message << '\n';
-    }
-
+    void Log(const string& message);
+    bool get_log_line() const { return log_line; }
+    bool get_log_file() const { return log_file; }
+    ostream& get_log_os() const { return os; }
 private:
     ostream& os;
     bool log_line = false;
     bool log_file = false;
 };
 
-#define LOG(logger, message) {          \
-    logger.Log(message);                \
+#define LOG(logger, message) {              \
+    bool log_line = logger.get_log_line();       \
+    bool log_file = logger.get_log_file();       \
+    ostream& os = logger.get_log_os();                        \
+    if (!log_file && !log_line) os << message << '\n';                                             \
+    else if (log_file && log_line) os << __FILE__ << ':' << __LINE__ << ' ' << message << '\n';     \
+    else if (log_file && !log_line) os << __FILE__ << ' ' << message << '\n';                       \
+    else if (!log_file && log_line) os << "Line " << __LINE__ << ' ' << message << '\n';            \
 }
+
+// void Logger::Log(const string& message) {
+//     if (!log_file && !log_line) os << message << '\n';
+//     else if (log_file && log_line) os << __FILE__ << ':' << __LINE__ << ' ' << message << '\n';
+//     else if (log_file && !log_line) os << __FILE__ << ' ' << message << '\n';
+//     else if (!log_file && log_line) os << "Line " << __LINE__ << ' ' << message << '\n';
+// }
 
 void TestLog() {
     /* Для написания юнит-тестов в этой задаче нам нужно фиксировать конкретные
@@ -72,3 +76,4 @@ int main() {
     TestRunner tr;
     RUN_TEST(tr, TestLog);
 }
+
