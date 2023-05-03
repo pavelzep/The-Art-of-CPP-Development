@@ -1,5 +1,5 @@
 #include <vector>
-#include <exception>
+// #include <exception>
 
 using namespace std;
 
@@ -19,22 +19,22 @@ public:
     }
 
     T& At(size_t index) {
-        if (!(index < Size())) throw out_of_range("wrong index");
+        // if (!(index < Size())) throw out_of_range("");
         if (index >= front.size()) {
             index -= front.size();
-            return back[index];
+            return back.at(index);
         } else {
-            return front[front.size() - index - 1];
+            return front.at(front.size() - index - 1);
         }
     }
 
     const T& At(size_t index) const {
-        if (!(index < Size())) throw out_of_range("wrong index");
+        // if (!(index < Size())) throw out_of_range("");
         if (index >= front.size()) {
             index -= front.size();
-            return back[index];
+            return back.at(index);
         } else {
-            return front[front.size() - index - 1];
+            return front.at(front.size() - index - 1);
         }
     }
 
@@ -63,7 +63,7 @@ public:
     }
 
     const T& Front() const {
-        if (front.emty()) return back.front();
+        if (front.empty()) return back.front();
         return front.back();
     }
 

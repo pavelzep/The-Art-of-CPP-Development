@@ -1,3 +1,6 @@
+#include "test_runner.h"
+#include "deque.h"
+
 void test_1() {
     Deque<int> t;
     ASSERT_EQUAL(t.Size(), 0u);
@@ -93,4 +96,26 @@ void MyTest() {
     test_5();
     test_6();
     test_7();
+}
+
+void test_8() {
+    Deque<int> t;
+    try {
+        cout << t.At(0);
+    }
+    catch (std::out_of_range&) {
+        cout << "out_of_range" << endl;
+    }
+
+}
+void test_9() {
+    Deque<int> t;
+    t.PushBack(1);
+    t.PushFront(2);
+    try {
+        cout << t.At(3);
+    }
+    catch (std::out_of_range&) {
+        cout << "out_of_range" << endl;
+    }
 }
