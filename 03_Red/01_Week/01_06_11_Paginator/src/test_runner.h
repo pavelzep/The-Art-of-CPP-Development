@@ -7,6 +7,9 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <numeric>
+#include <cctype>
+
 
 using namespace std;
 
@@ -56,7 +59,7 @@ template<class T, class U>
 void AssertEqual(const T& t, const U& u, const string& hint = {}) {
     if (!(t == u)) {
         ostringstream os;
-        os << "Assertion failed: "<< endl << t << " != " << u;
+        os << "Assertion failed: " << endl << t << " != " << u;
         if (!hint.empty()) {
             os << " hint: " << hint;
         }

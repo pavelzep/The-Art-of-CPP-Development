@@ -1,6 +1,7 @@
 #include "test_runner.h"
 #include "paginator.h"
 
+using namespace std;
 
 void TestPageCounts() {
     vector<int> v(15);
