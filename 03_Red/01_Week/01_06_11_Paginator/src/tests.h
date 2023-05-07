@@ -28,6 +28,11 @@ void TestLooping() {
         os << '\n';
     }
 
+    // for(const auto& page : paginate_v){
+    //     cout << page.size() << ' ';
+    // }
+    // cout << endl;
+    //  string a = os.str();
     ASSERT_EQUAL(os.str(), "1 2 3 4 5 6 \n7 8 9 10 11 12 \n13 14 15 \n");
 }
 

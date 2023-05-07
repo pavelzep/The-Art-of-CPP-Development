@@ -33,7 +33,12 @@ private:
 
 public:
     Paginator(Iterator begin, Iterator end, size_t page_size) {
-        pages.push_back();
+
+        for (Iterator it = begin;it < end;it = next(it, page_size)) {
+            IteratorRange page(it, min(next(it, page_size),end));
+            pages.push_back(page);
+        }
+
     }
 
     // возвращает количество страниц
