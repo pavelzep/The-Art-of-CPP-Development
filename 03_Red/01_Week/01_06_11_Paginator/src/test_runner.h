@@ -100,11 +100,14 @@ private:
     int fail_count = 0;
 };
 
+
+// #define ASSERT_LOW(x) #x 
+// #define ASSERT_MIDLE(x) ASSERT_LOW(x)
 #define ASSERT_EQUAL(x, y) {            \
-  ostringstream os;                     \
-  os << #x << " != " << #y << ", "      \
+  ostringstream os_;                     \
+  os_ << #x << " != " << #y << ", "      \
     << __FILE__ << ":" << __LINE__;     \
-  AssertEqual(x, y, os.str());          \
+  AssertEqual(x, y, os_.str());          \
 }
 
 #define ASSERT(x) {                     \
