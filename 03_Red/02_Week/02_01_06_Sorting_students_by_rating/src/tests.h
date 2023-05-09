@@ -45,3 +45,14 @@ void TestSorting() {
         })
     );
 }
+
+void MyTest1(){
+    for(int i=0; i<99999; ++i){
+        TestComparison();
+    }
+}
+void MyTest2(){
+    for(int i=0; i<99999; ++i){
+        TestSorting();
+    }
+}
