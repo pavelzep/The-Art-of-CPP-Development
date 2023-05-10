@@ -1,10 +1,12 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include "learner.h"
 
 using namespace std;
 
 int main() {
+    fstream cin("input.txt");
     Learner learner;
     string line;
     while (getline(cin, line)) {
