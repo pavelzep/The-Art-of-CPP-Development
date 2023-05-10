@@ -8,7 +8,7 @@ using namespace std;
 
 int main() {
 
-    fstream cin("input.txt");
+    fstream cin("inp.txt");
     Learner learner;
     string line;
     {

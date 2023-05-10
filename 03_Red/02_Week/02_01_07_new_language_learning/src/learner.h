@@ -35,8 +35,9 @@ private:
 
 public:
     int Learn(const vector<string>& words) {
-        dict = set(words.begin(), words.end());
-        return dict.size();
+        size_t old_size = dict.size();
+        dict.insert(words.begin(), words.end());
+        return dict.size() - old_size;
     }
 
     vector<string> KnownWords() {
