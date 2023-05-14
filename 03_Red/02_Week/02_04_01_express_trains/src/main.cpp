@@ -4,45 +4,64 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "profile.h"
-#include "test_runner.h"
-#include <fstream>
+// #include "profile.h"
+// #include "test_runner.h"
+// #include <fstream>
+#include <set>
 
 using namespace std;
 
 class RouteManager {
 public:
     void AddRoute(int start, int finish) {
-        reachable_lists_[start].push_back(finish);
-        reachable_lists_[finish].push_back(start);
+        reachable_lists_[start].insert(finish);
+        reachable_lists_[finish].insert(start);
     }
     int FindNearestFinish(int start, int finish) const {
         int result = abs(start - finish);
         if (reachable_lists_.count(start) < 1) {
             return result;
         }
-        const vector<int>& reachable_stations = reachable_lists_.at(start);
+
+        const set<int>& reachable_stations = reachable_lists_.at(start);
         if (!reachable_stations.empty()) {
-            result = min(
-                result,
-                abs(finish - *min_element(
-                    begin(reachable_stations), end(reachable_stations),
-                    [finish](int lhs, int rhs) { return abs(lhs - finish) < abs(rhs - finish); }
-                ))
-            );
+
+            auto it = FindNearestElement(reachable_stations, finish);
+            result = min(result, abs(*it - finish));
         }
+
+        // if (!reachable_stations.empty()) {
+        //     result = min(
+        //         result,
+        //         abs(finish - *min_element(
+        //             begin(reachable_stations), end(reachable_stations),
+        //             [finish](int lhs, int rhs) { return abs(lhs - finish) < abs(rhs - finish); }
+        //         ))
+        //     );
+        // }
+
         return result;
     }
 private:
-    map<int, vector<int>> reachable_lists_;
+
+    map<int, set<int>> reachable_lists_;
+
+    set<int>::const_iterator FindNearestElement(const set<int>& numbers, int border) const {
+        auto right = numbers.lower_bound(border);
+        if (right == numbers.begin()) return numbers.begin();
+        auto left = prev(right);
+        if (right == numbers.end()) return left;
+        if (border - *right <= *left - border)
+            return left;
+        else
+            return right;
+    }
 };
 
 
 int main() {
-    LOG_DURATION("all time");
+    // LOG_DURATION("all time");
     RouteManager routes;
-    // fstream cin ("input.txt");
-
     int query_count;
     cin >> query_count;
 
@@ -57,6 +76,7 @@ int main() {
             cout << routes.FindNearestFinish(start, finish) << "\n";
         }
     }
-
     return 0;
 }
+
+
