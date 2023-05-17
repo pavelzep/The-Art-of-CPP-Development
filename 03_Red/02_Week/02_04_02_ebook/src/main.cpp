@@ -12,16 +12,16 @@ public:
 
     }
 
-    void Read(int user_id, int page_count) {
-        if(user_to_page.find(user_id)!=user_to_page.end()))
-        
-        user_to_page[user_id] = page_count;
-        page_to_user[page_count].insert(user_id);
+    void Read(int user, int page) {
+        user_to_page[user] = page;
+
+
+        page_to_user[page].insert(user);
 
 
     }
 
-    double Cheer(int user_id
+    double Cheer(int user
     ) const {
 
 
