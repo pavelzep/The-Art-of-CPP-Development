@@ -9,24 +9,28 @@ using namespace std;
 class ReadingManager {
 public:
     ReadingManager() {
+
     }
 
     void Read(int user_id, int page_count) {
+        if(user_to_page.find(user_id)!=user_to_page.end()))
         
-        store[user_id].insert(page_count);
+        user_to_page[user_id] = page_count;
+        page_to_user[page_count].insert(user_id);
 
 
     }
 
-    double Cheer(int user_id) const {
+    double Cheer(int user_id
+    ) const {
 
 
     }
 
 private:
 
-    map <int, set<int>> store;
-
+    map <int, set<int>> page_to_user;
+    map <int, int> user_to_page;
 };
 
 
