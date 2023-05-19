@@ -6,7 +6,7 @@
 #include <fstream>
 
 
-using namespace std;
+using namespace std; 
 
 class ReadingManager {
 public:
@@ -20,7 +20,7 @@ public:
         auto it = user_to_page.find(user);
         if (it == user_to_page.end()) {
             ++user_count;
-            for (int i = it->second; i < 0; --i) {
+            for (int i = 0; i < page; ++i) {
                 pages[i]++;
             }
         } else {
@@ -33,8 +33,9 @@ public:
 
     double Cheer(int user) const {
         auto it = user_to_page.find(user);
+        if (user_count==1) return 1.0;
         if (it == user_to_page.end()) return {};
-        return pages[it->second] * 1.0 / user_count;
+        return 1-(pages[it->second-1]-1) * 1.0 / (user_count-1);
     }
 
 private:
@@ -45,7 +46,7 @@ private:
 
 
 int main() {
-    fstream cin("../input.txt");
+    // fstream cin("../input.txt");
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -69,6 +70,5 @@ int main() {
             cout << setprecision(6) << manager.Cheer(user_id) << "\n";
         }
     }
-
     return 0;
 }
