@@ -4,12 +4,14 @@
 #include <set>
 #include <vector>
 
-#define TEST_ON
+// #define TEST_ON
 
 #ifdef TEST_ON
-    #include "test_runner.h"
-    void Test_All();
+#include "test_runner.h"
+void Test_All();
 #endif
+
+using namespace std;
 
 class ReadingManager {
 public:
