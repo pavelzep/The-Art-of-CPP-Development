@@ -111,10 +111,10 @@ private:
 }
 
 #define ASSERT(x) {                     \
-  ostringstream os;                     \
-  os << #x << " is false, "             \
+  ostringstream os_;                     \
+  os_ << #x << " is false, "             \
     << __FILE__ << ":" << __LINE__;     \
-  Assert(x, os.str());                  \
+  Assert(x, os_.str());                  \
 }
 
 #define RUN_TEST(tr, func) \

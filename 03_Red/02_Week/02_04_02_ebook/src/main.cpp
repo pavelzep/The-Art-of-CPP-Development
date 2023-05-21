@@ -3,10 +3,13 @@
 #include <map>
 #include <set>
 #include <vector>
-#include <fstream>
 
+#define TEST_ON
 
-using namespace std; 
+#ifdef TEST_ON
+    #include "test_runner.h"
+    void Test_All();
+#endif
 
 class ReadingManager {
 public:
@@ -33,9 +36,11 @@ public:
 
     double Cheer(int user) const {
         auto it = user_to_page.find(user);
-        if (user_count==1) return 1.0;
+        if (user_count == 1) return 1.0;
         if (it == user_to_page.end()) return {};
-        return 1-(pages[it->second-1]-1) * 1.0 / (user_count-1);
+
+        return 1.0 - (pages[it->second - 1] - 1) * 1.0 / (user_count - 1);
+
     }
 
 private:
@@ -44,9 +49,11 @@ private:
     vector <int> pages;
 };
 
-
 int main() {
-    // fstream cin("../input.txt");
+
+#ifdef TEST_ON
+    Test_All();
+#endif
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -72,3 +79,58 @@ int main() {
     }
     return 0;
 }
+
+#ifdef TEST_ON
+void Test1() {
+    ReadingManager manager;
+    ASSERT_EQUAL(manager.Cheer(5), 0.0);
+    manager.Read(1, 10);
+    ASSERT_EQUAL(manager.Cheer(1), 1.0);
+    manager.Read(2, 5);
+    manager.Read(3, 7);
+    ASSERT_EQUAL(manager.Cheer(2), 0.0);
+    ASSERT_EQUAL(manager.Cheer(3), 0.5);
+    manager.Read(3, 10);
+    ASSERT_EQUAL(manager.Cheer(3), 0.5);
+    manager.Read(3, 11);
+    ASSERT_EQUAL(manager.Cheer(3), 1.0);
+    ASSERT_EQUAL(manager.Cheer(1), 0.5);
+}
+
+void Test2() {
+    ReadingManager manager;
+    manager.Read(1, 1);
+    manager.Read(1, 3);
+    manager.Read(2, 2);
+    ASSERT_EQUAL(manager.Cheer(1), 1.0);
+    ASSERT_EQUAL(manager.Cheer(2), 0.0);
+}
+
+void Test3() {
+    ReadingManager manager;
+    manager.Read(4, 5);
+    manager.Read(3, 4);
+    manager.Read(2, 3);
+    manager.Read(1, 2);
+    ASSERT_EQUAL(manager.Cheer(3), 2.0 / 3.0);
+}
+
+void Test4() {
+    const int MAX_USER_COUNT = 100'000;
+    ReadingManager manager;
+    ASSERT_EQUAL(manager.Cheer(MAX_USER_COUNT), 0.0);
+    manager.Read(MAX_USER_COUNT, 1000);
+
+    ASSERT_EQUAL(manager.Cheer(MAX_USER_COUNT), 1.0);
+
+}
+
+void Test_All() {
+    TestRunner tr;
+    RUN_TEST(tr, Test1);
+    RUN_TEST(tr, Test2);
+    RUN_TEST(tr, Test3);
+    RUN_TEST(tr, Test4);
+}
+
+#endif
