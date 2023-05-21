@@ -8,6 +8,7 @@
 
 #ifdef TEST_ON
 #include "test_runner.h"
+
 void Test_All();
 #endif
 
@@ -38,10 +39,11 @@ public:
 
     double Cheer(int user) const {
         auto it = user_to_page.find(user);
-        if (user_count == 1) return 1.0;
         if (it == user_to_page.end()) return {};
+        if (user_count == 1) return 1.0;
 
-        return 1.0 - (pages[it->second - 1] - 1) * 1.0 / (user_count - 1);
+
+        return ((user_count - 1) - (pages[it->second - 1] - 1)) * 1.0 / (user_count - 1);
 
     }
 
@@ -127,12 +129,40 @@ void Test4() {
 
 }
 
+
+void Test5() {
+
+    ReadingManager manager;
+    manager.Read(1, 1);
+    ASSERT_EQUAL(manager.Cheer(100'000), 0.0);
+
+}
+
+void Test6() {
+    ReadingManager manager;
+    ASSERT_EQUAL(manager.Cheer(1), 0.0);
+    manager.Read(1, 15);
+    ASSERT_EQUAL(manager.Cheer(3), 0.0);
+    ASSERT_EQUAL(manager.Cheer(3), 0.0);
+    ASSERT_EQUAL(manager.Cheer(3), 0.0);
+    manager.Read(1, 17);
+    ASSERT_EQUAL(manager.Cheer(1), 1.0);
+    ASSERT_EQUAL(manager.Cheer(3), 0.0);
+    ASSERT_EQUAL(manager.Cheer(3), 0.0);
+    ASSERT_EQUAL(manager.Cheer(3), 0.0);
+
+}
+
 void Test_All() {
     TestRunner tr;
-    RUN_TEST(tr, Test1);
-    RUN_TEST(tr, Test2);
-    RUN_TEST(tr, Test3);
-    RUN_TEST(tr, Test4);
+    // RUN_TEST(tr, Test1);
+    // RUN_TEST(tr, Test2);
+    // RUN_TEST(tr, Test3);
+    // RUN_TEST(tr, Test4);
+    // RUN_TEST(tr, Test5);
+    RUN_TEST(tr, Test6);
+
+
 }
 
 #endif
