@@ -1,3 +1,4 @@
+#pragma once
 
 #include "test_runner.h"
 #include "boking_manager.h"
