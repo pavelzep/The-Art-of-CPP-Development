@@ -4,7 +4,18 @@
 #include "boking_manager.h"
 
 void Test_All();
-void Test1();
+void Test0() {
+    BookingManager manager;
+    manager.Book(10, "FourSeasons", 1, 1);
+    manager.Book(10, "FourSeasons", 1, 1);
+    manager.Book(10, "FourSeasons", 1, 1);
+    manager.Book(10, "FourSeasons", 1, 1);
+
+    manager.Book(86410,"FourSeasons", 1, 1); 
+
+    ASSERT_EQUAL(manager.Clients("FourSeasons"),1);
+    ASSERT_EQUAL(manager.Rooms("FourSeasons"), 4);
+}
 
 void Test1() {
     BookingManager manager;
@@ -24,5 +35,5 @@ void Test1() {
 
 void Test_All() {
     TestRunner tr;
-    RUN_TEST(tr, Test1);
+    RUN_TEST(tr, Test0);
 }
