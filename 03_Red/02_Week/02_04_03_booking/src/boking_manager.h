@@ -4,6 +4,7 @@
 #include <vector>
 #include <deque>
 #include <algorithm>
+#include <set>
 
 #define MAX_CLIENT_ID 1'000'000'000
 #define MAX_ROOM_COUNT 1'000
@@ -41,21 +42,22 @@ void BookingManager::Book(int64_t current_time, const string& hotel_name, int cl
 
     store.push_back({ current_time, hotel_name, client_id, room_count });
     for (;store.front().booking_time <= day_start_time;store.pop_front()) {
-
     }
-
-
-
 }
 
 int BookingManager::Clients(const string& hotel_name) const {
-    int result = 0;
+
+    set<int> clients;
     for (const auto& item : store) {
-        item.client_id
+        if (item.hotel_name == hotel_name) clients.insert(item.client_id);
     }
-    return 0;
+    return clients.size();
 }
 
 int BookingManager::Rooms(const string& hotel_name) const {
-    return 0;
+    int rooms = 0;
+    for (const auto& item : store) {
+        if (item.hotel_name == hotel_name)  rooms += item.room_count;
+    }
+    return rooms;
 }
