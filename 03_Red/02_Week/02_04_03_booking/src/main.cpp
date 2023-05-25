@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <set>
 
@@ -72,6 +73,8 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
+    // ifstream cin("input.txt");
+
     BookingManager manager;
 
     int query_count;
@@ -80,8 +83,6 @@ int main() {
     for (int query_id = 0; query_id < query_count; ++query_id) {
         string query_type;
         cin >> query_type;
-        int user_id;
-        cin >> user_id;
 
         if (query_type == "BOOK") {
             int time;
