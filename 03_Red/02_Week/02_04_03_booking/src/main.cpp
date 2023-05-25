@@ -63,9 +63,6 @@ int BookingManager::Rooms(const string& hotel_name) const {
     return rooms;
 }
 
-
-
-
 int main() {
 
     Test_All();
@@ -137,9 +134,50 @@ void Test1() {
 
 }
 
+void Test4() {
+    BookingManager b;
+
+    ASSERT_EQUAL(b.Rooms("a"), 0);
+    ASSERT_EQUAL(b.Clients("a"), 0);
+
+    ASSERT_EQUAL(b.Rooms("b"), 0);
+    ASSERT_EQUAL(b.Clients("c"), 0);
+
+    b.Book(-100000, "a", 100000, 1000);
+    b.Book(-100000, "a", 100003, 1000);
+    b.Book(-100000, "b", 100002, 1000);
+    ASSERT_EQUAL(b.Rooms("a"), 2000);
+    ASSERT_EQUAL(b.Clients("a"), 2);
+
+    b.Book(-10000, "a", 100002, 1000);
+    ASSERT_EQUAL(b.Rooms("a"), 1000);
+    ASSERT_EQUAL(b.Clients("a"), 1);
+    ASSERT_EQUAL(b.Rooms("b"), 0);
+    ASSERT_EQUAL(b.Clients("b"), 0);
+}
+
+void Test2() {
+    BookingManager hm;
+
+    ASSERT_EQUAL(hm.Rooms("a"), 0);
+    ASSERT_EQUAL(hm.Clients("a"), 0);
+    hm.Book(-100000, "a", 100000, 1000);
+    hm.Book(-100000, "a", 100003, 1000);
+    hm.Book(-100000, "b", 100002, 1000);
+    ASSERT_EQUAL(hm.Rooms("a"), 2000);
+    ASSERT_EQUAL(hm.Clients("a"), 2);
+    hm.Book(-10000, "a", 100002, 1000);
+    ASSERT_EQUAL(hm.Rooms("a"), 1000);
+    ASSERT_EQUAL(hm.Clients("a"), 1);
+    ASSERT_EQUAL(hm.Rooms("b"), 0);
+    ASSERT_EQUAL(hm.Clients("b"), 0);
+}
+
 void Test_All() {
     TestRunner tr;
-    RUN_TEST(tr, Test0);
-    RUN_TEST(tr, Test1);
+    // RUN_TEST(tr, Test0);
+    // RUN_TEST(tr, Test1);
+    RUN_TEST(tr, Test4);
+    RUN_TEST(tr, Test2);
 
 }
