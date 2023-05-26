@@ -9,6 +9,13 @@
 #include "test_runner.h"
 #include "profile.h"
 
+#define MAX_CLIENT_ID 1'000'000'000
+#define MAX_ROOM_COUNT 1'000
+#define MAX_TIME 1'000'000'000'000'000'000
+#define MIN_TIME -MAX_TIME
+
+#define DAY_TIME_SIZE 86'400
+
 using namespace std;
 
 
@@ -38,11 +45,10 @@ public:
 };
 
 void BookingManager::Book(int64_t current_time, const string& hotel_name, int client_id, int room_count) {
-
-    int64_t day_start_time = current_time - 86'400;
+    int64_t day_start_time = current_time - DAY_TIME_SIZE;
 
     store.push_back({ current_time, hotel_name, client_id, room_count });
-    for (;store.front().booking_time <= day_start_time;store.pop_front()) {
+    for (; store.front().booking_time <= day_start_time; store.pop_front()) {
     }
 }
 
@@ -65,7 +71,7 @@ int BookingManager::Rooms(const string& hotel_name) const {
 
 int main() {
 
-    Test_All();
+    // Test_All();
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -102,23 +108,6 @@ int main() {
 }
 
 void Test0() {
-
-    BookingManager manager;
-    manager.Book(10, "FourSeasons", 1, 1);
-    manager.Book(10, "FourSeasons", 1, 1);
-    manager.Book(10, "FourSeasons", 1, 1);
-    manager.Book(10, "FourSeasons", 1, 1);
-
-    ASSERT_EQUAL(manager.Clients("FourSeasons"), 1);
-    ASSERT_EQUAL(manager.Rooms("FourSeasons"), 4);
-
-    manager.Book(86410, "FourSeasons", 1, 1);
-
-    ASSERT_EQUAL(manager.Clients("FourSeasons"), 1);
-    ASSERT_EQUAL(manager.Rooms("FourSeasons"), 1);
-}
-
-void Test1() {
     BookingManager manager;
     ASSERT_EQUAL(manager.Clients("Marriot"), 0);
     ASSERT_EQUAL(manager.Rooms("Marriot"), 0);
@@ -132,6 +121,54 @@ void Test1() {
     ASSERT_EQUAL(manager.Rooms("FourSeasons"), 1);
     ASSERT_EQUAL(manager.Rooms("Marriot"), 10);
 
+}
+
+void Test1() {
+
+    BookingManager manager;
+    manager.Book(10, "a", 1, 1);
+    manager.Book(10, "a", 1, 1);
+    manager.Book(10, "a", 1, 1);
+    manager.Book(10, "a", 1, 1);
+
+    ASSERT_EQUAL(manager.Clients("a"), 1);
+    ASSERT_EQUAL(manager.Rooms("a"), 4);
+
+    manager.Book(86410, "a", 1, 1);
+
+    ASSERT_EQUAL(manager.Clients("a"), 1);
+    ASSERT_EQUAL(manager.Rooms("a"), 1);
+}
+
+void Test2() {
+    BookingManager hm;
+
+    ASSERT_EQUAL(hm.Rooms("a"), 0);
+    ASSERT_EQUAL(hm.Clients("a"), 0);
+    hm.Book(-100000, "a", 100000, 1000);
+    hm.Book(-100000, "a", 100003, 1000);
+    hm.Book(-100000, "b", 100002, 1000);
+    ASSERT_EQUAL(hm.Rooms("a"), 2000);
+    ASSERT_EQUAL(hm.Clients("a"), 2);
+    hm.Book(-10000, "a", 100002, 1000);
+    ASSERT_EQUAL(hm.Rooms("a"), 1000);
+    ASSERT_EQUAL(hm.Clients("a"), 1);
+    ASSERT_EQUAL(hm.Rooms("b"), 0);
+    ASSERT_EQUAL(hm.Clients("b"), 0);
+}
+
+void Test3() {
+    BookingManager b;
+    ASSERT_EQUAL(b.Rooms("a"), 0);
+    ASSERT_EQUAL(b.Clients("a"), 0);
+
+    b.Book(10, "a", 1, 50);
+    b.Book(20, "a", 1, 50);
+    ASSERT_EQUAL(b.Rooms("a"), 100);
+    ASSERT_EQUAL(b.Clients("a"), 1);
+    b.Book(86410, "a", 1, 1);
+    ASSERT_EQUAL(b.Rooms("a"), 51);
+    ASSERT_EQUAL(b.Clients("a"), 1);
 }
 
 void Test4() {
@@ -156,28 +193,51 @@ void Test4() {
     ASSERT_EQUAL(b.Clients("b"), 0);
 }
 
-void Test2() {
-    BookingManager hm;
+void Test5() {
+    BookingManager mn;
+    ASSERT_EQUAL(mn.Rooms("a"), 0);
+    ASSERT_EQUAL(mn.Clients("a"), 0);
 
-    ASSERT_EQUAL(hm.Rooms("a"), 0);
-    ASSERT_EQUAL(hm.Clients("a"), 0);
-    hm.Book(-100000, "a", 100000, 1000);
-    hm.Book(-100000, "a", 100003, 1000);
-    hm.Book(-100000, "b", 100002, 1000);
-    ASSERT_EQUAL(hm.Rooms("a"), 2000);
-    ASSERT_EQUAL(hm.Clients("a"), 2);
-    hm.Book(-10000, "a", 100002, 1000);
-    ASSERT_EQUAL(hm.Rooms("a"), 1000);
-    ASSERT_EQUAL(hm.Clients("a"), 1);
-    ASSERT_EQUAL(hm.Rooms("b"), 0);
-    ASSERT_EQUAL(hm.Clients("b"), 0);
+    mn.Book(MIN_TIME, "a", MAX_CLIENT_ID, MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Rooms("a"), MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Clients("a"), 1);
+
+    mn.Book(MIN_TIME, "a", MAX_CLIENT_ID, MAX_ROOM_COUNT);
+    mn.Book(MIN_TIME, "b", MAX_CLIENT_ID, MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Rooms("a"), 2 * MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Rooms("b"), MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Clients("a"), 1);
+    ASSERT_EQUAL(mn.Clients("b"), 1);
+
+    mn.Book(MIN_TIME + DAY_TIME_SIZE - 1, "a", MAX_CLIENT_ID, MAX_ROOM_COUNT);
+    mn.Book(MIN_TIME + DAY_TIME_SIZE - 1, "b", MAX_CLIENT_ID, MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Rooms("a"), 3 * MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Rooms("b"), 2 * MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Clients("a"), 1);
+    ASSERT_EQUAL(mn.Clients("b"), 1);
+
+    mn.Book(MIN_TIME + DAY_TIME_SIZE, "a", MAX_CLIENT_ID, 1);
+    mn.Book(MIN_TIME + DAY_TIME_SIZE, "b", MAX_CLIENT_ID, 1);
+    ASSERT_EQUAL(mn.Rooms("a"), 1001);
+    ASSERT_EQUAL(mn.Rooms("b"), 1001);
+    ASSERT_EQUAL(mn.Clients("a"), 1);
+    ASSERT_EQUAL(mn.Clients("b"), 1);
+
+
+
+    mn.Book(MAX_TIME, "a", MAX_CLIENT_ID, MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Rooms("a"), MAX_ROOM_COUNT);
+    ASSERT_EQUAL(mn.Clients("a"), 1);
+
 }
 
 void Test_All() {
     TestRunner tr;
-    // RUN_TEST(tr, Test0);
-    // RUN_TEST(tr, Test1);
-    RUN_TEST(tr, Test4);
+    RUN_TEST(tr, Test0);
+    RUN_TEST(tr, Test1);
     RUN_TEST(tr, Test2);
+    RUN_TEST(tr, Test3);
+    RUN_TEST(tr, Test4);
+    RUN_TEST(tr, Test5);
 
 }
