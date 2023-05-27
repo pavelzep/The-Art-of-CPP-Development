@@ -92,7 +92,7 @@ int BookingManager::Rooms(const string& hotel_name) {
 
 int main() {
 
-    Test_All();
+    // Test_All();
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
