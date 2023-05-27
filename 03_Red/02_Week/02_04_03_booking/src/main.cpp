@@ -88,7 +88,7 @@ int main() {
         cin >> query_type;
 
         if (query_type == "BOOK") {
-            int time;
+            int64_t time;
             string hotel_name;
             int client_id;
             int room_count;
