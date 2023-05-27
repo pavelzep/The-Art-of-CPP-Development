@@ -15,11 +15,13 @@
 #define MIN_TIME -MAX_TIME
 
 #define DAY_TIME_SIZE 86'400
+#define MAX_REQUEST_NUMBERS 100'000
 
 using namespace std;
 
 
 void Test_All();
+
 
 struct Booking {
     int64_t booking_time;
@@ -27,10 +29,16 @@ struct Booking {
     int room_count;
 };
 
+struct Hotel {
+    int room_count = 0;
+    deque<Booking> bookings;
+    map <int, int > clients;
+};
+
 class BookingManager {
 private:
 
-    map<string, deque<Booking>> store;
+    map<string, Hotel> store;
     int64_t current_time;
     void CleanHotel(const string& hotel_name);
 
@@ -45,41 +53,41 @@ public:
 
 void BookingManager::CleanHotel(const string& hotel_name) {
     auto day_start_time = current_time - DAY_TIME_SIZE;
-    for (auto& hotel = store[hotel_name]; hotel.front().booking_time <= day_start_time; hotel.pop_front()) {}
+    auto& hotel = store[hotel_name];
+    for (; hotel.bookings.front().booking_time <= day_start_time && !hotel.bookings.empty(); hotel.bookings.pop_front()) {
+        hotel.room_count -= hotel.bookings.front().room_count;
+        hotel.clients[hotel.bookings.front().client_id] -= hotel.bookings.front().room_count;
+        if (hotel.clients[hotel.bookings.front().client_id] == 0) {
+            hotel.clients.erase(hotel.bookings.front().client_id);
+        }
+    }
 }
 
 void BookingManager::Book(int64_t current_time, const string& hotel_name, int client_id, int room_count) {
 
     auto& hotel = store[hotel_name];
-    hotel.push_back({ current_time, client_id, room_count });
-
+    hotel.bookings.push_back({ current_time, client_id, room_count });
+    hotel.room_count += room_count;
     this->current_time = current_time;
+    hotel.clients[client_id] += room_count;
 }
 
 int BookingManager::Clients(const string& hotel_name) {
 
     if (store.count(hotel_name) == 0) return 0;
-
+    if (store[hotel_name].bookings.size() == 0) return 0;
     CleanHotel(hotel_name);
-
-    set<int> clients;
-    for (const auto& item : store.at(hotel_name)) {
-        clients.insert(item.client_id);
-    }
-    return clients.size();
+    return store[hotel_name].clients.size();
 }
 
 int BookingManager::Rooms(const string& hotel_name) {
 
     if (store.count(hotel_name) == 0) return 0;
-
+    if (store[hotel_name].bookings.size() == 0) return 0;
     CleanHotel(hotel_name);
 
-    int rooms = 0;
-    for (const auto& item : store.at(hotel_name)) {
-        rooms += item.room_count;
-    }
-    return rooms;
+    return store[hotel_name].room_count;
+
 }
 
 int main() {
@@ -251,6 +259,15 @@ void Test6() {
     ASSERT_EQUAL(bm.Clients("a"), 0);
     ASSERT_EQUAL(bm.Rooms("a"), 0);
 }
+
+void Test7() {
+    LOG_DURATION("Test7");
+    BookingManager bm;
+    for (int q = 0; q < MAX_REQUEST_NUMBERS; ++q) {
+        bm.Book(q, "a", q, 1);
+    }
+
+}
 void Test_All() {
     TestRunner tr;
     RUN_TEST(tr, Test0);
@@ -260,5 +277,6 @@ void Test_All() {
     RUN_TEST(tr, Test4);
     RUN_TEST(tr, Test5);
     RUN_TEST(tr, Test6);
+    RUN_TEST(tr, Test7);
 
 }
