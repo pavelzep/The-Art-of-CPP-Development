@@ -21,26 +21,15 @@ using namespace std;
 
 void Test_All();
 
-
-// struct Booking {
-//     int64_t booking_time;
-//     string hotel_name;
-//     int client_id;
-//     int room_count;
-// };
-
 struct Booking {
     int64_t booking_time;
-    // string hotel_name;
     int client_id;
     int room_count;
 };
 
-
 class BookingManager {
 private:
 
-    //  deque<Booking> store;
     map<string, deque<Booking>> store;
     int64_t current_time;
     void CleanHotel(const string& hotel_name);
@@ -52,7 +41,6 @@ public:
     void Book(int64_t current_time, const string& hotel_name, int client_id, int room_count);
     int Clients(const string& hotel_name);
     int Rooms(const string& hotel_name);
-
 };
 
 void BookingManager::CleanHotel(const string& hotel_name) {
@@ -96,7 +84,7 @@ int BookingManager::Rooms(const string& hotel_name) {
 
 int main() {
 
-    // Test_All();
+    Test_All();
 
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -256,6 +244,13 @@ void Test5() {
 
 }
 
+void Test6() {
+    BookingManager bm;
+    bm.Book(10, "a", 1, 5);
+    bm.Book(86410, "b", 1, 5);
+    ASSERT_EQUAL(bm.Clients("a"), 0);
+    ASSERT_EQUAL(bm.Rooms("a"), 0);
+}
 void Test_All() {
     TestRunner tr;
     RUN_TEST(tr, Test0);
@@ -264,5 +259,6 @@ void Test_All() {
     RUN_TEST(tr, Test3);
     RUN_TEST(tr, Test4);
     RUN_TEST(tr, Test5);
+    RUN_TEST(tr, Test6);
 
 }
