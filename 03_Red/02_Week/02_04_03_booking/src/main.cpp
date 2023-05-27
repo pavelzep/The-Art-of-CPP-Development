@@ -22,49 +22,74 @@ using namespace std;
 void Test_All();
 
 
+// struct Booking {
+//     int64_t booking_time;
+//     string hotel_name;
+//     int client_id;
+//     int room_count;
+// };
+
 struct Booking {
     int64_t booking_time;
-    string hotel_name;
+    // string hotel_name;
     int client_id;
     int room_count;
 };
 
+
 class BookingManager {
 private:
 
-    deque<Booking> store;
-    // map<string, deque<Booking>> store_;
+    //  deque<Booking> store;
+    map<string, deque<Booking>> store;
+    int64_t current_time;
+    void CleanHotel(const string& hotel_name);
 
 public:
     BookingManager() {};
     ~BookingManager() {};
 
     void Book(int64_t current_time, const string& hotel_name, int client_id, int room_count);
-    int Clients(const string& hotel_name) const;
-    int Rooms(const string& hotel_name) const;
+    int Clients(const string& hotel_name);
+    int Rooms(const string& hotel_name);
+
 };
 
-void BookingManager::Book(int64_t current_time, const string& hotel_name, int client_id, int room_count) {
-    int64_t day_start_time = current_time - DAY_TIME_SIZE;
-
-    store.push_back({ current_time, hotel_name, client_id, room_count });
-    for (; store.front().booking_time <= day_start_time; store.pop_front()) {
-    }
+void BookingManager::CleanHotel(const string& hotel_name) {
+    auto day_start_time = current_time - DAY_TIME_SIZE;
+    for (auto& hotel = store[hotel_name]; hotel.front().booking_time <= day_start_time; hotel.pop_front()) {}
 }
 
-int BookingManager::Clients(const string& hotel_name) const {
+void BookingManager::Book(int64_t current_time, const string& hotel_name, int client_id, int room_count) {
+
+    auto& hotel = store[hotel_name];
+    hotel.push_back({ current_time, client_id, room_count });
+
+    this->current_time = current_time;
+}
+
+int BookingManager::Clients(const string& hotel_name) {
+
+    if (store.count(hotel_name) == 0) return 0;
+
+    CleanHotel(hotel_name);
 
     set<int> clients;
-    for (const auto& item : store) {
-        if (item.hotel_name == hotel_name) clients.insert(item.client_id);
+    for (const auto& item : store.at(hotel_name)) {
+        clients.insert(item.client_id);
     }
     return clients.size();
 }
 
-int BookingManager::Rooms(const string& hotel_name) const {
+int BookingManager::Rooms(const string& hotel_name) {
+
+    if (store.count(hotel_name) == 0) return 0;
+
+    CleanHotel(hotel_name);
+
     int rooms = 0;
-    for (const auto& item : store) {
-        if (item.hotel_name == hotel_name)  rooms += item.room_count;
+    for (const auto& item : store.at(hotel_name)) {
+        rooms += item.room_count;
     }
     return rooms;
 }
