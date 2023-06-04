@@ -6,17 +6,31 @@ using namespace std;
 
 template <typename T>
 void Swap(T* first, T* second) {
-    
+    T* temp = new T();
+    *temp = *first;
+    *first = *second;
+    *second = *temp;
+    delete temp;
 };
 
 template <typename T>
 void SortPointers(vector<T*>& pointers) {
-
+    sort(pointers.begin(), pointers.end(), [](T* l, T* r) {if (*l < *r)return 1; else return 0;});
 };
 
 template <typename T>
 void ReversedCopy(T* source, size_t count, T* destination) {
-
+    T* temp = new T[count];
+    for (size_t i = 0; i < count;++i) {
+        temp[i] = source[i];
+    }
+    for (size_t i = 0; i < count;++i) {
+        destination[count - i - 1] = temp[i];
+    }
+    // for (size_t i = 0; i < count;++i) {
+    //     destination[count - i - 1] = source[i];
+    // }
+    delete[] temp;
 };
 
 void TestSwap() {
