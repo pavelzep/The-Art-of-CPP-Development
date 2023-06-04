@@ -27,9 +27,6 @@ void ReversedCopy(T* source, size_t count, T* destination) {
     for (size_t i = 0; i < count;++i) {
         destination[count - i - 1] = temp[i];
     }
-    // for (size_t i = 0; i < count;++i) {
-    //     destination[count - i - 1] = source[i];
-    // }
     delete[] temp;
 };
 
