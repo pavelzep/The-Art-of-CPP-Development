@@ -15,40 +15,60 @@ public:
     T* begin();
     T* end();
 
+    const T* begin() const;
+    const T* end() const;
+
     size_t Size() const;
     size_t Capacity() const;
     void PushBack(const T& value);
 
 private:
     T* data = nullptr;
-    
+    T* end_ = nullptr;
+
+
 };
 
 template<typename T>
 inline SimpleVector<T>::SimpleVector() {
+
+
 }
 
 template<typename T>
 inline SimpleVector<T>::SimpleVector(size_t size) {
+    data = new T[size];
+    end_ = data + size;
 }
 
 template<typename T>
 inline SimpleVector<T>::~SimpleVector() {
+    delete[] data;
 }
 
 template<typename T>
 inline T& SimpleVector<T>::operator[](size_t index) {
-    // TODO: вставьте здесь оператор return
+    return *(data + index);
 }
 
 template<typename T>
 inline T* SimpleVector<T>::begin() {
-    return nullptr;
+    return data;
 }
 
 template<typename T>
 inline T* SimpleVector<T>::end() {
-    return nullptr;
+    return end_;
+}
+
+template<typename T>
+inline const T* SimpleVector<T>::begin() const {
+    return data;
+}
+
+template<typename T>
+inline const T* SimpleVector<T>::end() const {
+    return end_;
 }
 
 template<typename T>
