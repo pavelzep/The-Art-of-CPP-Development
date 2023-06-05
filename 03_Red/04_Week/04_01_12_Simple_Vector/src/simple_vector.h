@@ -20,8 +20,8 @@ public:
     void PushBack(const T& value);
 
 private:
-T* data
-    // Добавьте поля для хранения данных вектора
+    T* data = nullptr;
+    
 };
 
 template<typename T>
