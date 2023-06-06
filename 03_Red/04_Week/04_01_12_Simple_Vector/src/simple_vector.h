@@ -26,17 +26,18 @@ private:
     T* data = nullptr;
     T* end_ = nullptr;
 
+    size_t size = 0;
+    size_t capacity = 0;
+
 
 };
 
 template<typename T>
-inline SimpleVector<T>::SimpleVector() {
-
-
+inline SimpleVector<T>::SimpleVector():size(0), capacity(0) {
 }
 
 template<typename T>
-inline SimpleVector<T>::SimpleVector(size_t size) {
+inline SimpleVector<T>::SimpleVector(size_t size): SimpleVector() {
     data = new T[size];
     end_ = data + size;
 }
@@ -73,14 +74,16 @@ inline const T* SimpleVector<T>::end() const {
 
 template<typename T>
 inline size_t SimpleVector<T>::Size() const {
-    return size_t();
+    return size;
 }
 
 template<typename T>
 inline size_t SimpleVector<T>::Capacity() const {
-    return size_t();
+    return capacity;
 }
 
 template<typename T>
 inline void SimpleVector<T>::PushBack(const T& value) {
+     if(size==0)
+      
 }
