@@ -2,7 +2,6 @@
 
 #include <cstdlib>
 
-// Реализуйте шаблон SimpleVector
 template <typename T>
 class SimpleVector {
 public:
