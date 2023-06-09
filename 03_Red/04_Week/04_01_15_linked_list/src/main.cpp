@@ -110,6 +110,9 @@ int main() {
 
 template<typename T>
 LinkedList<T>::~LinkedList() {
+    while(head!=nullptr){
+        PopFront();
+    }
 }
 
 template<typename T>
@@ -130,8 +133,24 @@ void LinkedList<T>::InsertAfter(Node* node, const T& value) {
 
 template<typename T>
 void LinkedList<T>::RemoveAfter(Node* node) {
+    if (node == nullptr) {
+        PopFront();
+        return;
+    }
+
+
+
+    auto temp = node->next;
+    if(temp == nullptr){
+        return;
+    }
+    node->next = node->next->next;
+    delete temp;
 }
 
 template<typename T>
 void LinkedList<T>::PopFront() {
+    auto temp = head->next;
+    delete head;
+    head = temp;
 }
