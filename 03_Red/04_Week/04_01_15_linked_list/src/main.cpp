@@ -127,6 +127,7 @@ template<typename T>
 void LinkedList<T>::InsertAfter(Node* node, const T& value) {
     if (node == nullptr) {
         PushFront(value);
+        return;
     }
     auto new_node = new Node();
     new_node->next = node->next;
@@ -140,8 +141,6 @@ void LinkedList<T>::RemoveAfter(Node* node) {
         PopFront();
         return;
     }
-
-
 
     auto temp = node->next;
     if (temp == nullptr) {
