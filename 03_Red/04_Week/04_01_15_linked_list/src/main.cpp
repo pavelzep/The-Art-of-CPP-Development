@@ -117,9 +117,9 @@ LinkedList<T>::~LinkedList() {
 
 template<typename T>
 void LinkedList<T>::PushFront(const T& value) {
-    auto new_head = new Node();
-    new_head->next = head;
-    new_head->value = value;
+    auto new_head = new Node{ value,head };
+    // new_head->next = head;
+    // new_head->value = value;
     this->head = new_head;
 }
 
@@ -129,9 +129,9 @@ void LinkedList<T>::InsertAfter(Node* node, const T& value) {
         PushFront(value);
         return;
     }
-    auto new_node = new Node();
-    new_node->next = node->next;
-    new_node->value = value;
+    auto new_node = new Node{ value,node->next };
+    // new_node->next = node->next;
+    // new_node->value = value;
     node->next = new_node;
 }
 
