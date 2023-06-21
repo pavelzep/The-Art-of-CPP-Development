@@ -6,26 +6,32 @@ using namespace std;
 
 class Translator {
 public:
-  void Add(string_view source, string_view target);
-  string_view TranslateForward(string_view source) const;
-  string_view TranslateBackward(string_view target) const;
+    void Add(string_view source, string_view target) {
+
+    }
+    string_view TranslateForward(string_view source) const {
+        return string_view();
+    }
+    string_view TranslateBackward(string_view target) const {
+        return string_view();
+    }
 
 private:
-  // ???
+    
 };
 
 void TestSimple() {
-  Translator translator;
-  translator.Add(string("okno"), string("window"));
-  translator.Add(string("stol"), string("table"));
+    Translator translator;
+    translator.Add(string("okno"), string("window"));
+    translator.Add(string("stol"), string("table"));
 
-  ASSERT_EQUAL(translator.TranslateForward("okno"), "window");
-  ASSERT_EQUAL(translator.TranslateBackward("table"), "stol");
-  ASSERT_EQUAL(translator.TranslateBackward("stol"), "");
+    ASSERT_EQUAL(translator.TranslateForward("okno"), "window");
+    ASSERT_EQUAL(translator.TranslateBackward("table"), "stol");
+    ASSERT_EQUAL(translator.TranslateBackward("stol"), "");
 }
 
 int main() {
-  TestRunner tr;
-  RUN_TEST(tr, TestSimple);
-  return 0;
+    TestRunner tr;
+    RUN_TEST(tr, TestSimple);
+    return 0;
 }
