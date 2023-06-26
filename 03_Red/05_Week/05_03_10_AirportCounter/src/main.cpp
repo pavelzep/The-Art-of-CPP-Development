@@ -56,18 +56,24 @@ public:
     }
 
     using Item = pair<TAirport, size_t>;
-    using Items = map<TAirport, size_t>;
+    using Items = array<pair<TAirport, size_t>, static_cast<size_t>(TAirport::Last_)>;
 
     // получить некоторый объект, по которому можно проитерироваться,
     // получив набор объектов типа Item - пар (аэропорт, количество),
     // упорядоченных по аэропорту
     Items GetItems() const {
-        return store;
-        // for (const auto& item : store) {
+        Items result;
 
+        // size_t size = static_cast<size_t>(TAirport::Last_);
+        // for (size_t i = 0; i < size; ++i) {
+        //     result[static_cast<size_t>(Airport(i))] = store[TAirport(i)];
         // }
 
-        // return result;
+        for (const auto item : store) {
+            result[] = item;
+        }
+
+        return result;
     }
 
 private:
