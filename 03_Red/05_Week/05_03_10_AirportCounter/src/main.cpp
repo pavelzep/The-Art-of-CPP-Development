@@ -15,44 +15,41 @@ class AirportCounter {
 public:
     // конструктор по умолчанию: список элементов пока пуст
     AirportCounter() {
-
+        size_t size = static_cast<size_t>(TAirport::Last_);
+        for (size_t i = 0; i < size; ++i) {
+            store[i] = make_pair(TAirport(i), 0);
+        }
     }
 
     // конструктор от диапазона элементов типа TAirport
     template <typename TIterator>
-    AirportCounter(TIterator begin, TIterator end) {
+    AirportCounter(TIterator begin, TIterator end) : AirportCounter() {
 
-        size_t size = static_cast<size_t>(TAirport::Last_);
-        for (size_t i = 0; i < size; ++i) {
-            store[TAirport(i)] = 0;
-        }
         auto it = begin;
         while (it != end) {
-            store[*it] += 1;
+            store[static_cast<size_t>(*it)].second += 1;
             it = next(it);
         }
     }
 
     // получить количество элементов, равных данному
     size_t Get(TAirport airport) const {
-        if (store.count(airport)) {
-            return store.at(airport);
-        } else return 0;
+        return store[static_cast<size_t>(airport)].second;
     }
 
     // добавить данный элемент
     void Insert(TAirport airport) {
-        store[airport] += 1;
+        store[static_cast<size_t>(airport)].second += 1;
     }
 
     // удалить одно вхождение данного элемента
     void EraseOne(TAirport airport) {
-        store[airport] -= 1;
+        store[static_cast<size_t>(airport)].second -= 1;
     }
 
     // удалить все вхождения данного элемента
     void EraseAll(TAirport airport) {
-        store.erase(airport);
+        store[static_cast<size_t>(airport)].second = 0;
     }
 
     using Item = pair<TAirport, size_t>;
@@ -62,22 +59,11 @@ public:
     // получив набор объектов типа Item - пар (аэропорт, количество),
     // упорядоченных по аэропорту
     Items GetItems() const {
-        Items result;
-
-        // size_t size = static_cast<size_t>(TAirport::Last_);
-        // for (size_t i = 0; i < size; ++i) {
-        //     result[static_cast<size_t>(Airport(i))] = store[TAirport(i)];
-        // }
-
-        for (const auto item : store) {
-            result[] = item;
-        }
-
-        return result;
+        return store;
     }
 
 private:
-    map<TAirport, size_t> store;
+    Items store;
 };
 
 void TestMoscow() {
@@ -249,5 +235,22 @@ int main() {
     RUN_TEST(tr, TestManyConstructions);
     RUN_TEST(tr, TestManyGetItems);
     RUN_TEST(tr, TestMostPopularAirport);
+
+    // {
+    //     LOG_DURATION("TestMoscow");
+    //     RUN_TEST(tr, TestMoscow);
+    // }
+    // {
+    //     LOG_DURATION("TestManyConstructions");
+    //     RUN_TEST(tr, TestManyConstructions);
+    // }
+    // {
+    //     LOG_DURATION("TestManyGetItems");
+    //     RUN_TEST(tr, TestManyGetItems);
+    // }
+    // {
+    //     LOG_DURATION("TestMostPopularAirport");
+    //     RUN_TEST(tr, TestMostPopularAirport);
+    // }
     return 0;
 }
