@@ -23,13 +23,14 @@ public:
 
     void Insert(char token) {
         pos = data.insert(pos, token);
-
+        pos = next(pos);
     }
 
     void Cut(size_t tokens = 1) {
         buff.clear();
         auto from = pos;
         advance(pos, tokens);
+        auto it = --pos;
         buff.insert(buff.begin(), from, pos);
         data.erase(from, pos);
     }
@@ -44,6 +45,7 @@ public:
 
     void Paste() {
         data.insert(pos, buff.begin(), buff.end());
+        advance(pos,buff.size()); 
     }
 
     string GetText() const {
