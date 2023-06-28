@@ -9,61 +9,55 @@
 
 using namespace std;
 
-// TAirport should be enum with sequential items and last item TAirport::Last_
 template <typename TAirport>
 class AirportCounter {
 public:
-    // конструктор по умолчанию: список элементов пока пуст
     AirportCounter() {
-        size_t size = static_cast<size_t>(TAirport::Last_);
-        for (size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < SIZE; ++i) {
             store[i] = make_pair(TAirport(i), 0);
         }
     }
 
-    // конструктор от диапазона элементов типа TAirport
     template <typename TIterator>
     AirportCounter(TIterator begin, TIterator end) : AirportCounter() {
-
         auto it = begin;
         while (it != end) {
-            store[static_cast<size_t>(*it)].second += 1;
+            GetItem(*it).second += 1;
             it = next(it);
         }
     }
 
-    // получить количество элементов, равных данному
     size_t Get(TAirport airport) const {
         return store[static_cast<size_t>(airport)].second;
     }
 
-    // добавить данный элемент
     void Insert(TAirport airport) {
-        store[static_cast<size_t>(airport)].second += 1;
+        GetItem(airport).second += 1;
     }
 
-    // удалить одно вхождение данного элемента
     void EraseOne(TAirport airport) {
-        store[static_cast<size_t>(airport)].second -= 1;
+        GetItem(airport).second -= 1;
     }
 
-    // удалить все вхождения данного элемента
     void EraseAll(TAirport airport) {
-        store[static_cast<size_t>(airport)].second = 0;
+        GetItem(airport).second = 0;
     }
+
+    static const size_t SIZE = static_cast<size_t>(TAirport::Last_);
 
     using Item = pair<TAirport, size_t>;
-    using Items = array<pair<TAirport, size_t>, static_cast<size_t>(TAirport::Last_)>;
+    using Items = array<Item, SIZE>;
 
-    // получить некоторый объект, по которому можно проитерироваться,
-    // получив набор объектов типа Item - пар (аэропорт, количество),
-    // упорядоченных по аэропорту
     Items GetItems() const {
         return store;
     }
 
 private:
     Items store;
+    Item& GetItem(TAirport airport) {
+        return store[static_cast<size_t>(airport)];
+    }
+
 };
 
 void TestMoscow() {
