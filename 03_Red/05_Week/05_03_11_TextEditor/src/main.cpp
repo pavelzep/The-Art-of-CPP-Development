@@ -93,12 +93,46 @@ void TestEmptyBuffer() {
     ASSERT_EQUAL(editor.GetText(), "example");
 }
 
+void TestCopy()
+{
+    Editor editor;
+    TypeText(editor, "1234567");
+    editor.Left();
+    editor.Left();
+    editor.Copy(2);
+    editor.Right();
+    editor.Right();
+    editor.Right();
+    editor.Right();
+    editor.Right();
+    editor.Paste();
+    editor.Paste();
+    ASSERT_EQUAL(editor.GetText(), "12345676767");
+}
+
+void Test()
+{
+    Editor editor;
+    TypeText(editor, "1234567");
+    editor.Left();
+    editor.Left();
+    editor.Cut(1);
+    editor.Paste();
+    editor.Paste();
+    editor.Paste();
+    ASSERT_EQUAL(editor.GetText(), "123456667");
+}
+
 int main() {
     TestRunner tr;
     RUN_TEST(tr, TestEditing);
     RUN_TEST(tr, TestReverse);
     RUN_TEST(tr, TestNoText);
     RUN_TEST(tr, TestEmptyBuffer);
+    RUN_TEST(tr, TestCopy);
+    RUN_TEST(tr, Test);
+
+
     return 0;
 }
 
