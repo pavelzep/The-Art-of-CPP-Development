@@ -51,11 +51,9 @@ public:
     string GetText() const {
         return string(data.begin(), data.end());
     }
+    
 private:
-
     deque<char> data;
     deque<char>::iterator pos;
     deque<char> buff;
-
-
 };
