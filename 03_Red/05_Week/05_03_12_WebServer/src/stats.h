@@ -4,24 +4,33 @@
 
 #include <string_view>
 #include <map>
+#include <vector>
+
 using namespace std;
+
+enum class METHODS {
+    GET,
+    PUT,
+    POST,
+    DELETE,
+    UNKNOWN,
+    Last_
+};
 
 class Stats {
 public:
-    void AddMethod(string_view method){
 
-    }
-    void AddUri(string_view uri){
+    using stats_ = map<string_view, int>;
 
-    }
-    const map<string_view, int>& GetMethodStats() const{
+    void AddMethod(string_view method);
+    void AddUri(string_view uri);
 
-    }
-    const map<string_view, int>& GetUriStats() const{
+    const  stats_& GetMethodStats() const;
+    const  stats_& GetUriStats() const;
 
-    }
+private:
+    stats_ methods;
+    stats_ uris;
 };
 
-HttpRequest ParseRequest(string_view line){
-
-}
+HttpRequest ParseRequest(string_view line);
