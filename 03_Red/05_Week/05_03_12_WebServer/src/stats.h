@@ -1,36 +1,31 @@
 #pragma once
 
 #include "http_request.h"
-
 #include <string_view>
 #include <map>
 #include <vector>
+#include <string>
 
 using namespace std;
 
-enum class METHODS {
-    GET,
-    PUT,
-    POST,
-    DELETE,
-    UNKNOWN,
-    Last_
-};
-
 class Stats {
 public:
-
     using stats_ = map<string_view, int>;
+    Stats();
 
     void AddMethod(string_view method);
     void AddUri(string_view uri);
 
-    const  stats_& GetMethodStats() const;
-    const  stats_& GetUriStats() const;
+    const Stats::stats_& GetMethodStats() const;
+    const Stats::stats_& GetUriStats() const;
 
 private:
-    stats_ methods;
-    stats_ uris;
+    Stats::stats_ methods;
+    Stats::stats_ uris;
+
+    vector<string> methodsVector{ "GET", "PUT", "POST", "DELETE", "UNKNOWN" };
+    vector<string> urisVector{ "/", "/order", "/product", "/basket", "/help","unknown" };
+
 };
 
 HttpRequest ParseRequest(string_view line);
