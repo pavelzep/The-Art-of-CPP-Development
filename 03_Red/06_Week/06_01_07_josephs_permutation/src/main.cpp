@@ -5,28 +5,57 @@
 #include <numeric>
 #include <vector>
 #include <utility>
+#include <list>
 
 using namespace std;
 
+
 template <typename RandomIt>
 void MakeJosephusPermutation(RandomIt first, RandomIt last, uint32_t step_size) {
-    vector<typename RandomIt::value_type> pool;
+    list <typename RandomIt::value_type> pool;
+
     auto it = first;
     while (it != last) {
         pool.push_back(move(*it));
         ++it;
     }
 
+
     size_t cur_pos = 0;
     while (!pool.empty()) {
-        *(first++) = move(pool[cur_pos]);
-        pool.erase(pool.begin() + cur_pos);
+
+        auto it = pool.begin();
+        advance(it, cur_pos);
+        *(first++) = move(*it);
+
+        pool.erase(it);
         if (pool.empty()) {
             break;
         }
         cur_pos = (cur_pos + step_size - 1) % pool.size();
     }
 }
+
+// template <typename RandomIt>
+// void MakeJosephusPermutation(RandomIt first, RandomIt last, uint32_t step_size) {
+//     vector<typename RandomIt::value_type> pool;
+
+//     auto it = first;
+//     while (it != last) {
+//         pool.push_back(move(*it));
+//         ++it;
+//     }
+
+//     size_t cur_pos = 0;
+//     while (!pool.empty()) {
+//         *(first++) = move(pool[cur_pos]);
+//         pool.erase(pool.begin() + cur_pos);
+//         if (pool.empty()) {
+//             break;
+//         }
+//         cur_pos = (cur_pos + step_size - 1) % pool.size();
+//     }
+// }
 
 vector<int> MakeTestVector() {
     vector<int> numbers(10);
@@ -96,5 +125,9 @@ int main() {
     TestRunner tr;
     RUN_TEST(tr, TestIntVector);
     RUN_TEST(tr, TestAvoidsCopying);
+
+    {LOG_DURATION("100000/100")
+
+    }
     return 0;
 }
