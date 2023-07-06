@@ -14,27 +14,47 @@ using namespace std;
 template <typename RandomIt>
 void MakeJosephusPermutation(RandomIt first, RandomIt last, uint32_t step_size) {
     list <typename RandomIt::value_type> pool;
-
-    auto it = first;
-    while (it != last) {
-        pool.push_back(move(*it));
-        ++it;
+    {
+        auto it = first;
+        while (it != last) {
+            pool.push_back(move(*it));
+            ++it;
+        }
     }
-
 
     size_t cur_pos = 0;
-    while (!pool.empty()) {
-
-        auto it = pool.begin();
-        advance(it, cur_pos);
-        *(first++) = move(*it);
-
-        pool.erase(it);
-        if (pool.empty()) {
-            break;
+    auto it = pool.begin();
+    {
+        auto my_advance = [](list <typename RandomIt::value_type>& lst, auto& it, uint32_t step_size) -> auto {
+            auto last_it = prev(end(lst));
+            while (step_size) {
+                if (it != last_it) it = next(it);
+                else it = begin(lst);
+                --step_size;
+            }
+            };
+        auto for_del = it;
+        while (!pool.empty()) {
+            for_del = it;
+            *(first++) = move(*it);
+            my_advance(pool, it, step_size);
+            if(pool.empty())return;
+            pool.erase(for_del);
         }
-        cur_pos = (cur_pos + step_size - 1) % pool.size();
     }
+
+    // while (!pool.empty()) {
+
+    //     auto it = pool.begin();
+    //     advance(it, cur_pos);
+    //     *(first++) = move(*it);
+
+    //     pool.erase(it);
+    //     if (pool.empty()) {
+    //         break;
+    //     }
+    //     cur_pos = (cur_pos + step_size - 1) % pool.size();
+    // }
 }
 
 // template <typename RandomIt>
