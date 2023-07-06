@@ -1,4 +1,5 @@
 #include "test_runner.h"
+#include "profile.h"
 
 #include <cstdint>
 #include <iterator>
@@ -63,6 +64,12 @@ vector<int> MakeTestVector() {
     return numbers;
 }
 
+vector<int> MakeIntVector_(size_t size) {
+    vector<int> numbers(size);
+    iota(begin(numbers), end(numbers), 0);
+    return numbers;
+}
+
 void TestIntVector() {
     const vector<int> numbers = MakeTestVector();
     {
@@ -121,13 +128,28 @@ void TestAvoidsCopying() {
     ASSERT_EQUAL(numbers, expected);
 }
 
+void TestBigVector1() {
+    auto vect = MakeIntVector_(100000);
+    MakeJosephusPermutation(begin(vect), end(vect), 1);
+}
+
+void TestBigVector2() {
+    auto vect = MakeIntVector_(100000);
+    MakeJosephusPermutation(begin(vect), end(vect), 100);
+}
+
 int main() {
     TestRunner tr;
     RUN_TEST(tr, TestIntVector);
     RUN_TEST(tr, TestAvoidsCopying);
+    {
+        LOG_DURATION("100000/1");
+        RUN_TEST(tr, TestBigVector1);
+    }
 
-    {LOG_DURATION("100000/100")
-
+    {
+        LOG_DURATION("100000/100");
+        RUN_TEST(tr, TestBigVector2);
     }
     return 0;
 }
