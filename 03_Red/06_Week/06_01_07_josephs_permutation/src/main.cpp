@@ -38,17 +38,19 @@ void MakeJosephusPermutation(RandomIt first, RandomIt last, uint32_t step_size) 
             for_del = it;
             *(first++) = move(*it);
             my_advance(pool, it, step_size);
-            if(pool.empty())return;
+            if (pool.empty())return;
             pool.erase(for_del);
         }
     }
 
-    // while (!pool.empty()) {
 
+
+
+
+    // while (!pool.empty()) {
     //     auto it = pool.begin();
     //     advance(it, cur_pos);
     //     *(first++) = move(*it);
-
     //     pool.erase(it);
     //     if (pool.empty()) {
     //         break;
@@ -60,13 +62,11 @@ void MakeJosephusPermutation(RandomIt first, RandomIt last, uint32_t step_size) 
 // template <typename RandomIt>
 // void MakeJosephusPermutation(RandomIt first, RandomIt last, uint32_t step_size) {
 //     vector<typename RandomIt::value_type> pool;
-
 //     auto it = first;
 //     while (it != last) {
 //         pool.push_back(move(*it));
 //         ++it;
 //     }
-
 //     size_t cur_pos = 0;
 //     while (!pool.empty()) {
 //         *(first++) = move(pool[cur_pos]);
@@ -157,9 +157,22 @@ void TestBigVector2() {
     auto vect = MakeIntVector_(100000);
     MakeJosephusPermutation(begin(vect), end(vect), 100);
 }
+void ThreeTest() {
+    auto vect = MakeIntVector_(3);
+    MakeJosephusPermutation(begin(vect), end(vect), 3);
+}
+
+void TenTest() {
+    auto vect = MakeIntVector_(10);
+    MakeJosephusPermutation(begin(vect), end(vect), 1);
+}
 
 int main() {
     TestRunner tr;
+    RUN_TEST(tr, TenTest);
+
+    RUN_TEST(tr, ThreeTest);
+
     RUN_TEST(tr, TestIntVector);
     RUN_TEST(tr, TestAvoidsCopying);
     {
