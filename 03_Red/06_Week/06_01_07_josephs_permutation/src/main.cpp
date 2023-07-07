@@ -37,9 +37,10 @@ void MakeJosephusPermutation(RandomIt first, RandomIt last, uint32_t step_size) 
         while (!pool.empty()) {
             for_del = it;
             *(first++) = move(*it);
-            my_advance(pool, it, step_size);
-            if (pool.empty())return;
+            my_advance(pool, it, 1);
             pool.erase(for_del);
+            if (pool.empty()) return;
+            my_advance(pool, it, step_size - 1);
         }
     }
 
@@ -148,41 +149,47 @@ void TestAvoidsCopying() {
     ASSERT_EQUAL(numbers, expected);
 }
 
-void TestBigVector1() {
+
+void Test_10000_1() {
     auto vect = MakeIntVector_(100000);
     MakeJosephusPermutation(begin(vect), end(vect), 1);
 }
 
-void TestBigVector2() {
+void Test_10000_100() {
     auto vect = MakeIntVector_(100000);
     MakeJosephusPermutation(begin(vect), end(vect), 100);
 }
-void ThreeTest() {
+void Test_3_3() {
     auto vect = MakeIntVector_(3);
     MakeJosephusPermutation(begin(vect), end(vect), 3);
 }
 
-void TenTest() {
+void Test_10_1() {
     auto vect = MakeIntVector_(10);
     MakeJosephusPermutation(begin(vect), end(vect), 1);
 }
 
+void Test_1_100000() {
+    auto vect = MakeIntVector_(1);
+    MakeJosephusPermutation(begin(vect), end(vect), 100000);
+}
+
 int main() {
     TestRunner tr;
-    RUN_TEST(tr, TenTest);
-
-    RUN_TEST(tr, ThreeTest);
 
     RUN_TEST(tr, TestIntVector);
     RUN_TEST(tr, TestAvoidsCopying);
-    {
-        LOG_DURATION("100000/1");
-        RUN_TEST(tr, TestBigVector1);
-    }
 
+    RUN_TEST(tr, Test_10_1);
+    RUN_TEST(tr, Test_3_3);
+    RUN_TEST(tr, Test_1_100000);
     {
-        LOG_DURATION("100000/100");
-        RUN_TEST(tr, TestBigVector2);
+        LOG_DURATION("Test_10000_1");
+        RUN_TEST(tr, Test_10000_1);
+    }
+    {
+        LOG_DURATION("Test_10000_100");
+        RUN_TEST(tr, Test_10000_100);
     }
     return 0;
 }
