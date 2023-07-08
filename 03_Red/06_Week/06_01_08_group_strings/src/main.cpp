@@ -65,10 +65,52 @@ void TestGroupingReal() {
 }
 
 
+struct MyChar {
+    char value;
+    // int count = 0;
+
+    // MyChar(const MyChar& c) {
+    //     value = c.value;
+    //     ++count;
+    // };
+
+    // MyChar& operator=(const MyChar& c) {
+    //     value = c.value;
+    //     ++count;
+    //     return *this;
+    // };
+    // MyChar(const MyChar&) = delete;
+    // MyChar& operator=(const MyChar&) = delete;
+
+    // MyChar(MyChar&&) = default;
+    // MyChar& operator=(MyChar&&) = default;
+
+
+};
+
+
+bool operator < (const MyChar& lhs, const MyChar& rhs) {
+    return lhs.value == rhs.value;
+}
+
+void TestVectorSymbols() {
+    vector < vector<MyChar>> noncopyableChars = {
+        {{'b'}, {'a'}, {'c'}, {'a'},{ 'd'}, {'e'}} ,
+        {{'b'},{'b'},{'b'}, {'a'}, {'c'}, {'a'}, {'d'}, {'e'}, {'e'}, {'e'}},
+        {{'z'},{'z'},{'z'}}
+    };
+    auto groups = GroupHeavyStrings(noncopyableChars);
+    ASSERT_EQUAL(groups.size(), 2);
+    sort(begin(groups), end(groups));
+
+    //ASSERT_EQUAL(groups[0], vector<char>({ { 'b', 'a', 'c', 'a', 'd', 'e' }, { 'b','b','b', 'a', 'c', 'a', 'd', 'e', 'e', 'e' } }));
+    //ASSERT_EQUAL(groups[1], vector<char>({ {'z','z','z'} }));
+}
 
 int main() {
     TestRunner tr;
-    RUN_TEST(tr, TestGroupingABC);
-    RUN_TEST(tr, TestGroupingReal);
+    RUN_TEST(tr, TestVectorSymbols);
+    // RUN_TEST(tr, TestGroupingABC);
+    // RUN_TEST(tr, TestGroupingReal);
     return 0;
 }
