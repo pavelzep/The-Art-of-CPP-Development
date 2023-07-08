@@ -25,15 +25,15 @@ using Char = typename String::value_type;
 
 template <typename String>
 vector<Group<String>> GroupHeavyStrings(vector<String> strings) {
+
     // Напишите реализацию функции,
     // использовав не более 1 копирования каждого символа
 
-    set<typename String::value_type> key;
-
     map< set <Char<String>>, Group<String>> mapStrings;
     for (const String& item : strings) {
-        set<Char<String>> key(make_move_iterator(begin(item)), make_move_iterator(end(item)));
-        mapStrings[move(key)].push_back(move(item));
+
+        mapStrings[set<Char<String>>((begin(item)), (end(item)))].push_back(move(item));
+
     }
 
     vector<Group<String>> result;
@@ -43,7 +43,6 @@ vector<Group<String>> GroupHeavyStrings(vector<String> strings) {
 
     return result;
 }
-
 
 void TestGroupingABC() {
     vector<string> strings = { "caab", "abc", "cccc", "bacc", "c" };
@@ -64,6 +63,8 @@ void TestGroupingReal() {
     ASSERT_EQUAL(groups[2], vector<string>({ "port" }));
     ASSERT_EQUAL(groups[3], vector<string>({ "top", "pot" }));
 }
+
+
 
 int main() {
     TestRunner tr;
