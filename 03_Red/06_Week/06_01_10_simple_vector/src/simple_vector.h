@@ -28,32 +28,31 @@ public:
 
 private:
     T* data = nullptr;
-    T* end_ = nullptr;
 
-    size_t size_ = 0;
-    size_t capacity_ = 0;
+
+    size_t size = 0;
+    size_t capacity = 0;
 
     void reserve(size_t new_cap);
 };
 
 template<typename T>
-inline SimpleVector<T>::SimpleVector() :size_(0), capacity_(0) {
+inline SimpleVector<T>::SimpleVector() :size(0), capacity(0) {
 }
 
 template<typename T>
 inline SimpleVector<T>::SimpleVector(size_t size) : SimpleVector() {
     data = new T[size];
-    end_ = data + size;
-    size_ = size;
-    capacity_ = size;
+    size = size;
+    capacity = size;
 }
 
 template<typename T>
 inline SimpleVector<T>::SimpleVector(const SimpleVector& other) :
-    data(new T[other.capacity_]),
-    size_(other.size_),
-    capacity_(other.capacity_) {
-    copy(other.begin().other.end(), begin());
+    data(new T[other.capacity]),
+    size(other.size),
+    capacity(other.capacity) {
+    copy(other.begin(), other.end(), begin());
 }
 
 template<typename T>
@@ -69,13 +68,13 @@ inline T& SimpleVector<T>::operator[](size_t index) {
 template<typename T>
 inline void SimpleVector<T>::operator=(const SimpleVector& other) {
     delete[] data;
-    data = new T[other.capacity_];
-    size_ = other.size_;
-    capacity_ = other.capacity_;
-    end_ = data + size_;
-    for (size_t i = 0; i < capacity_; i++) {
-        data[i] = other.data[i];
-    }
+    data = new T[other.capacity];
+    size = other.size;
+    capacity = other.capacity;
+    copy(other.begin(), other.end(), begin());
+    // for (size_t i = 0; i < capacity; i++) {
+    //     data[i] = other.data[i];
+    // }
 }
 
 template<typename T>
@@ -85,7 +84,7 @@ inline T* SimpleVector<T>::begin() {
 
 template<typename T>
 inline T* SimpleVector<T>::end() {
-    return end_;
+    return data + size;
 }
 
 template<typename T>
@@ -95,17 +94,17 @@ inline const T* SimpleVector<T>::begin() const {
 
 template<typename T>
 inline const T* SimpleVector<T>::end() const {
-    return end_;
+    return data + size;
 }
 
 template<typename T>
 inline size_t SimpleVector<T>::Size() const {
-    return size_;
+    return size;
 }
 
 template<typename T>
 inline size_t SimpleVector<T>::Capacity() const {
-    return capacity_;
+    return capacity;
 }
 
 template<typename T>
@@ -114,25 +113,24 @@ inline void SimpleVector<T>::PushBack(const T& value) {
         reserve(1);
     }
     if (Size() == Capacity()) {
-        reserve(capacity_ * 2);
+        reserve(capacity * 2);
     }
-    data[size_] = value;
-    size_++;
-    end_ = data + size_;
+    data[size] = value;
+    size++;
 }
 
 template<typename T>
 inline void SimpleVector<T>::reserve(size_t new_cap) {
-    if (new_cap <= capacity_) return;
+    if (new_cap <= capacity) return;
     T* new_data = new T[new_cap];
 
-    for (size_t i = 0; i < size_; ++i) {
+    for (size_t i = 0; i < size; ++i) {
         new_data[i] = data[i];
     }
 
     delete[] data;
     data = new_data;
-    capacity_ = new_cap;
+    capacity = new_cap;
 }
 
 template <typename T>
