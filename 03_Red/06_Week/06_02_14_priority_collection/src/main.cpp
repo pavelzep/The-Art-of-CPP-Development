@@ -6,13 +6,16 @@
 #include <set>
 #include <utility>
 #include <vector>
+#include <map>
 
 using namespace std;
 
 template <typename T>
 class PriorityCollection {
 public:
-    using Id = /* тип, используемый для идентификаторов */;
+    
+    using Id = vector<T>::iterator/* тип, используемый для идентификаторов */;
+    using Prtiority = int;
 
     // Добавить объект с нулевым приоритетом
     // с помощью перемещения и вернуть его идентификатор
@@ -36,13 +39,16 @@ public:
     void Promote(Id id);
 
     // Получить объект с максимальным приоритетом и его приоритет
-    pair<const T&, int> GetMax() const;
+    pair<const T&, Prtiority> GetMax() const;
 
     // Аналогично GetMax, но удаляет элемент из контейнера
-    pair<T, int> PopMax();
+    pair<T, Prtiority> PopMax();
 
 private:
     // Приватные поля и методы
+
+    map<Id, pair<T, Prtiority>> id_to_object;
+    map<Prtiority, vector<Id>> prtiority_to_ids;
 
 };
 
