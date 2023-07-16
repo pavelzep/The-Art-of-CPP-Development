@@ -15,7 +15,11 @@ using namespace std;
 template <typename T>
 class PriorityCollection {
 public:
-    using Id = size_t;//typename set<T>::iterator; /* тип, используемый для идентификаторов */
+    // тип, используемый для идентификаторов 
+    using Id = size_t;
+
+    using It = typename set<T>::iterator;
+    // тип, используемый для приоритера 
     using Priority = int;
 
     // Добавить объект с нулевым приоритетом
@@ -48,6 +52,9 @@ public:
 private:
     // Приватные поля и методы
 
+    set<T> objects;
+    vector<It> iterators;
+    map<Priority, vector<Id>> priority_to_iterators;
 
 };
 
@@ -128,5 +135,5 @@ pair<T, typename PriorityCollection<T>::Priority> PriorityCollection<T>::PopMax(
 template<typename T>
 template<typename ObjInputIt, typename IdOutputIt>
 void PriorityCollection<T>::Add(ObjInputIt range_begin, ObjInputIt range_end, IdOutputIt ids_begin) {
-    
+
 }
