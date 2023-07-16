@@ -15,8 +15,7 @@ using namespace std;
 template <typename T>
 class PriorityCollection {
 public:
-
-    using Id = typename vector<T>::iterator; /* тип, используемый для идентификаторов */
+    using Id = size_t;//typename set<T>::iterator; /* тип, используемый для идентификаторов */
     using Priority = int;
 
     // Добавить объект с нулевым приоритетом
@@ -49,12 +48,7 @@ public:
 private:
     // Приватные поля и методы
 
-    // set<pair<Id, Priority>> id_to_priority;
-    vector<T> objects;
 
-    // map<Id, pair<T, Priority>> id_to_object;
-    map<Priority, set<Id>> prtiority_to_ids;
-    map<Id, Priority> id_to_priority;
 };
 
 
@@ -103,30 +97,23 @@ int main() {
 
 template<typename T>
 typename PriorityCollection<T>::Id PriorityCollection<T>::Add(T object) {
-    objects.push_back(move(object));
-    auto id = prev(objects.end());
-    prtiority_to_ids[MIN_PRIORITY].insert(id);
-    id_to_priority[id] = MIN_PRIORITY;
-    return id;
+    return Id();
 }
 
 template<typename T>
 bool PriorityCollection<T>::IsValid(Id id) const {
-    return id_to_priority.count(id) ? true : false;
+    return false;
 }
 
 template<typename T>
 const T& PriorityCollection<T>::Get(Id id) const {
-    return *id;
+
 }
 
 template<typename T>
 void PriorityCollection<T>::Promote(Id id) {
-    auto priority = id_to_priority[id];
-    prtiority_to_ids[priority].erase(id);
-    prtiority_to_ids[++priority].insert(id);
-}
 
+}
 template<typename T>
 pair<const T&, typename PriorityCollection<T>::Priority> PriorityCollection<T>::GetMax() const {
     return pair<const T&, Priority>();
@@ -135,16 +122,11 @@ pair<const T&, typename PriorityCollection<T>::Priority> PriorityCollection<T>::
 template<typename T>
 pair<T, typename PriorityCollection<T>::Priority> PriorityCollection<T>::PopMax() {
 
-
-    auto priority = prtiority_to_ids.rbegin()->first;
-    auto id = *prtiority_to_ids.rbegin()->second.rbegin();
-
-    cout << "      : " << *id << ' ' << priority << endl;
-    return { move(*id), priority };
-    // return pair<T, Priority>();
+    return pair<T, Priority>();
 }
 
 template<typename T>
 template<typename ObjInputIt, typename IdOutputIt>
 void PriorityCollection<T>::Add(ObjInputIt range_begin, ObjInputIt range_end, IdOutputIt ids_begin) {
+    
 }
