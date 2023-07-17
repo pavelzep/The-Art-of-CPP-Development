@@ -55,6 +55,7 @@ private:
     set<T> objects;
     vector<It> iterators;
     map<Priority, vector<Id>> priority_to_iterators;
+    
 
 };
 
@@ -104,6 +105,9 @@ int main() {
 
 template<typename T>
 typename PriorityCollection<T>::Id PriorityCollection<T>::Add(T object) {
+    auto it = objects.insert(object);
+    iterators.push_back(it);
+
     return Id();
 }
 
