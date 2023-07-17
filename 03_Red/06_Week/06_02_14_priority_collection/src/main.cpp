@@ -6,7 +6,6 @@
 #include <set>
 #include <utility>
 #include <vector>
-// #include <list>
 
 #define MIN_PRIORITY 0
 
@@ -18,9 +17,12 @@ public:
     // тип, используемый для идентификаторов 
     using Id = size_t;
 
-    using It = typename set<T>::iterator;
     // тип, используемый для приоритера 
     using Priority = int;
+
+
+    // using It = typename set<T>::iterator;
+
 
     // Добавить объект с нулевым приоритетом
     // с помощью перемещения и вернуть его идентификатор
@@ -52,10 +54,11 @@ public:
 private:
     // Приватные поля и методы
 
-    set<T> objects;
-    vector<It> iterators;
-    map<Priority, vector<Id>> priority_to_iterators;
-    
+    vector<T> objects;
+    set<Priority> priorities;
+
+    map<Id, Priority> id_to_priority;
+    map<Priority,vector<Id>> priority_to_ids;
 
 };
 
@@ -105,10 +108,9 @@ int main() {
 
 template<typename T>
 typename PriorityCollection<T>::Id PriorityCollection<T>::Add(T object) {
-    auto it = objects.insert(object);
-    iterators.push_back(it);
+    objects.push_back(move(object);)
+    
 
-    return Id();
 }
 
 template<typename T>
@@ -125,6 +127,7 @@ template<typename T>
 void PriorityCollection<T>::Promote(Id id) {
 
 }
+
 template<typename T>
 pair<const T&, typename PriorityCollection<T>::Priority> PriorityCollection<T>::GetMax() const {
     return pair<const T&, Priority>();
