@@ -20,6 +20,12 @@ public:
     // тип, используемый для приоритера 
     using Priority = int;
 
+    // struct Object{
+    //     T object;
+    //     Priority priority;
+    // }
+
+    using Object = struct { T object; Priority priority; };
 
     // using It = typename set<T>::iterator;
 
@@ -54,12 +60,11 @@ public:
 private:
     // Приватные поля и методы
 
-    vector<T> objects;
-    set<Priority> priorities;
+    vector<Object> objects;
+    map<Priority, set<Id>> priority_to_ids;
 
-    map<Id, Priority> id_to_priority;
-    map<Priority,vector<Id>> priority_to_ids;
-
+    Priority GetMaxPriority() const;
+    Id GetMaxPriorityId(Priority priority) const;
 };
 
 
@@ -108,9 +113,11 @@ int main() {
 
 template<typename T>
 typename PriorityCollection<T>::Id PriorityCollection<T>::Add(T object) {
-    objects.push_back(move(object);)
-    
 
+    objects.push_back({ move(object),MIN_PRIORITY });
+    Id id = objects.size() - 1;
+    priority_to_ids[MIN_PRIORITY].insert(id);
+    return id;
 }
 
 template<typename T>
@@ -126,17 +133,48 @@ const T& PriorityCollection<T>::Get(Id id) const {
 template<typename T>
 void PriorityCollection<T>::Promote(Id id) {
 
+    Priority priority = objects[id].priority++;
+    priority_to_ids[priority].erase(id);
+    if (priority_to_ids[priority].size() == 0) {
+        priority_to_ids.erase(priority);
+    }
+    priority_to_ids[++priority].insert(id);
+
 }
 
 template<typename T>
 pair<const T&, typename PriorityCollection<T>::Priority> PriorityCollection<T>::GetMax() const {
-    return pair<const T&, Priority>();
+    
+    Id max_priority_id = *priority_to_ids.rbegin()->second.rbegin();
+
+    return { objects.at(max_priority_id).object, objects.at(max_priority_id).priority };
+    //  return pair<const T&, Priority>();
 }
 
 template<typename T>
 pair<T, typename PriorityCollection<T>::Priority> PriorityCollection<T>::PopMax() {
 
-    return pair<T, Priority>();
+    Id  max_priority_id = *priority_to_ids.rbegin()->second.rbegin();
+    priority_to_ids.rbegin()->second.erase(max_priority_id);
+
+    Priority max_priority = objects.at(max_priority_id).priority;
+    if (priority_to_ids[max_priority].size() == 0) {
+        priority_to_ids.erase(max_priority);
+    }
+    return{ move(objects.at(max_priority_id).object),objects.at(max_priority_id).priority };
+
+    // return pair<T, Priority>();
+}
+
+template<typename T>
+typename PriorityCollection<T>::Priority PriorityCollection<T>::GetMaxPriority() const {
+    return priority_to_ids.rbegin()->first;
+}
+
+template<typename T>
+typename PriorityCollection<T>::Id PriorityCollection<T>::GetMaxPriorityId(Priority priority) const {
+    auto s = priority_to_ids[priority];
+
 }
 
 template<typename T>
