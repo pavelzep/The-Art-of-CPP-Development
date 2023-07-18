@@ -63,8 +63,8 @@ private:
     vector<Object> objects;
     map<Priority, set<Id>> priority_to_ids;
 
-    Priority GetMaxPriority() const;
-    Id GetMaxPriorityId(Priority priority) const;
+    Priority GetMaxPriority()const;
+    Id GetMaxPriorityId(const Priority priority) const;
 };
 
 
@@ -120,14 +120,17 @@ typename PriorityCollection<T>::Id PriorityCollection<T>::Add(T object) {
     return id;
 }
 
+
 template<typename T>
 bool PriorityCollection<T>::IsValid(Id id) const {
-    return false;
+    bool result = false;
+    if (objects[id].priority != -1) result = true;
+    return result;
 }
 
 template<typename T>
 const T& PriorityCollection<T>::Get(Id id) const {
-
+    return objects[id].object;
 }
 
 template<typename T>
@@ -139,31 +142,31 @@ void PriorityCollection<T>::Promote(Id id) {
         priority_to_ids.erase(priority);
     }
     priority_to_ids[++priority].insert(id);
-
 }
 
 template<typename T>
 pair<const T&, typename PriorityCollection<T>::Priority> PriorityCollection<T>::GetMax() const {
-    
-    Id max_priority_id = *priority_to_ids.rbegin()->second.rbegin();
 
-    return { objects.at(max_priority_id).object, objects.at(max_priority_id).priority };
-    //  return pair<const T&, Priority>();
+    auto max_priority = GetMaxPriority();
+    auto max_priority_id = GetMaxPriorityId(max_priority);
+    return { objects.at(max_priority_id).object, max_priority };
+
 }
 
 template<typename T>
 pair<T, typename PriorityCollection<T>::Priority> PriorityCollection<T>::PopMax() {
 
-    Id  max_priority_id = *priority_to_ids.rbegin()->second.rbegin();
+    Priority max_priority = GetMaxPriority();
+    Id max_priority_id = GetMaxPriorityId(max_priority);
     priority_to_ids.rbegin()->second.erase(max_priority_id);
 
-    Priority max_priority = objects.at(max_priority_id).priority;
     if (priority_to_ids[max_priority].size() == 0) {
         priority_to_ids.erase(max_priority);
     }
-    return{ move(objects.at(max_priority_id).object),objects.at(max_priority_id).priority };
 
-    // return pair<T, Priority>();
+    objects[max_priority_id].priority = -1;
+
+    return{ move(objects.at(max_priority_id).object), max_priority };
 }
 
 template<typename T>
@@ -172,13 +175,17 @@ typename PriorityCollection<T>::Priority PriorityCollection<T>::GetMaxPriority()
 }
 
 template<typename T>
-typename PriorityCollection<T>::Id PriorityCollection<T>::GetMaxPriorityId(Priority priority) const {
-    auto s = priority_to_ids[priority];
-
+typename PriorityCollection<T>::Id PriorityCollection<T>::GetMaxPriorityId(const Priority priority) const {
+    return *priority_to_ids.at(priority).rbegin();
 }
 
 template<typename T>
 template<typename ObjInputIt, typename IdOutputIt>
 void PriorityCollection<T>::Add(ObjInputIt range_begin, ObjInputIt range_end, IdOutputIt ids_begin) {
-
+    auto it = range_begin;
+    while (it != range_end) {
+        *ids_begin = Add(move(*it));
+        ++ids_begin;
+        ++it;
+    }
 }
