@@ -5,17 +5,13 @@ template<typename Iterator>
 class IteratorRange {
 private:
     Iterator first, last;
-
 public:
     IteratorRange(Iterator f, Iterator l)
         : first(f)
         , last(l) {
     }
-
     Iterator begin() const { return first; }
-
     Iterator end() const { return last; }
-
     size_t size() const { return end() - begin(); }
 };
 
@@ -23,7 +19,6 @@ template <typename Iterator>
 class Paginator {
 private:
     vector <IteratorRange<Iterator>> pages;
-
 public:
     Paginator(Iterator begin, Iterator end, size_t page_size) {
         for (Iterator it = begin;it < end;it = next(it, page_size)) {
@@ -31,11 +26,8 @@ public:
             pages.push_back(page);
         }
     }
-
     size_t size() const { return pages.size(); }
-
     auto begin() const { return pages.begin(); }
-
     auto end() const { return pages.end(); }
 };
 
