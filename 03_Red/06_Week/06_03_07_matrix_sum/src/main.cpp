@@ -1,5 +1,4 @@
-#include "test_runner.h"
-#include "profile.h"
+
 
 #include "matrix.h"
 #include "tests.h"
@@ -7,13 +6,13 @@
 using namespace std;
 
 int main() {
+    TestAll();
     // TestRunner tr;
     // RUN_TEST(tr, TestCalculateMatrixSum);
 
-
     // LOG_DURATION("Total");
-    const size_t matrix_size = 7000;
-    vector <vector <int>> matrix;
+    // const size_t matrix_size = 7000;
+    // vector <vector <int>> matrix;
 
     // {
     //     LOG_DURATION("Single thread generation");
@@ -24,15 +23,15 @@ int main() {
     //     matrix = GenerateMultiThread(matrix_size, 900);
     // }
 
-    matrix = GenerateMultiThread(matrix_size, 900);
-    {
-        LOG_DURATION("Single thread sum");
-        cout << SumSingleThread(matrix) << endl;
-    }
-    {
-        LOG_DURATION("CalculateMatrixSum");
-        cout << CalculateMatrixSum(matrix) << endl;
-    }
+    // matrix = GenerateMultiThread(matrix_size, 900);
+    // {
+    //     LOG_DURATION("Single thread sum");
+    //     cout << SumSingleThread(matrix) << endl;
+    // }
+    // {
+    //     LOG_DURATION("CalculateMatrixSum");
+    //     cout << CalculateMatrixSum(matrix) << endl;
+    // }
 
 
 }
