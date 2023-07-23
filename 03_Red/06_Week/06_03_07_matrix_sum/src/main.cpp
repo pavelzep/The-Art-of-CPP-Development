@@ -7,8 +7,8 @@
 using namespace std;
 
 int main() {
-    TestRunner tr;
-    RUN_TEST(tr, TestCalculateMatrixSum);
+    // TestRunner tr;
+    // RUN_TEST(tr, TestCalculateMatrixSum);
 
 
     // LOG_DURATION("Total");

@@ -21,16 +21,17 @@ int64_t SumSingleThread(const ContainerOfVectors& matrix) {
 int64_t CalculateMatrixSum(const vector<vector<int>>& matrix) {
     int64_t result = 0;
     vector <future <int64_t >> futures;
-    size_t page_size = matrix.size() / THREAD_COUNT;
-  
-    auto P = Paginate(matrix, page_size);
-    for (const auto& page : P) {
+
+    size_t thread_count = matrix.size() < 100 ? 1 : THREAD_COUNT;
+    size_t page_size = matrix.size() / thread_count;
+
+    for (const auto& page : Paginate(matrix, page_size)) {
         futures.push_back(
-            async([&page,  &result] {return SumSingleThread(page );})
+            async([&page, &result] {return SumSingleThread(page);})
         );
     }
-    
-    for (auto &item : futures) {
+
+    for (auto& item : futures) {
         result += item.get();
     }
     return result;
