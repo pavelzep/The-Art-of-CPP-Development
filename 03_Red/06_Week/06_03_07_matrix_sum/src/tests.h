@@ -13,4 +13,5 @@ void TestCalculateMatrixSum() {
       {13, 14, 15, 16}
     };
     ASSERT_EQUAL(CalculateMatrixSum(matrix), 136);
+    // ASSERT_EQUAL(SumSingleThread(matrix), 136);
 }
