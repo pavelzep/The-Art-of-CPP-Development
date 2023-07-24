@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 #include <set>
+#include <cctype>
+
 
 using namespace std;
 
@@ -12,6 +14,18 @@ struct Stats {
 };
 
 Stats ExploreLine(const set<string>& key_words, const string& line) {
+    size_t pos = 0
+        for (const auto& key : key_words) {
+            n = line.find(key, pos);
+            if (n != string::npos) {
+                size_t t = n + key.size();
+                if(isspace(line[t].)){
+                    
+                }
+            }
+
+        }
+    Stats();
 }
 
 Stats ExploreKeyWordsSingleThread(
@@ -26,4 +40,8 @@ Stats ExploreKeyWordsSingleThread(
 
 Stats ExploreKeyWords(const set<string>& key_words, istream& input) {
     // Реализуйте эту функцию
+    Stats();
+}
+
+void Stats::operator+=(const Stats& other) {
 }
