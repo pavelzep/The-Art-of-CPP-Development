@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <map>
 #include <string>
 #include <set>
@@ -9,10 +10,7 @@
 #include <functional>
 #define THREAD_COUNT 4
 
-
 using namespace std;
-
-
 
 
 template<typename Iterator>
@@ -51,50 +49,31 @@ auto Paginate(Container& container, size_t page_size) {
 };
 
 
-
-
-
-
 struct Stats {
     map<string, int> word_frequences;
     void operator += (const Stats& other);
 };
 
 Stats ExploreLine(const set<string>& key_words, const string& line) {
-
-    /*
-    size_t pos = 0;
-    for (const auto& key : key_words) {
-        n = line.find(key, pos);
-        if (n != string::npos) {
-            size_t t = n + key.size();
-            if(isspace(line[t].)){
-            }
-        }
-    }
-    */
     Stats result;
-    for (const auto& key : key_words) {
-        string_view find_words;
-        string_view key_view = key;
-        size_t pos = 0;
-        const size_t pos_end = line.npos;
-        while (true) {
-
-            size_t space_pos = line.find(' ', pos);
-            find_words = space_pos == pos_end ? line.substr(pos) : line.substr(pos, space_pos - pos);
-            if (find_words == key_view) {
-                result.word_frequences[key] += 1;
-            }
-
-            if (space_pos == pos_end) {
-                break;
-            } else {
-                pos = space_pos + 1;
-            }
+    size_t pos = 0;
+    string_view find_words_view;
+    string_view key_view = key;
+    string_view key_view = key;
+    const size_t pos_end = line.npos;
+    while (true) {
+        size_t space_pos = line.find(' ', pos);
+        find_words_view = space_pos == pos_end ? line.substr(pos) : line.substr(pos, space_pos - pos);
+        if (find_words_view == key_view) {
+            result.word_frequences[key] += 1;
         }
-
+        if (space_pos == pos_end) {
+            break;
+        } else {
+            pos = space_pos + 1;
+        }
     }
+
     return result;
 }
 
@@ -108,16 +87,33 @@ Stats ExploreKeyWordsSingleThread(
     return result;
 }
 
+template <typename ContainerOfString>
+Stats ExploreKeyWordsSingleThreaFromPage(const set<string>& key_words, const ContainerOfString& page) {
+    Stats result;
+    for (const auto& str : page) {
+        result += ExploreLine(key_words, str);
+    }
+    return result;
+}
+
 Stats ExploreKeyWords(const set<string>& key_words, istream& input) {
 
-    // futures_stats.push_back(async(ExploreKeyWordsSingleThread, key_words, input));
     Stats result;
     vector<future<Stats>> futures_stats;
     const size_t thread_count = key_words.size() < 4 ? 1 : THREAD_COUNT;
     const size_t page_size = key_words.size() / thread_count;
 
-    for (const auto page : Paginate(key_words, page_size)) {
-        futures_stats.push_back(async(ExploreKeyWordsSingleThread, ref(key_words), ref(input)));
+    vector<string> input_strings;
+
+    for (string line; getline(input, line);input_strings.push_back(move(line))) {}
+
+    // auto P = Paginate(input_strings, page_size);
+    for (const auto page : Paginate(input_strings, page_size)) {
+        // futures_stats.push_back(async(ExploreKeyWordsSingleThreaFromPage, ref(key_words), ref(page)));
+        futures_stats.push_back(
+            async([&key_words, page] { return ExploreKeyWordsSingleThreaFromPage(key_words, page); })
+        );
+        // result += ExploreKeyWordsSingleThreaFromPage(key_words, page);
     }
 
 
