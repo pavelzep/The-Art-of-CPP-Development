@@ -8,6 +8,9 @@
 #include <string_view>
 #include <future>
 #include <functional>
+#include <deque>
+
+
 #define THREAD_COUNT 4
 
 using namespace std;
@@ -30,7 +33,7 @@ public:
 template <typename Iterator>
 class Paginator {
 private:
-    vector <IteratorRange<Iterator>> pages;
+    deque <IteratorRange<Iterator>> pages;
 public:
     Paginator(Iterator begin, Iterator end, size_t page_size) {
         for (Iterator it = begin;it < end;it = next(it, page_size)) {
@@ -57,15 +60,13 @@ struct Stats {
 Stats ExploreLine(const set<string>& key_words, const string& line) {
     Stats result;
     size_t pos = 0;
-    string_view find_words_view;
-    string_view key_view = key;
-    string_view key_view = key;
+
     const size_t pos_end = line.npos;
     while (true) {
         size_t space_pos = line.find(' ', pos);
-        find_words_view = space_pos == pos_end ? line.substr(pos) : line.substr(pos, space_pos - pos);
-        if (find_words_view == key_view) {
-            result.word_frequences[key] += 1;
+        string find_word = space_pos == pos_end ? line.substr(pos) : line.substr(pos, space_pos - pos);
+        if (key_words.count(find_word)) {
+            result.word_frequences[move(find_word)] += 1;
         }
         if (space_pos == pos_end) {
             break;
@@ -73,7 +74,6 @@ Stats ExploreLine(const set<string>& key_words, const string& line) {
             pos = space_pos + 1;
         }
     }
-
     return result;
 }
 
@@ -88,7 +88,7 @@ Stats ExploreKeyWordsSingleThread(
 }
 
 template <typename ContainerOfString>
-Stats ExploreKeyWordsSingleThreaFromPage(const set<string>& key_words, const ContainerOfString& page) {
+Stats ExploreKeyWordsSingleThreadFromPage(const set<string>& key_words, const ContainerOfString& page) {
     Stats result;
     for (const auto& str : page) {
         result += ExploreLine(key_words, str);
@@ -98,25 +98,21 @@ Stats ExploreKeyWordsSingleThreaFromPage(const set<string>& key_words, const Con
 
 Stats ExploreKeyWords(const set<string>& key_words, istream& input) {
 
-    Stats result;
-    vector<future<Stats>> futures_stats;
-    const size_t thread_count = key_words.size() < 4 ? 1 : THREAD_COUNT;
-    const size_t page_size = key_words.size() / thread_count;
-
     vector<string> input_strings;
-
     for (string line; getline(input, line);input_strings.push_back(move(line))) {}
 
-    // auto P = Paginate(input_strings, page_size);
-    for (const auto page : Paginate(input_strings, page_size)) {
+    const size_t thread_count = input_strings.size() < THREAD_COUNT ? 1 : THREAD_COUNT;
+    const size_t page_size = input_strings.size() / thread_count;
+
+    vector<future<Stats>> futures_stats;
+    // const auto P = Paginate(input_strings, page_size);
+    for (const auto& page : Paginate(input_strings, page_size)) {
         // futures_stats.push_back(async(ExploreKeyWordsSingleThreaFromPage, ref(key_words), ref(page)));
-        futures_stats.push_back(
-            async([&key_words, page] { return ExploreKeyWordsSingleThreaFromPage(key_words, page); })
-        );
+        futures_stats.push_back(async([&key_words, &page] { return ExploreKeyWordsSingleThreadFromPage(key_words, page); }));
         // result += ExploreKeyWordsSingleThreaFromPage(key_words, page);
     }
 
-
+    Stats result;
     for (auto& item : futures_stats) {
         result += item.get();
     }
