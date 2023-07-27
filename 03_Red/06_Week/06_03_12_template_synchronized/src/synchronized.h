@@ -15,13 +15,17 @@ using namespace std;
 template <typename T>
 class Synchronized {
 public:
-  explicit Synchronized(T initial = T());
+  explicit Synchronized(T initial = T()){
+    
+  }
 
   struct Access {
     T& ref_to_value;
   };
 
-  Access GetAccess();
+  Access GetAccess(){
+
+  }
 private:
   T value;
 };
