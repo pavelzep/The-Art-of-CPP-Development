@@ -11,7 +11,7 @@
 #include <deque>
 
 
-#define THREAD_COUNT 4
+#define THREAD_COUNT 8
 
 using namespace std;
 
@@ -50,7 +50,6 @@ template <typename Container>
 auto Paginate(Container& container, size_t page_size) {
     return Paginator(container.begin(), container.end(), page_size);
 };
-
 
 struct Stats {
     map<string, int> word_frequences;
@@ -105,8 +104,9 @@ Stats ExploreKeyWords(const set<string>& key_words, istream& input) {
     const size_t page_size = input_strings.size() / thread_count;
 
     vector<future<Stats>> futures_stats;
-    // const auto P = Paginate(input_strings, page_size);
-    for (const auto& page : Paginate(input_strings, page_size)) {
+    const auto P = Paginate(input_strings, page_size);
+    for (const auto& page : P) {
+    // for (const auto& page : Paginate(input_strings, page_size)) {
         // futures_stats.push_back(async(ExploreKeyWordsSingleThreaFromPage, ref(key_words), ref(page)));
         futures_stats.push_back(async([&key_words, &page] { return ExploreKeyWordsSingleThreadFromPage(key_words, page); }));
         // result += ExploreKeyWordsSingleThreaFromPage(key_words, page);
