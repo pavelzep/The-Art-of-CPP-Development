@@ -15,49 +15,51 @@ using namespace std;
 template <typename T>
 class Synchronized {
 public:
-  explicit Synchronized(T initial = T()){
-    
-  }
+    explicit Synchronized(T initial = T()) {
 
-  struct Access {
-    T& ref_to_value;
-  };
+    }
 
-  Access GetAccess(){
+    struct Access {
+        T& ref_to_value;
+    };
 
-  }
+    Access GetAccess() {
+        lock_guard <mutex> g(m);
+        return Access{ value };
+    }
 private:
-  T value;
+    T value;
+    mutex m;
 };
 
 
 vector<int> Consume(Synchronized<deque<int>>& common_queue) {
-  vector<int> got;
+    vector<int> got;
 
-  for (;;) {
-    deque<int> q;
+    for (;;) {
+        deque<int> q;
 
-    {
-      // Мы специально заключили эти две строчки в операторные скобки, чтобы
-      // уменьшить размер критической секции. Поток-потребитель захватывает
-      // мьютекс, перемещает всё содержимое общей очереди в свою
-      // локальную переменную и отпускает мьютекс. После этого он обрабатывает
-      // объекты в очереди за пределами критической секции, позволяя
-      // потоку-производителю параллельно помещать в очередь новые объекты.
-      //
-      // Размер критической секции существенно влияет на быстродействие
-      // многопоточных программ.
-      auto access = common_queue.GetAccess();
-      q = move(access.ref_to_value);
+        {
+            // Мы специально заключили эти две строчки в операторные скобки, чтобы
+            // уменьшить размер критической секции. Поток-потребитель захватывает
+            // мьютекс, перемещает всё содержимое общей очереди в свою
+            // локальную переменную и отпускает мьютекс. После этого он обрабатывает
+            // объекты в очереди за пределами критической секции, позволяя
+            // потоку-производителю параллельно помещать в очередь новые объекты.
+            //
+            // Размер критической секции существенно влияет на быстродействие
+            // многопоточных программ.
+            auto access = common_queue.GetAccess();
+            q = move(access.ref_to_value);
+        }
+
+        for (int item : q) {
+            if (item > 0) {
+                got.push_back(item);
+            } else {
+                return got;
+            }
+        }
     }
-
-    for (int item : q) {
-      if (item > 0) {
-        got.push_back(item);
-      } else {
-        return got;
-      }
-    }
-  }
 }
 
