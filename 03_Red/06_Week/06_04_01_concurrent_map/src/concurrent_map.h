@@ -19,14 +19,21 @@ public:
     };
 
     explicit ConcurrentMap(size_t bucket_count) {
-
+        vector<map< K, V>> storage(bucket_count);
     }
 
     Access operator[](const K& key) {
+        storage[current_bucket_index].count(key)
 
     }
 
     map<K, V> BuildOrdinaryMap() {
 
+    }
+    private:
+    size_t current_bucket_index;
+    void indexUpdate(){
+        current_bucket_index++;
+        if (current_bucket_index == bucket_count) current_bucket_index = 0;
     }
 };
