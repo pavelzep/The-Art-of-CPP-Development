@@ -22,6 +22,3 @@ private:
     T value;
     mutex m;
 };
-
-
-
