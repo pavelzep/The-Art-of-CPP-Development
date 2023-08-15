@@ -18,21 +18,32 @@ public:
         V& ref_to_value;
     };
 
-    explicit ConcurrentMap(size_t bucket_count) {
-        vector<map< K, V>> storage(bucket_count);
+    explicit ConcurrentMap(size_t _bucket_count) :
+        bucket_count(_bucket_count) {
+
     }
 
     Access operator[](const K& key) {
-        storage[current_bucket_index].count(key)
+        for (size_t i = 0; i < current_bucket_index; ++i) {
 
+            if (storage[i].count(key)) {
+                return { storage[i][key] };
+            }
+
+            return { storage[current_bucket_index][key] };
+
+
+        }
     }
-
     map<K, V> BuildOrdinaryMap() {
 
     }
-    private:
+private:
+    vector<map< K, V>> storage;
+    size_t bucket_count;
     size_t current_bucket_index;
-    void indexUpdate(){
+
+    void indexUpdate() {
         current_bucket_index++;
         if (current_bucket_index == bucket_count) current_bucket_index = 0;
     }
