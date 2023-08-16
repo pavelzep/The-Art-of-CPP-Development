@@ -37,7 +37,6 @@ public:
             if (storage[i].count(key)) {
                 return { lock_guard(m), storage[i][key] };
             }
-
         }
         {
             mutex m;
@@ -46,6 +45,11 @@ public:
     }
 
     map<K, V> BuildOrdinaryMap() {
+        map<K, V> result;
+        for (auto& item : storage) {
+            result.merge(item);
+        }
+        return result;
     }
 
 private:
