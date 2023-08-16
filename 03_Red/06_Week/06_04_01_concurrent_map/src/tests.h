@@ -36,7 +36,7 @@ void RunConcurrentUpdates(
                 cm[key].ref_to_value++;
             }
         }
-        };
+    };
 
     vector<future<void>> futures;
     for (size_t i = 0; i < thread_count; ++i) {
