@@ -9,6 +9,11 @@
 
 using namespace std;
 
+template <typename T>
+T Abs(T x) {
+    return x < 0 ? -x : x;
+}
+
 template <typename K, typename V>
 class ConcurrentMap {
 public:
@@ -28,7 +33,7 @@ public:
     }
 
     Access operator[](const K& key) {
-        return { lock_guard(*mutexes[key % bucket_count]),storage[key % bucket_count][key] };
+        return { lock_guard(*mutexes[Abs(key) % bucket_count]),storage[Abs(key) % bucket_count][key] };
     }
 
     map<K, V> BuildOrdinaryMap() {
