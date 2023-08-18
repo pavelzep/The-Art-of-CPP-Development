@@ -1,11 +1,9 @@
 #pragma once
 
-
 #include <algorithm>
 #include <numeric>
 #include <random>
 #include <memory>
-
 #include <map>
 #include <mutex>
 
