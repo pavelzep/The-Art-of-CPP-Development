@@ -7,7 +7,7 @@
 #include "parse.h"
 
 void TestAll();
-void TestFunctionality();
+void TestFunctionality(const vector<string>& docs, const vector<string>& queries, const vector<string>& expected);
 
 void TestSerpFormat();
 void TestTop5();
