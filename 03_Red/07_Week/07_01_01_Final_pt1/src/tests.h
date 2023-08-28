@@ -210,4 +210,28 @@ inline void TestAll() {
     RUN_TEST(tr, TestRanking);
     RUN_TEST(tr, TestBasicSearch);
 
+    const int count = 10000;
+    {
+        LOG_DURATION("TOTAL");
+        {
+            LOG_DURATION("TestSerpFormat");
+            for (int i = 0; i < count; ++i) { TestSerpFormat(); }
+        }
+        {
+            LOG_DURATION("TestTop5");
+            for (int i = 0; i < count; ++i) { TestTop5(); }
+        }
+        {
+            LOG_DURATION("TestHitcount");
+            for (int i = 0; i < count; ++i) { TestHitcount(); }
+        }
+        {
+            LOG_DURATION("TestRanking");
+            for (int i = 0; i < count; ++i) { TestRanking(); }
+        }
+        {
+            LOG_DURATION("TestBasicSearch");
+            for (int i = 0; i < count; ++i) { TestBasicSearch(); }
+        }
+    }
 }
