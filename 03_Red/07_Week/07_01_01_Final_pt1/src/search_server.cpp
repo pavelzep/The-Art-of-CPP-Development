@@ -25,9 +25,7 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
     index = move(new_index);
 }
 
-void SearchServer::AddQueriesStream(
-    istream& query_input, ostream& search_results_output
-) {
+void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
     for (string current_query; getline(query_input, current_query); ) {
         const auto words = SplitIntoWords(current_query);
 
@@ -64,11 +62,11 @@ void SearchServer::AddQueriesStream(
 }
 
 void InvertedIndex::Add(const string& document) {
-    docs.push_back(document);
+    // docs.push_back(document);
+    // const size_t docid = docs.size() - 1;
 
-    const size_t docid = docs.size() - 1;
     for (const auto& word : SplitIntoWords(document)) {
-        index[word].push_back(docid);
+        index[word].push_back(docid++);
     }
 }
 

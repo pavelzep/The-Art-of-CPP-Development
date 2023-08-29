@@ -14,14 +14,16 @@ class InvertedIndex {
 public:
     void Add(const string& document);
     list<size_t> Lookup(const string& word) const;
+    InvertedIndex() :docid(0) {}
 
-    const string& GetDocument(size_t id) const {
-        return docs[id];
-    }
+    // const string& GetDocument(size_t id) const {
+    //     return docs[id];
+    // }
 
 private:
     map<string, list<size_t>> index;
-    vector<string> docs;
+    size_t docid;
+    // vector<string> docs;
 };
 
 class SearchServer {
@@ -33,4 +35,5 @@ public:
 
 private:
     InvertedIndex index;
+
 };
