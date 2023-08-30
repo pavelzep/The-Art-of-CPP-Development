@@ -8,22 +8,31 @@
 #include <map>
 #include <string>
 
+// #define ORIGIN
+
 using namespace std;
 
 class InvertedIndex {
 public:
     void Add(const string& document);
     list<size_t> Lookup(const string& word) const;
-    InvertedIndex() :docid(0) {}
 
-    // const string& GetDocument(size_t id) const {
-    //     return docs[id];
-    // }
+#ifdef ORIGIN
+    const string& GetDocument(size_t id) const {
+        return docs[id];
+    }
+#else
+    InvertedIndex() :docid(0) {}
+#endif
 
 private:
     map<string, list<size_t>> index;
+    
+#ifdef ORIGIN
+    vector<string> docs;
+#else
     size_t docid;
-    // vector<string> docs;
+#endif
 };
 
 class SearchServer {
