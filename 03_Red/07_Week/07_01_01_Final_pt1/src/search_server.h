@@ -8,31 +8,43 @@
 #include <map>
 #include <string>
 
-// #define ORIGIN
-
 using namespace std;
+
+
+
+#ifdef ORIGIN
 
 class InvertedIndex {
 public:
     void Add(const string& document);
     list<size_t> Lookup(const string& word) const;
-
-#ifdef ORIGIN
-    const string& GetDocument(size_t id) const {
-        return docs[id];
-    }
-#else
-    InvertedIndex() :docid(0) {}
-#endif
-
+    const string& GetDocument(size_t id) const { return docs[id]; }
 private:
     map<string, list<size_t>> index;
-    
-#ifdef ORIGIN
     vector<string> docs;
+};
+
+class SearchServer {
+public:
+    SearchServer() = default;
+    explicit SearchServer(istream& document_input);
+    void UpdateDocumentBase(istream& document_input);
+    void AddQueriesStream(istream& query_input, ostream& search_results_output);
+private:
+    InvertedIndex index;
+};
+
 #else
-    size_t docid;
-#endif
+
+class InvertedIndex {
+public:
+    void Add(const string& document, size_t docid);
+    list<size_t> Lookup(const string& word) const;
+  
+private:
+    map<string, list<size_t>> index;
+
+
 };
 
 class SearchServer {
@@ -46,3 +58,4 @@ private:
     InvertedIndex index;
 
 };
+#endif

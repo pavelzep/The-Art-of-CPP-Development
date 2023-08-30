@@ -14,6 +14,7 @@ void TestTop5();
 void TestHitcount();
 void TestRanking();
 void TestBasicSearch();
+void TestBasic();
 
 void TestFunctionality(
     const vector<string>& docs,
@@ -34,6 +35,38 @@ void TestFunctionality(
     for (size_t i = 0; i < lines.size(); ++i) {
         ASSERT_EQUAL(lines[i], expected[i]);
     }
+}
+
+void TestBasic() {
+    const vector<string> docs = {
+         "q w e r t y",
+         "q w e r t",
+         "q w e r"
+    };
+    const vector<string> queries = { "w", "e", "r" };
+
+    const vector<string> expected = {
+          Join(' ', vector{
+            "w:",
+            "{docid: 0, hitcount: 1}",
+            "{docid: 1, hitcount: 1}",
+            "{docid: 2, hitcount: 1}"
+          }),
+          Join(' ', vector{
+            "e:",
+            "{docid: 0, hitcount: 1}",
+            "{docid: 1, hitcount: 1}",
+            "{docid: 2, hitcount: 1}"
+          }),
+          Join(' ', vector{
+            "r:",
+            "{docid: 0, hitcount: 1}",
+            "{docid: 1, hitcount: 1}",
+            "{docid: 2, hitcount: 1}"
+          }),
+    };
+
+    TestFunctionality(docs, queries, expected);
 }
 
 void TestSerpFormat() {
@@ -204,12 +237,20 @@ void TestBasicSearch() {
 
 inline void TestAll() {
     TestRunner tr;
+
+#ifdef MY_TEST
+    RUN_TEST(tr, TestBasic);
+#endif
+
+#ifdef STD_TESTS
     RUN_TEST(tr, TestSerpFormat);
     RUN_TEST(tr, TestTop5);
     RUN_TEST(tr, TestHitcount);
     RUN_TEST(tr, TestRanking);
     RUN_TEST(tr, TestBasicSearch);
+#endif
 
+#ifdef DURATION_TEST
     const int count = 10000;
     {
         LOG_DURATION("TOTAL");
@@ -234,4 +275,6 @@ inline void TestAll() {
             for (int i = 0; i < count; ++i) { TestBasicSearch(); }
         }
     }
+
+#endif
 }
