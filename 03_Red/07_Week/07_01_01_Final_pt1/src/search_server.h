@@ -16,6 +16,9 @@ using namespace std;
 
 #ifdef ORIGIN
 
+
+vector<string> SplitIntoWords(const string& line);
+
 class InvertedIndex {
 public:
     void Add(const string& document);
@@ -38,11 +41,13 @@ private:
 
 #else
 
+vector<string> SplitIntoWords(const string& line);
+
 class InvertedIndex {
 public:
     void Add(const string& document, size_t docid);
     list<size_t> Lookup(const string& word) const;
-  
+
 private:
     map<string, list<size_t>> index;
 
