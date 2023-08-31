@@ -1,5 +1,7 @@
 #pragma once
 
+#include "global.h"
+
 #include <istream>
 #include <ostream>
 #include <set>

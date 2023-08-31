@@ -1,5 +1,6 @@
 #pragma once
 
+#include "global.h"
 #include "iterator_range.h"
 
 #include <string_view>

@@ -1,4 +1,4 @@
-#include "global.h"
+
 #include "search_server.h"
 #include "iterator_range.h"
 
