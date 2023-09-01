@@ -12,6 +12,5 @@ int main() {
     // while (it != istream_iterator<string>()) {
     //     cout << *it++ << ' ';
     // }
-
     TestAll();
 }
