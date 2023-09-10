@@ -6,6 +6,8 @@
 #include "search_server.h"
 #include "parse.h"
 
+#include <fstream>
+
 void TestAll();
 void TestFunctionality(const vector<string>& docs, const vector<string>& queries, const vector<string>& expected);
 
@@ -15,6 +17,7 @@ void TestHitcount();
 void TestRanking();
 void TestBasicSearch();
 void TestBasic();
+void BigTest();
 
 void TestFunctionality(
     const vector<string>& docs,
@@ -69,6 +72,12 @@ void TestBasic() {
     TestFunctionality(docs, queries, expected);
 }
 
+void BigTest() {
+    SearchServer srv;
+    ifstream in_str("input.txt");
+    srv.UpdateDocumentBase(in_str);
+}
+
 void TestSerpFormat() {
     const vector<string> docs = {
       "london is the capital of great britain",
@@ -98,7 +107,8 @@ void TestTop5() {
       "milk g",
       "water a",
       "water b",
-      "fire and earth"
+      "fire and earth",
+
     };
 
     const vector<string> queries = { "milk", "water", "rock" };
@@ -240,6 +250,10 @@ inline void TestAll() {
 
 #ifdef MY_TEST
     RUN_TEST(tr, TestBasic);
+    {
+        LOG_DURATION("BigTest");
+        BigTest();
+    }
 #endif
 
 #ifdef STD_TESTS
