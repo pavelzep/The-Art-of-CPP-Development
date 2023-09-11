@@ -250,6 +250,10 @@ inline void TestAll() {
 
 #ifdef MY_TEST
     RUN_TEST(tr, TestBasic);
+
+
+#endif
+#ifdef BIG_TEST
     {
         LOG_DURATION("BigTest");
         BigTest();
