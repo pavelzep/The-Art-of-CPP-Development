@@ -18,6 +18,7 @@ void TestRanking();
 void TestBasicSearch();
 void TestBasic();
 void BigTest();
+void BigTest(SearchServer& srv, istream& document_input, istream& query_input, ostream& search_results_output);
 
 void TestFunctionality(
     const vector<string>& docs,
@@ -74,8 +75,18 @@ void TestBasic() {
 
 void BigTest() {
     SearchServer srv;
-    ifstream in_str("../input.txt");
-    srv.UpdateDocumentBase(in_str);
+    ifstream document_in_stream("../document_input.txt");
+    ifstream query_in_stream("../query_input.txt");
+
+    {
+        LOG_DURATION("BigTest");
+        BigTest(srv, document_in_stream, query_in_stream, cout);
+    }
+}
+
+void BigTest(SearchServer& srv, istream& document_input, istream& query_input, ostream& search_results_output) {
+    srv.UpdateDocumentBase(document_input);
+    srv.AddQueriesStream(query_input, search_results_output);
 }
 
 void TestSerpFormat() {
@@ -249,15 +260,15 @@ inline void TestAll() {
     TestRunner tr;
 
 #ifdef MY_TEST
+
     RUN_TEST(tr, TestBasic);
 
-
 #endif
+
 #ifdef BIG_TEST
-    {
-        LOG_DURATION("BigTest");
-        BigTest();
-    }
+
+    BigTest();
+
 #endif
 
 #ifdef STD_TESTS
@@ -291,8 +302,8 @@ inline void TestAll() {
         {
             LOG_DURATION("TestBasicSearch");
             for (int i = 0; i < count; ++i) { TestBasicSearch(); }
-        }
-    }
+}
+}
 
 #endif
 }
