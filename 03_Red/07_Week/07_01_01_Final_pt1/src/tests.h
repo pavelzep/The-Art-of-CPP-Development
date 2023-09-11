@@ -74,7 +74,7 @@ void TestBasic() {
 
 void BigTest() {
     SearchServer srv;
-    ifstream in_str("input.txt");
+    ifstream in_str("../input.txt");
     srv.UpdateDocumentBase(in_str);
 }
 
