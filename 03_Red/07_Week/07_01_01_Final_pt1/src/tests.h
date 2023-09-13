@@ -75,18 +75,25 @@ void TestBasic() {
 
 void BigTest() {
     SearchServer srv;
-    ifstream document_in_stream("../document_input.txt");
-    ifstream query_in_stream("../query_input.txt");
-
+    ifstream document_in_stream("../document_input.txt");   //Lord Of The Rings ~18000 strings
+    ifstream query_in_stream("../query_input.txt");         //1000 strings
+    stringstream out;
     {
         LOG_DURATION("BigTest");
-        BigTest(srv, document_in_stream, query_in_stream, cout);
+        BigTest(srv, document_in_stream, query_in_stream, out);
     }
 }
 
 void BigTest(SearchServer& srv, istream& document_input, istream& query_input, ostream& search_results_output) {
-    srv.UpdateDocumentBase(document_input);
-    srv.AddQueriesStream(query_input, search_results_output);
+    {
+        LOG_DURATION("BigTest: UpdateDocumentBase");
+        srv.UpdateDocumentBase(document_input);
+    }
+
+    {
+        LOG_DURATION("BigTest :AddQueriesStream");
+        srv.AddQueriesStream(query_input, search_results_output);
+    }
 }
 
 void TestSerpFormat() {
@@ -302,8 +309,8 @@ inline void TestAll() {
         {
             LOG_DURATION("TestBasicSearch");
             for (int i = 0; i < count; ++i) { TestBasicSearch(); }
-}
-}
+        }
+    }
 
 #endif
 }
