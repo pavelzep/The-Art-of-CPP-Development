@@ -1,6 +1,8 @@
 
 #include "search_server.h"
 #include "iterator_range.h"
+#include "profile.h"
+
 
 #include <algorithm>
 #include <iterator>
@@ -30,7 +32,12 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
     for (string current_query; getline(query_input, current_query); ) {
-        const auto words = SplitIntoWords(current_query);
+
+        uint64_t a = 0;
+        DurationPart dp(a);
+            const auto words = SplitIntoWords(current_query);
+        
+        auto b = a;
 
         map<size_t, size_t> docid_count;
         for (const auto& word : words) {
