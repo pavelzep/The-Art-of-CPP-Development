@@ -7,6 +7,7 @@
 using namespace std;
 using namespace std::chrono;
 
+
 class LogDuration {
 public:
     explicit LogDuration(const string& msg = "")
