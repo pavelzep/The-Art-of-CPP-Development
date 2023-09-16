@@ -91,7 +91,7 @@ void BigTest(SearchServer& srv, istream& document_input, istream& query_input, o
     }
 
     {
-        LOG_DURATION("BigTest :AddQueriesStream");
+        LOG_DURATION("BigTest: AddQueriesStream");
         srv.AddQueriesStream(query_input, search_results_output);
     }
 }

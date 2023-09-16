@@ -33,11 +33,10 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
     for (string current_query; getline(query_input, current_query); ) {
 
-        uint64_t a = 0;
-        DurationPart dp(a);
-            const auto words = SplitIntoWords(current_query);
-        
-        auto b = a;
+
+        const auto words = SplitIntoWords(current_query);
+
+
 
         map<size_t, size_t> docid_count;
         for (const auto& word : words) {
