@@ -37,6 +37,14 @@ public:
     void AddQueriesStream(istream& query_input, ostream& search_results_output);
 private:
     InvertedIndex index;
+
+    Split() {
+        vector<string> SplitIntoWords(const string & line, TotalDuration & dest) {
+            ADD_DURATION(dest);
+            istringstream words_input(line);
+            return { istream_iterator<string>(words_input), istream_iterator<string>() };
+        }
+    };
 };
 
 #else

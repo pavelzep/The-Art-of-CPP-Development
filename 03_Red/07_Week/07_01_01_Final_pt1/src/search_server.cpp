@@ -31,23 +31,36 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
 
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
+
+    TotalDuration Split_d("Split");
+    TotalDuration Lookup_d("Lookup");
+    TotalDuration Sort_d("sort");
+    TotalDuration Output_d("output");
+
     for (string current_query; getline(query_input, current_query); ) {
 
 
-        const auto words = SplitIntoWords(current_query);
-
+        const auto words = SplitIntoWords(current_query, Split);
 
 
         map<size_t, size_t> docid_count;
-        for (const auto& word : words) {
-            for (const size_t docid : index.Lookup(word)) {
-                docid_count[docid]++;
+        {
+            ADD_DURATION(Lookup);
+            for (const auto& word : words) {
+                for (const size_t docid : index.Lookup(word)) {
+                    docid_count[docid]++;
+                }
             }
         }
 
-        vector<pair<size_t, size_t>> search_results(
-            docid_count.begin(), docid_count.end()
-        );
+        {
+            ADD_DURATION(sort_);
+            vector<pair<size_t, size_t>> search_results(
+                docid_count.begin(), docid_count.end()
+            );
+        }
+
+
         sort(
             begin(search_results),
             end(search_results),
