@@ -111,7 +111,19 @@ vector<string> SearchServer::Split(const string& line, TotalDuration& dest) {
     return SplitIntoWords(line);
 }
 
+map<size_t, size_t> SearchServer::Lookup(InvertedIndex& index, const vector<string>& words, TotalDuration& dest) {
+    map<size_t, size_t> docid_count;
+    ADD_DURATION(dest);
+    for (const auto& word : words) {
+        for (const size_t docid : index.Lookup(word)) {
+            docid_count[docid]++;
+        }
+    }
+    return docid_count;
+}
+
 void SearchServer::Lookup(map<size_t, size_t>& docid_count, InvertedIndex& index, const vector<string>& words, TotalDuration& dest) {
+
     ADD_DURATION(dest);
     for (const auto& word : words) {
         for (const size_t docid : index.Lookup(word)) {
@@ -134,11 +146,14 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
     TotalDuration Output_d("Output Duration");
 
     for (string current_query; getline(query_input, current_query); ) {
+
         //pt1
         const auto words = Split(current_query, Split_d);
 
         //pt2
-        map<size_t, size_t> docid_count = Lookup(docid_count, index, words, Lookup_d);
+        // map<size_t, size_t> docid_count;
+        // Lookup(docid_count, index, words, Lookup_d);
+        map<size_t, size_t> docid_count = Lookup(index, words, Lookup_d);
 
         //pt3        
         vector<pair<size_t, size_t>> search_results = GetResult(docid_count, GetRes_d);
@@ -159,6 +174,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             );
 
         }
+
         //pt5
         {
             ADD_DURATION(Output_d);

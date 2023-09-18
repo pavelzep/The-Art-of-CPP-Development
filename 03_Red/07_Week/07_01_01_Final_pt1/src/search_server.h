@@ -67,6 +67,7 @@ private:
 
     vector<string> Split(const string& line, TotalDuration& dest);
     void Lookup(map<size_t, size_t>& docid_count, InvertedIndex& index, const vector<string>& words, TotalDuration& dest);
+    map<size_t, size_t> Lookup(InvertedIndex& index, const vector<string>& words, TotalDuration& dest);
     vector<pair<size_t, size_t>> GetResult(const map<size_t, size_t>& docid_count, TotalDuration& dest);
 
 };
