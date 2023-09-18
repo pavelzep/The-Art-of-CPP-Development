@@ -1,6 +1,6 @@
 #pragma once
 
-#define ORIGIN
+// #define ORIGIN
 
 // #define STD_TESTS
 

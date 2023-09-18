@@ -31,36 +31,19 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
 
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
-
-    TotalDuration Split_d("Split");
-    TotalDuration Lookup_d("Lookup");
-    TotalDuration Sort_d("sort");
-    TotalDuration Output_d("output");
-
     for (string current_query; getline(query_input, current_query); ) {
-
-
-        const auto words = SplitIntoWords(current_query, Split);
-
+        const auto words = SplitIntoWords(current_query);
 
         map<size_t, size_t> docid_count;
-        {
-            ADD_DURATION(Lookup);
-            for (const auto& word : words) {
-                for (const size_t docid : index.Lookup(word)) {
-                    docid_count[docid]++;
-                }
+        for (const auto& word : words) {
+            for (const size_t docid : index.Lookup(word)) {
+                docid_count[docid]++;
             }
         }
 
-        {
-            ADD_DURATION(sort_);
-            vector<pair<size_t, size_t>> search_results(
-                docid_count.begin(), docid_count.end()
-            );
-        }
-
-
+        vector<pair<size_t, size_t>> search_results(
+            docid_count.begin(), docid_count.end()
+        );
         sort(
             begin(search_results),
             end(search_results),
@@ -81,6 +64,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
         }
         search_results_output << endl;
     }
+
 }
 
 void InvertedIndex::Add(const string& document) {
@@ -122,38 +106,69 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
     index = move(new_index);
 }
 
+vector<string> SearchServer::Split(const string& line, TotalDuration& dest) {
+    ADD_DURATION(dest);
+    return SplitIntoWords(line);
+}
+
+void SearchServer::Lookup(map<size_t, size_t>& docid_count, InvertedIndex& index, const vector<string>& words, TotalDuration& dest) {
+    ADD_DURATION(dest);
+    for (const auto& word : words) {
+        for (const size_t docid : index.Lookup(word)) {
+            docid_count[docid]++;
+        }
+    }
+}
+
+vector<pair<size_t, size_t>> SearchServer::GetResult(const map<size_t, size_t>& docid_count, TotalDuration& dest) {
+    ADD_DURATION(dest);
+    return vector<pair<size_t, size_t>>(docid_count.begin(), docid_count.end());
+
+}
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
+    TotalDuration Split_d("Split Duration");
+    TotalDuration Lookup_d("Lookup Duration");
+    TotalDuration GetRes_d("GetRes Duration");
+    TotalDuration Sort_d("Sort Duration");
+    TotalDuration Output_d("Output Duration");
+
     for (string current_query; getline(query_input, current_query); ) {
-        const auto words = SplitIntoWords(current_query);
+        //pt1
+        const auto words = Split(current_query, Split_d);
 
-        map<size_t, size_t> docid_count;
-        for (const auto& word : words) {
-            for (const size_t docid : index.Lookup(word)) {
-                docid_count[docid]++;
-            }
+        //pt2
+        map<size_t, size_t> docid_count = Lookup(docid_count, index, words, Lookup_d);
+
+        //pt3        
+        vector<pair<size_t, size_t>> search_results = GetResult(docid_count, GetRes_d);
+
+        //pt4
+        {
+            ADD_DURATION(Sort_d);
+            sort(
+                begin(search_results),
+                end(search_results),
+                [](pair<size_t, size_t> lhs, pair<size_t, size_t> rhs) {
+                    int64_t lhs_docid = lhs.first;
+                    auto lhs_hit_count = lhs.second;
+                    int64_t rhs_docid = rhs.first;
+                    auto rhs_hit_count = rhs.second;
+                    return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
+                }
+            );
+
         }
-
-        vector<pair<size_t, size_t>> search_results(
-            docid_count.begin(), docid_count.end()
-        );
-        sort(
-            begin(search_results),
-            end(search_results),
-            [](pair<size_t, size_t> lhs, pair<size_t, size_t> rhs) {
-                int64_t lhs_docid = lhs.first;
-                auto lhs_hit_count = lhs.second;
-                int64_t rhs_docid = rhs.first;
-                auto rhs_hit_count = rhs.second;
-                return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
+        //pt5
+        {
+            ADD_DURATION(Output_d);
+            search_results_output << current_query << ':';
+            for (auto [docid, hitcount] : Head(search_results, 5)) {
+                search_results_output << " {"
+                    << "docid: " << docid << ", "
+                    << "hitcount: " << hitcount << '}';
             }
-        );
 
-        search_results_output << current_query << ':';
-        for (auto [docid, hitcount] : Head(search_results, 5)) {
-            search_results_output << " {"
-                << "docid: " << docid << ", "
-                << "hitcount: " << hitcount << '}';
         }
         search_results_output << endl;
     }

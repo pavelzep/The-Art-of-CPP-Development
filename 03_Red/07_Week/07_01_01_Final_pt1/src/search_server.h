@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include "profile.h"
 
 using namespace std;
 
@@ -37,14 +38,6 @@ public:
     void AddQueriesStream(istream& query_input, ostream& search_results_output);
 private:
     InvertedIndex index;
-
-    Split() {
-        vector<string> SplitIntoWords(const string & line, TotalDuration & dest) {
-            ADD_DURATION(dest);
-            istringstream words_input(line);
-            return { istream_iterator<string>(words_input), istream_iterator<string>() };
-        }
-    };
 };
 
 #else
@@ -72,5 +65,11 @@ public:
 private:
     InvertedIndex index;
 
+    vector<string> Split(const string& line, TotalDuration& dest);
+    void Lookup(map<size_t, size_t>& docid_count, InvertedIndex& index, const vector<string>& words, TotalDuration& dest);
+    vector<pair<size_t, size_t>> GetResult(const map<size_t, size_t>& docid_count, TotalDuration& dest);
+
 };
+
+
 #endif
