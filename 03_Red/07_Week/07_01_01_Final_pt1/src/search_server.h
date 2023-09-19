@@ -50,8 +50,7 @@ public:
     list<size_t> Lookup(const string& word) const;
 
 private:
-    map<string, list<size_t>> index;
-
+    map<string_view, list<size_t>> index;
 
 };
 
@@ -66,7 +65,7 @@ private:
     InvertedIndex index;
 
     vector<string> Split(const string& line, TotalDuration& dest);
-    
+
 };
 
 

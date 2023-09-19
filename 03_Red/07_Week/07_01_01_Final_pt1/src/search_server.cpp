@@ -89,6 +89,26 @@ vector<string> SplitIntoWords(const string& line) {
     istringstream words_input(line);
     return { istream_iterator<string>(words_input), istream_iterator<string>() };
 }
+vector <string_view > SplitIntoWordsView(const string& s) {
+    string_view str = s;
+    vector <string_view > result;
+    size_t pos = 0;
+    const size_t pos_end = str.npos;
+    while (true) {
+        size_t space = str.find(' ', pos);
+        result.push_back(
+            space == pos_end
+            ? str.substr(pos)
+            : str.substr(pos, space - pos));
+        if (space == pos_end) {
+            break;
+        } else {
+            pos = space + 1;
+        }
+    }
+    return result;
+}
+
 
 SearchServer::SearchServer(istream& document_input) {
     UpdateDocumentBase(document_input);
@@ -118,12 +138,15 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
     TotalDuration Sort_d("Sort Duration");
     TotalDuration Output_d("Output Duration");
 
+    vector<size_t> docid_count(50000);
+
     for (string current_query; getline(query_input, current_query); ) {
 
         //pt1
         const auto words = Split(current_query, Split_d);
 
         //pt2
+#if 0
         map<size_t, size_t> docid_count;
         {
             ADD_DURATION(Lookup_d);
@@ -135,7 +158,20 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                 }
             }
         }
-
+#endif
+#if 0
+        {
+            ADD_DURATION(Lookup_d);
+            {
+                for (const auto& word : words) {
+                    for (const size_t docid : index.Lookup(word)) {
+                        docid_count[docid]++;
+                    }
+                }
+            }
+        }
+#endif
+#if 0
         //pt3    
         vector<pair<size_t, size_t>> search_results;
         {
@@ -176,11 +212,13 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             }
         }
         search_results_output << endl;
+#endif
     }
+
 }
 
 void InvertedIndex::Add(const string& document, size_t docid) {
-    for (const auto& word : SplitIntoWords(document)) {
+    for (const auto word : SplitIntoWordsView(document)) {
         index[word].push_back(docid);
     }
 }
