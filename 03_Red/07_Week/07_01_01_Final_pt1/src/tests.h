@@ -18,7 +18,6 @@ void TestRanking();
 void TestBasicSearch();
 void TestBasic();
 void BigTest();
-void BigTest(SearchServer& srv, istream& document_input, istream& query_input, ostream& search_results_output);
 
 void TestFunctionality(
     const vector<string>& docs,
@@ -80,19 +79,14 @@ void BigTest() {
     stringstream out;
     {
         LOG_DURATION("BigTest");
-        BigTest(srv, document_in_stream, query_in_stream, out);
-    }
-}
-
-void BigTest(SearchServer& srv, istream& document_input, istream& query_input, ostream& search_results_output) {
-    {
-        LOG_DURATION("BigTest: UpdateDocumentBase");
-        srv.UpdateDocumentBase(document_input);
-    }
-
-    {
-        LOG_DURATION("BigTest: AddQueriesStream");
-        srv.AddQueriesStream(query_input, search_results_output);
+        {
+            LOG_DURATION("BigTest: UpdateDocumentBase");
+            srv.UpdateDocumentBase(document_in_stream);
+        }
+        {
+            LOG_DURATION("BigTest: AddQueriesStream");
+            srv.AddQueriesStream(query_in_stream, out);
+        }
     }
 }
 
@@ -125,8 +119,7 @@ void TestTop5() {
       "milk g",
       "water a",
       "water b",
-      "fire and earth",
-
+      "fire and earth"
     };
 
     const vector<string> queries = { "milk", "water", "rock" };

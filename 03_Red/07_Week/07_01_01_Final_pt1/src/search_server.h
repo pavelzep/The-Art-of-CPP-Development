@@ -13,13 +13,9 @@
 
 #include "profile.h"
 
-
 using namespace std;
 
-
-
 #ifdef ORIGIN
-
 
 vector<string> SplitIntoWords(const string& line);
 
@@ -46,6 +42,7 @@ private:
 #else
 
 vector<string> SplitIntoWords(const string& line);
+vector<string_view> SplitIntoWordsView(string_view line);
 
 class InvertedIndex {
 public:
@@ -68,7 +65,7 @@ public:
 private:
     InvertedIndex index;
 
-    vector<string> Split(const string& line, TotalDuration& dest);
+    vector<string_view> Split(string_view line, TotalDuration& dest);
 
 };
 
