@@ -8,6 +8,7 @@
 #include <iterator>
 #include <sstream>
 #include <iostream>
+#include <string_view>
 
 
 #ifdef ORIGIN
@@ -146,8 +147,8 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
         const auto words = Split(current_query, Split_d);
 
         //pt2
-#if 0
-        map<size_t, size_t> docid_count;
+#if 1
+        // map<size_t, size_t> docid_count;
         {
             ADD_DURATION(Lookup_d);
             {
@@ -224,6 +225,14 @@ void InvertedIndex::Add(const string& document, size_t docid) {
 }
 
 list<size_t> InvertedIndex::Lookup(const string& word) const {
+    if (auto it = index.find(word); it != index.end()) {
+        return it->second;
+    } else {
+        return {};
+    }
+}
+
+list<size_t> InvertedIndex::Lookup(const string_view& word) const {
     if (auto it = index.find(word); it != index.end()) {
         return it->second;
     } else {
