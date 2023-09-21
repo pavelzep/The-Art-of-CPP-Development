@@ -50,10 +50,10 @@ public:
 
     void Add(const string& document, size_t docid);
     list<size_t> Lookup(const string& word) const;
-    list<size_t> Lookup(string_view word) const;
+
 
 private:
-    map<string_view, list<size_t>> index;
+    map<string, list<size_t>> index;
     vector<string> docs;
 
 };
@@ -68,8 +68,9 @@ public:
 private:
     InvertedIndex index;
 
-    vector<string_view> Split(string_view line, TotalDuration& dest);
 
+    vector<string_view> Split(string_view line, TotalDuration& dest);
+    vector<string> Split(string& line, TotalDuration& dest);
 };
 
 

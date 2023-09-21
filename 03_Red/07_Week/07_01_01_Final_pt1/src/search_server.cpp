@@ -86,11 +86,12 @@ list<size_t> InvertedIndex::Lookup(const string& word) const {
 
 
 #else 
+
 vector<string> SplitIntoWords(const string& line) {
     istringstream words_input(line);
     return { istream_iterator<string>(words_input), istream_iterator<string>() };
 }
-vector <string_view > SplitIntoWordsView(string_view str) {
+vector <string_view> SplitIntoWordsView(string_view str) {
     vector <string_view > result;
     while (true) {
         size_t space = str.find(' ');
@@ -126,6 +127,11 @@ vector<string_view> SearchServer::Split(string_view line, TotalDuration& dest) {
     return SplitIntoWordsView(line);
 }
 
+vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
+    ADD_DURATION(dest);
+    return SplitIntoWords(line);
+}
+
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
     TotalDuration Split_d("Split Duration");
     TotalDuration Lookup_d("Lookup Duration");
@@ -155,12 +161,13 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
         }
 #endif
 
-#if 0
+#if 1
         //pt3    
         vector<pair<size_t, size_t>> search_results;
         {
             ADD_DURATION(GetRes_d);
             {
+                
                 search_results = vector<pair<size_t, size_t>>(docid_count.begin(), docid_count.end());
             }
         }
@@ -210,8 +217,8 @@ InvertedIndex::InvertedIndex() {
 }
 
 void InvertedIndex::Add(const string& document, size_t docid) {
-    for (const auto word : SplitIntoWordsView(document)) {
-        docs[docid] = move(word);
+    for (const auto word : SplitIntoWords(document)) {
+        docs[docid] = word;
         index[docs[docid]].push_back(docid);
     }
 }
@@ -224,11 +231,4 @@ list<size_t> InvertedIndex::Lookup(const string& word) const {
     }
 }
 
-list<size_t> InvertedIndex::Lookup(string_view word) const {
-    if (auto it = index.find(word); it != index.end()) {
-        return it->second;
-    } else {
-        return {};
-    }
-}
 #endif
