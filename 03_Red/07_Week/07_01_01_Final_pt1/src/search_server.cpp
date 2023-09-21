@@ -154,18 +154,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             }
         }
 #endif
-#if 0
-        {
-            ADD_DURATION(Lookup_d);
-            {
-                for (const auto& word : words) {
-                    for (const size_t docid : index.Lookup(word)) {
-                        docid_count[docid]++;
-                    }
-                }
-            }
-        }
-#endif
+
 #if 0
         //pt3    
         vector<pair<size_t, size_t>> search_results;
@@ -175,7 +164,9 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                 search_results = vector<pair<size_t, size_t>>(docid_count.begin(), docid_count.end());
             }
         }
+#endif
 
+#if 0
         //pt4
         {
             ADD_DURATION(Sort_d);
@@ -194,6 +185,9 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             }
         }
 
+#endif
+
+#if 0
         //pt5
         {
             ADD_DURATION(Output_d);
@@ -211,9 +205,14 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
     }
 }
 
+InvertedIndex::InvertedIndex() {
+    docs.reserve(50000);
+}
+
 void InvertedIndex::Add(const string& document, size_t docid) {
     for (const auto word : SplitIntoWordsView(document)) {
-        index[word].push_back(docid);
+        docs[docid] = move(word);
+        index[docs[docid]].push_back(docid);
     }
 }
 

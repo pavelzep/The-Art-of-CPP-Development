@@ -46,12 +46,15 @@ vector<string_view> SplitIntoWordsView(string_view line);
 
 class InvertedIndex {
 public:
+    InvertedIndex();
+
     void Add(const string& document, size_t docid);
     list<size_t> Lookup(const string& word) const;
-    list<size_t> Lookup(const string_view& word) const;
+    list<size_t> Lookup(string_view word) const;
 
 private:
     map<string_view, list<size_t>> index;
+    vector<string> docs;
 
 };
 
