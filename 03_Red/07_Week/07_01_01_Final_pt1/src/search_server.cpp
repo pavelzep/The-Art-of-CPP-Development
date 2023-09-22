@@ -140,8 +140,10 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
     TotalDuration Output_d("Output Duration");
 
     vector<size_t> docid_count(50000);
+    // map<size_t, size_t> docid_count;
 
     for (string current_query; getline(query_input, current_query); ) {
+        docid_count.clear();
 
         //pt1
         const auto words = Split(current_query, Split_d);
@@ -161,13 +163,13 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
         }
 #endif
 
-#if 1
+#if 0
         //pt3    
         vector<pair<size_t, size_t>> search_results;
         {
             ADD_DURATION(GetRes_d);
             {
-                
+
                 search_results = vector<pair<size_t, size_t>>(docid_count.begin(), docid_count.end());
             }
         }
@@ -191,7 +193,6 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                 );
             }
         }
-
 #endif
 
 #if 0
