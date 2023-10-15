@@ -65,5 +65,6 @@ private:
 #define UNIQ_ID_IMPL(lineno) _a_local_var_##lineno
 #define UNIQ_ID(lineno) UNIQ_ID_IMPL(lineno)
 #define LOG_DURATION(message) LogDuration UNIQ_ID(__LINE__){message};
+
 #define TOTAL_DURATION(message) TotalDuration UNIQ_ID(__LINE__){message};
 #define ADD_DURATION(value) AddDuration UNIQ_ID(__LINE__){value};

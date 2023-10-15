@@ -42,17 +42,17 @@ void TestFunctionality(
 
 void TestBasic() {
     const vector<string> docs = {
-         "q w e r t y",
-         "q w e r t",
-         "q w e r"
+         "q w e r t y w w ",
+         "q w e r t w e e",
+         "q w e r r e"
     };
     const vector<string> queries = { "w", "e", "r" };
 
     const vector<string> expected = {
           Join(' ', vector{
             "w:",
-            "{docid: 0, hitcount: 1}",
-            "{docid: 1, hitcount: 1}",
+            "{docid: 0, hitcount: 3}",
+            "{docid: 1, hitcount: 2}",
             "{docid: 2, hitcount: 1}"
           }),
           Join(' ', vector{
@@ -74,7 +74,7 @@ void TestBasic() {
 
 void BigTest() {
     SearchServer srv;
-    ifstream document_in_stream("../document_input.txt");   //Lord Of The Rings ~18000 strings
+    ifstream document_in_stream("../document_input.txt");   //Lord Of The Rings ~10000 strings
     ifstream query_in_stream("../query_input.txt");         //1000 strings
     stringstream out;
     {

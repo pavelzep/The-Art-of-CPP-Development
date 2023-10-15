@@ -132,38 +132,59 @@ vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
     return SplitIntoWords(line);
 }
 
-void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
-    TotalDuration Split_d("Split Duration");
-    TotalDuration Lookup_d("Lookup Duration");
-    TotalDuration GetRes_d("GetRes Duration");
-    TotalDuration Sort_d("Sort Duration");
-    TotalDuration Output_d("Output Duration");
 
-    vector<size_t> docid_count(50000);
+#define pt1
+#define pt2
+// #define pt3
+#define pt4
+#define pt5
+
+void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
+#ifdef pt1
+    TotalDuration Split_d("Split Duration");
+#endif
+#ifdef pt2
+    TotalDuration Lookup_d("Lookup Duration");
+#endif
+#ifdef pt3
+    TotalDuration GetRes_d("GetRes Duration");
+#endif
+#ifdef pt4
+    TotalDuration Sort_d("Sort Duration");
+#endif
+#ifdef pt5
+    TotalDuration Output_d("Output Duration");
+#endif
+
+
+    // vector<size_t> docid_count(50000);
+    vector<pair<size_t, size_t>> search_results(50000);
     // map<size_t, size_t> docid_count;
 
     for (string current_query; getline(query_input, current_query); ) {
-        docid_count.clear();
+        search_results.clear();
 
         //pt1
+#ifdef pt1
         const auto words = Split(current_query, Split_d);
-
+#endif
         //pt2
-#if 1
+#ifdef pt2
         // map<size_t, size_t> docid_count;
         {
             ADD_DURATION(Lookup_d);
             {
                 for (const auto& word : words) {
                     for (const size_t docid : index.Lookup(word)) {
-                        docid_count[docid]++;
+                        search_results[docid].first = docid;
+                        search_results[docid].second++;
                     }
                 }
             }
         }
 #endif
 
-#if 0
+#ifdef pt3
         //pt3    
         vector<pair<size_t, size_t>> search_results;
         {
@@ -175,13 +196,16 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
         }
 #endif
 
-#if 0
+#ifdef pt4
         //pt4
         {
             ADD_DURATION(Sort_d);
             {
-                sort(
+                // partial_sort(begin(docid_count), begin(docid_count) + 5, end(docid_count));
+
+                partial_sort(
                     begin(search_results),
+                    begin(search_results) + 5,
                     end(search_results),
                     [](pair<size_t, size_t> lhs, pair<size_t, size_t> rhs) {
                         int64_t lhs_docid = lhs.first;
@@ -195,7 +219,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
         }
 #endif
 
-#if 0
+#ifdef pt5
         //pt5
         {
             ADD_DURATION(Output_d);
@@ -209,6 +233,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             }
         }
         search_results_output << endl;
+        search_results_output.
 #endif
     }
 }
