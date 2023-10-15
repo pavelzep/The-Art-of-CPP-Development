@@ -133,6 +133,13 @@ vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
 }
 
 
+struct docid_to_hitcount {
+    size_t docid;
+    size_t hitcount;
+};
+
+
+
 #define pt1
 #define pt2
 // #define pt3
@@ -157,12 +164,12 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #endif
 
 
-    // vector<size_t> docid_count(50000);
-    vector<pair<size_t, size_t>> search_results(50000);
+    // vector<size_t> docid_count(50000);   
     // map<size_t, size_t> docid_count;
+    // vector<pair<size_t, size_t>> search_results(50000);
+    vector<docid_to_hitcount> search_results(50000);
 
     for (string current_query; getline(query_input, current_query); ) {
-        search_results.clear();
 
         //pt1
 #ifdef pt1
@@ -176,8 +183,10 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             {
                 for (const auto& word : words) {
                     for (const size_t docid : index.Lookup(word)) {
-                        search_results[docid].first = docid;
-                        search_results[docid].second++;
+                        // search_results[docid].first = docid;
+                        // search_results[docid].second++;
+                        search_results[docid].docid = docid;
+                        search_results[docid].hitcount++;
                     }
                 }
             }
@@ -203,18 +212,31 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             {
                 // partial_sort(begin(docid_count), begin(docid_count) + 5, end(docid_count));
 
+                // partial_sort(
+                //     begin(search_results),
+                //     begin(search_results) + 5,
+                //     end(search_results),
+                //     [](pair<size_t, size_t> lhs, pair<size_t, size_t> rhs) {
+                //         int64_t lhs_docid = lhs.first;
+                //         auto lhs_hit_count = lhs.second;
+                //         int64_t rhs_docid = rhs.first;
+                //         auto rhs_hit_count = rhs.second;
+                //         return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
+                //     }
+                // );
                 partial_sort(
                     begin(search_results),
                     begin(search_results) + 5,
                     end(search_results),
-                    [](pair<size_t, size_t> lhs, pair<size_t, size_t> rhs) {
-                        int64_t lhs_docid = lhs.first;
-                        auto lhs_hit_count = lhs.second;
-                        int64_t rhs_docid = rhs.first;
-                        auto rhs_hit_count = rhs.second;
+                    [](docid_to_hitcount lhs, docid_to_hitcount rhs) {
+                        int64_t lhs_docid = lhs.docid;
+                        auto lhs_hit_count = lhs.hitcount;
+                        int64_t rhs_docid = rhs.docid;
+                        auto rhs_hit_count = rhs.hitcount;
                         return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
                     }
                 );
+
             }
         }
 #endif
@@ -225,16 +247,27 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             ADD_DURATION(Output_d);
             {
                 search_results_output << current_query << ':';
-                for (auto [docid, hitcount] : Head(search_results, 5)) {
+                // for (auto [docid, hitcount] : Head(search_results, 5)) {
+                //     search_results_output << " {"
+                //         << "docid: " << docid << ", "
+                //         << "hitcount: " << hitcount << '}';
+                // }
+                for (size_t i = 0;i < 5;++i) {
+                    if (!search_results[i].hitcount) { break; }
                     search_results_output << " {"
-                        << "docid: " << docid << ", "
-                        << "hitcount: " << hitcount << '}';
+                        << "docid: " << search_results[i].docid << ", "
+                        << "hitcount: " << search_results[i].hitcount << '}';
                 }
             }
         }
         search_results_output << endl;
-        search_results_output.
 #endif
+        // std::make_pair(0, 0);
+        for (auto& item : search_results) {
+            item.docid = 0;
+            item.hitcount = 0;
+        }
+        // search_results.clear();
     }
 }
 

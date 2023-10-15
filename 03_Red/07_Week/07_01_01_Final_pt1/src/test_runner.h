@@ -59,9 +59,9 @@ template<class T, class U>
 void AssertEqual(const T& t, const U& u, const string& hint = {}) {
     if (!(t == u)) {
         ostringstream os;
-        os << "Assertion failed: " << endl << t << " != " << u;
+        os << "Assertion failed: " << endl << t << " != " << endl << u << endl;
         if (!hint.empty()) {
-            os << " hint: " << hint;
+            os << "hint: " << hint;
         }
         throw runtime_error(os.str());
     }

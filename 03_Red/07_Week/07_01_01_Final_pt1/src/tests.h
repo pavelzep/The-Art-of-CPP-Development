@@ -43,7 +43,7 @@ void TestFunctionality(
 void TestBasic() {
     const vector<string> docs = {
          "q w e r t y w w ",
-         "q w e r t w e e",
+         "q w e r r r t w e e",
          "q w e r r e"
     };
     const vector<string> queries = { "w", "e", "r" };
@@ -57,15 +57,15 @@ void TestBasic() {
           }),
           Join(' ', vector{
             "e:",
-            "{docid: 0, hitcount: 1}",
-            "{docid: 1, hitcount: 1}",
-            "{docid: 2, hitcount: 1}"
+            "{docid: 1, hitcount: 3}",
+            "{docid: 2, hitcount: 2}",
+            "{docid: 0, hitcount: 1}"
           }),
           Join(' ', vector{
             "r:",
-            "{docid: 0, hitcount: 1}",
-            "{docid: 1, hitcount: 1}",
-            "{docid: 2, hitcount: 1}"
+            "{docid: 1, hitcount: 3}",
+            "{docid: 2, hitcount: 2}",
+            "{docid: 0, hitcount: 1}"
           }),
     };
 
