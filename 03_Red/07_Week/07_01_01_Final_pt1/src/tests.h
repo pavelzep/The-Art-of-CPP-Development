@@ -40,7 +40,7 @@ void TestFunctionality(
     }
 }
 
-void TestBasic() {
+void MyTest() {
     const vector<string> docs = {
          "q w e r t y w w ",
          "q w e r r r t w e e",
@@ -75,7 +75,7 @@ void TestBasic() {
 void BigTest() {
     SearchServer srv;
     ifstream document_in_stream("../document_input.txt");   //Lord Of The Rings ~10000 strings
-    ifstream query_in_stream("../query_input.txt");         //1000 strings
+    ifstream query_in_stream("../query_input.txt");         //1000 strings 
     stringstream out;
     {
         LOG_DURATION("BigTest");
@@ -259,18 +259,6 @@ void TestBasicSearch() {
 inline void TestAll() {
     TestRunner tr;
 
-#ifdef MY_TEST
-
-    RUN_TEST(tr, TestBasic);
-
-#endif
-
-#ifdef BIG_TEST
-
-    BigTest();
-
-#endif
-
 #ifdef STD_TESTS
     RUN_TEST(tr, TestSerpFormat);
     RUN_TEST(tr, TestTop5);
@@ -279,31 +267,12 @@ inline void TestAll() {
     RUN_TEST(tr, TestBasicSearch);
 #endif
 
-#ifdef DURATION_TEST
-    const int count = 10000;
-    {
-        LOG_DURATION("TOTAL");
-        {
-            LOG_DURATION("TestSerpFormat");
-            for (int i = 0; i < count; ++i) { TestSerpFormat(); }
-        }
-        {
-            LOG_DURATION("TestTop5");
-            for (int i = 0; i < count; ++i) { TestTop5(); }
-        }
-        {
-            LOG_DURATION("TestHitcount");
-            for (int i = 0; i < count; ++i) { TestHitcount(); }
-        }
-        {
-            LOG_DURATION("TestRanking");
-            for (int i = 0; i < count; ++i) { TestRanking(); }
-        }
-        {
-            LOG_DURATION("TestBasicSearch");
-            for (int i = 0; i < count; ++i) { TestBasicSearch(); }
-        }
-    }
-
+#ifdef MY_TEST
+    RUN_TEST(tr, MyTest);
 #endif
+
+#ifdef BIG_TEST
+    BigTest();
+#endif
+
 }

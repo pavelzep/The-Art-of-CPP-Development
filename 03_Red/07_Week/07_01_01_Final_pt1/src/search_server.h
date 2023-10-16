@@ -47,15 +47,12 @@ vector<string_view> SplitIntoWordsView(string_view line);
 class InvertedIndex {
 public:
     InvertedIndex();
-
     void Add(const string& document, size_t docid);
     list<size_t> Lookup(const string& word) const;
-
 
 private:
     map<string, list<size_t>> index;
     vector<string> docs;
-
 };
 
 class SearchServer {
@@ -67,8 +64,7 @@ public:
 
 private:
     InvertedIndex index;
-
-
+    
     vector<string_view> Split(string_view line, TotalDuration& dest);
     vector<string> Split(string& line, TotalDuration& dest);
 };

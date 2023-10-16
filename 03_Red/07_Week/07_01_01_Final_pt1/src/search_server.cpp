@@ -132,13 +132,10 @@ vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
     return SplitIntoWords(line);
 }
 
-
 struct docid_to_hitcount {
     size_t docid;
     size_t hitcount;
 };
-
-
 
 #define pt1
 #define pt2
@@ -163,8 +160,6 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
     TotalDuration Output_d("Output Duration");
 #endif
 
-
-    // vector<size_t> docid_count(50000);   
     // map<size_t, size_t> docid_count;
     // vector<pair<size_t, size_t>> search_results(50000);
     vector<docid_to_hitcount> search_results(50000);
@@ -247,17 +242,18 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             ADD_DURATION(Output_d);
             {
                 search_results_output << current_query << ':';
-                // for (auto [docid, hitcount] : Head(search_results, 5)) {
-                //     search_results_output << " {"
-                //         << "docid: " << docid << ", "
-                //         << "hitcount: " << hitcount << '}';
-                // }
-                for (size_t i = 0;i < 5;++i) {
-                    if (!search_results[i].hitcount) { break; }
+                for (auto [docid, hitcount] : Head(search_results, 5)) {
+                    if (!hitcount) { break; }
                     search_results_output << " {"
-                        << "docid: " << search_results[i].docid << ", "
-                        << "hitcount: " << search_results[i].hitcount << '}';
+                        << "docid: " << docid << ", "
+                        << "hitcount: " << hitcount << '}';
                 }
+                // for (size_t i = 0;i < 5;++i) {
+                //     if (!search_results[i].hitcount) { break; }
+                //     search_results_output << " {"
+                //         << "docid: " << search_results[i].docid << ", "
+                //         << "hitcount: " << search_results[i].hitcount << '}';
+                // }
             }
         }
         search_results_output << endl;
