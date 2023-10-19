@@ -16,8 +16,9 @@ void TestTop5();
 void TestHitcount();
 void TestRanking();
 void TestBasicSearch();
-void TestBasic();
+void MyTest();
 void BigTest();
+void EmtyTest();
 
 void TestFunctionality(
     const vector<string>& docs,
@@ -38,6 +39,13 @@ void TestFunctionality(
     for (size_t i = 0; i < lines.size(); ++i) {
         ASSERT_EQUAL(lines[i], expected[i]);
     }
+}
+
+void EmtyTest() {
+    const vector<string> docs = {};
+    const vector<string> queries = {};
+    const vector<string> expected = {};
+    TestFunctionality(docs, queries, expected);
 }
 
 void MyTest() {
@@ -273,6 +281,11 @@ inline void TestAll() {
 
 #ifdef BIG_TEST
     BigTest();
+#endif
+
+
+#ifdef EMTY_TEST
+    EmtyTest();
 #endif
 
 }
