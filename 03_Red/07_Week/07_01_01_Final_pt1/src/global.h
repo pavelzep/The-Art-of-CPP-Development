@@ -1,10 +1,11 @@
 #pragma once
 
-#define ORIGIN
+// #define ORIGIN
 
-//  #define STD_TESTS
+// #define STD_TESTS
 // #define BIG_TEST
 // #define MY_TEST
+
 #define EMTY_TEST
 
 

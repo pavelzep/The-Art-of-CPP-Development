@@ -115,7 +115,7 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
     InvertedIndex new_index;
     size_t docid = 0;
     for (string current_document; getline(document_input, current_document); ) {
-
+        
         new_index.Add(move(current_document), docid++);
 
     }

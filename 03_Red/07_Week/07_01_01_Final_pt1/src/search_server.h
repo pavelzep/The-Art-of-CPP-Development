@@ -25,7 +25,12 @@ vector<string_view> SplitIntoWordsView(string_view line);
 class InvertedIndex {
 public:
     InvertedIndex();
+
+#ifndef ORIGIN
     void Add(const string& document, size_t docid);
+#else
+    void Add(const string& document);
+#endif
     list<size_t> Lookup(const string& word) const;
 
 private:
@@ -42,8 +47,9 @@ public:
 
 private:
     InvertedIndex index;
-    #ifndef ORIGIN
+
+#ifndef ORIGIN
     vector<string_view> Split(string_view line, TotalDuration& dest);
     vector<string> Split(string& line, TotalDuration& dest);
-    #endif
+#endif
 };
