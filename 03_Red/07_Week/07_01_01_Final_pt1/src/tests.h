@@ -18,7 +18,8 @@ void TestRanking();
 void TestBasicSearch();
 void MyTest();
 void BigTest();
-void EmtyTest();
+void BigTest2();
+void EmptyTest();
 
 void TestFunctionality(
     const vector<string>& docs,
@@ -36,14 +37,14 @@ void TestFunctionality(
     const string result = queries_output.str();
     const auto lines = SplitBy(Strip(result), '\n');
     ASSERT_EQUAL(lines.size(), expected.size());
-    
+
     for (size_t i = 0; i < lines.size(); ++i) {
         ASSERT_EQUAL(lines[i], expected[i]);
     }
 
 }
 
-void EmtyTest() {
+void EmptyTest() {
     const vector<string> docs = {};
     const vector<string> queries = {};
     const vector<string> expected = {};
@@ -88,16 +89,48 @@ void BigTest() {
     ifstream query_in_stream("../query_input.txt");         //1000 strings 
     stringstream out;
     {
+
         LOG_DURATION("BigTest");
+
         {
             LOG_DURATION("BigTest: UpdateDocumentBase");
             srv.UpdateDocumentBase(document_in_stream);
         }
+
         {
             LOG_DURATION("BigTest: AddQueriesStream");
             srv.AddQueriesStream(query_in_stream, out);
         }
+
     }
+}
+
+inline void BigTest2() {
+
+    SearchServer srv;
+    const vector <string> docs(50, "aaaa");
+    istringstream docs_input(Join('\n', docs));
+
+    const vector <string> queries(5000, "aaaa");
+    istringstream queries_input(Join('\n', queries));
+
+    stringstream out;
+    {
+
+        LOG_DURATION("BigTest");
+
+        {
+            LOG_DURATION("BigTest: UpdateDocumentBase");
+            srv.UpdateDocumentBase(docs_input);
+        }
+
+        {
+            LOG_DURATION("BigTest: AddQueriesStream");
+            srv.AddQueriesStream(queries_input, out);
+        }
+
+    }
+
 }
 
 void TestSerpFormat() {
@@ -285,9 +318,13 @@ inline void TestAll() {
     BigTest();
 #endif
 
+#ifdef BIG_TEST2
+    BigTest2();
+#endif
 
-#ifdef EMTY_TEST
-    EmtyTest();
+
+#ifdef EMPTY_TEST
+    EmptyTest();
 #endif
 
 }
