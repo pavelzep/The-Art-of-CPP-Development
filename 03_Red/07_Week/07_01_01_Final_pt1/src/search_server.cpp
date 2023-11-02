@@ -194,7 +194,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 }
 
 InvertedIndex::InvertedIndex() {
-    docs.reserve(50000);
+    docs.resize(50000);
 }
 
 void InvertedIndex::Add(const string& document, size_t docid) {
