@@ -67,7 +67,21 @@ vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
 struct docid_to_hitcount {
     size_t docid;
     size_t hitcount;
+
 };
+
+bool operator > (docid_to_hitcount lhs, docid_to_hitcount rhs) {
+    if (lhs.hitcount == rhs.hitcount) {
+        if (-(int64_t)lhs.docid > -(int64_t)rhs.docid)
+            return true;
+        else
+            return false;
+    } else
+        if (lhs.hitcount > rhs.hitcount)
+            return true;
+        else
+            return false;
+}
 
 #define pt1
 #define pt2
@@ -150,12 +164,13 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                     begin(search_results),
                     begin(search_results) + 5,
                     end(search_results),
-                    [](docid_to_hitcount lhs, docid_to_hitcount rhs) {
-                        int64_t lhs_docid = lhs.docid;
-                        auto lhs_hit_count = lhs.hitcount;
-                        int64_t rhs_docid = rhs.docid;
-                        auto rhs_hit_count = rhs.hitcount;
-                        return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
+                    [](const docid_to_hitcount &lhs, const docid_to_hitcount &rhs) {
+                        return lhs > rhs;
+                        // int64_t lhs_docid = lhs.docid;
+                        // auto lhs_hit_count = lhs.hitcount;
+                        // int64_t rhs_docid = rhs.docid;
+                        // auto rhs_hit_count = rhs.hitcount;
+                        // make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
                     }
                 );
 

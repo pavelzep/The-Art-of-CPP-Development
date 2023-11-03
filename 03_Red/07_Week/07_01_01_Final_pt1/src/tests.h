@@ -108,29 +108,24 @@ void BigTest() {
 inline void BigTest2() {
 
     SearchServer srv;
-    const vector <string> docs(50, "aaaa");
-    istringstream docs_input(Join('\n', docs));
-
-    const vector <string> queries(5000, "aaaa");
-    istringstream queries_input(Join('\n', queries));
-
+    ifstream document_in_stream("../docs.txt");   
+    ifstream query_in_stream("../queries.txt");
     stringstream out;
     {
 
-        LOG_DURATION("BigTest");
+        LOG_DURATION("BigTest2");
 
         {
-            LOG_DURATION("BigTest: UpdateDocumentBase");
-            srv.UpdateDocumentBase(docs_input);
+            LOG_DURATION("BigTest2: UpdateDocumentBase");
+            srv.UpdateDocumentBase(document_in_stream);
         }
 
         {
-            LOG_DURATION("BigTest: AddQueriesStream");
-            srv.AddQueriesStream(queries_input, out);
+            LOG_DURATION("BigTest2: AddQueriesStream");
+            srv.AddQueriesStream(query_in_stream, out);
         }
 
     }
-
 }
 
 void TestSerpFormat() {
