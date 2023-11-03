@@ -70,7 +70,7 @@ struct docid_to_hitcount {
 
 };
 
-bool operator > (docid_to_hitcount lhs, docid_to_hitcount rhs) {
+bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
     if (lhs.hitcount == rhs.hitcount) {
         if (-(int64_t)lhs.docid > -(int64_t)rhs.docid)
             return true;
@@ -164,7 +164,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                     begin(search_results),
                     begin(search_results) + 5,
                     end(search_results),
-                    [](const docid_to_hitcount &lhs, const docid_to_hitcount &rhs) {
+                    [](const docid_to_hitcount& lhs, const docid_to_hitcount& rhs) {
                         return lhs > rhs;
                         // int64_t lhs_docid = lhs.docid;
                         // auto lhs_hit_count = lhs.hitcount;
