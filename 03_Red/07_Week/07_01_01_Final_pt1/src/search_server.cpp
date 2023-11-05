@@ -13,8 +13,9 @@
 #include <iterator>
 #include <sstream>
 #include <iostream>
+#ifdef USE_STRING_VIEW
 #include <string_view>
-
+#endif
 
 vector<string> SplitIntoWords(const string& line) {
     istringstream words_input(line);

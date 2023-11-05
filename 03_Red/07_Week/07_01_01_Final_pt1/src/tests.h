@@ -5,6 +5,7 @@
 
 #include "search_server.h"
 #include "parse.h"
+#include "generator.h"
 
 #include <fstream>
 
@@ -19,6 +20,7 @@ void TestBasicSearch();
 void MyTest();
 void BigTest();
 void BigTest2();
+void BigTest3();
 void EmptyTest();
 
 void TestFunctionality(
@@ -108,7 +110,7 @@ void BigTest() {
 inline void BigTest2() {
 
     SearchServer srv;
-    ifstream document_in_stream("../docs.txt");   
+    ifstream document_in_stream("../docs.txt");
     ifstream query_in_stream("../queries.txt");
     stringstream out;
     {
@@ -126,6 +128,31 @@ inline void BigTest2() {
         }
 
     }
+}
+
+inline void BigTest3() {
+    SearchServer srv;
+
+    vector<string> words = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    stringstream document_in_stream = generateDocuments(DOC_COUNT, words, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream query_in_stream = generateQueries(QUERY_COUNT, words, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+
+    stringstream out;
+    {
+        LOG_DURATION("BigTest3");
+        {
+            LOG_DURATION("BigTest3: UpdateDocumentBase");
+            srv.UpdateDocumentBase(document_in_stream);
+        }
+
+        {
+            LOG_DURATION("BigTest3: AddQueriesStream");
+            srv.AddQueriesStream(query_in_stream, out);
+        }
+
+    }
+
+
 }
 
 void TestSerpFormat() {
@@ -315,6 +342,9 @@ inline void TestAll() {
 
 #ifdef BIG_TEST2
     BigTest2();
+#endif
+#ifdef BIG_TEST3
+    BigTest3();
 #endif
 
 
