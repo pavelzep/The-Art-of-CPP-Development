@@ -9,6 +9,7 @@ using namespace std;
 using namespace std::chrono;
 
 
+
 class LogDuration {
 public:
     explicit LogDuration(const string& msg = "")
@@ -17,11 +18,13 @@ public:
     }
 
     ~LogDuration() {
+#ifdef SHOW_LOG_DURATION_INFO
         auto finish = steady_clock::now();
         auto dur = finish - start;
         cerr << message
             << duration_cast<milliseconds>(dur).count()
             << " ms" << endl;
+#endif
     }
 private:
     string message;
@@ -36,11 +39,13 @@ struct TotalDuration {
         , value(0) {
     }
     ~TotalDuration() {
+#ifdef SHOW_TOTAL_DURATION_INFO
         ostringstream os;
         os << message
             << duration_cast<milliseconds>(value).count()
             << " ms" << endl;
         cerr << os.str();
+#endif
     }
 };
 

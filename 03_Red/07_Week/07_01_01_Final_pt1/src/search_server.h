@@ -31,7 +31,9 @@ public:
 
 
     void Add(const string& document, size_t docid);
+    void Add(const string& document);
     list<size_t> Lookup(const string& word) const;
+    size_t GetDocsCount();
 
 private:
     map<string, list<size_t>> index;

@@ -43,10 +43,12 @@ SearchServer::SearchServer(istream& document_input) {
 
 void SearchServer::UpdateDocumentBase(istream& document_input) {
     InvertedIndex new_index;
-    size_t docid = 0;
+    // size_t docid = 0;
     for (string current_document; getline(document_input, current_document); ) {
 
-        new_index.Add(move(current_document), docid++);
+        // new_index.Add(move(current_document), docid++);
+        new_index.Add(move(current_document));
+
 
     }
 
@@ -109,7 +111,8 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 
     // map<size_t, size_t> docid_count;
     // vector<pair<size_t, size_t>> search_results(50000);
-    vector<docid_to_hitcount> search_results(50000);
+    size_t doc_count = index.GetDocsCount();
+    vector<docid_to_hitcount> search_results(doc_count);
 
     for (string current_query; getline(query_input, current_query); ) {
 
@@ -210,7 +213,8 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 }
 
 InvertedIndex::InvertedIndex() {
-    docs.resize(50000);
+    // docs.resize(50000);
+    docs.reserve(50000);
 }
 
 void InvertedIndex::Add(const string& document, size_t docid) {
@@ -218,6 +222,19 @@ void InvertedIndex::Add(const string& document, size_t docid) {
         docs[docid] = word;
         index[docs[docid]].push_back(docid);
     }
+}
+
+void InvertedIndex::Add(const string& document) {
+    docs.push_back(document);
+
+    const size_t docid = docs.size() - 1;
+    for (const auto& word : SplitIntoWords(document)) {
+        index[word].push_back(docid);
+    }
+}
+
+size_t InvertedIndex::GetDocsCount() {
+    return docs.size();
 }
 
 list<size_t> InvertedIndex::Lookup(const string& word) const {
