@@ -18,6 +18,10 @@
 #include "profile.h"
 
 using namespace std;
+using docid_t = size_t;
+using word_count_t = size_t;
+using doc_to_word_count_t = map <docid_t, word_count_t>;
+
 
 vector<string> SplitIntoWords(const string& line);
 
@@ -25,17 +29,21 @@ vector<string> SplitIntoWords(const string& line);
 vector<string_view> SplitIntoWordsView(string_view line);
 #endif
 
+
+
 class InvertedIndex {
 public:
     InvertedIndex();
 
     // void Add(const string& document, size_t docid);
     void Add(const string& document);
-    list<size_t> Lookup(const string& word) const;
+    // list<size_t> Lookup(const string& word) const;
+    doc_to_word_count_t Lookup(const string& word) const;
     size_t GetDocsCount();
 
 private:
-    map<string, list<size_t>> index;
+    map <string, map <docid_t, word_count_t>> index;
+    // map<string, list<size_t>> index;
     vector<string> docs;
 };
 
