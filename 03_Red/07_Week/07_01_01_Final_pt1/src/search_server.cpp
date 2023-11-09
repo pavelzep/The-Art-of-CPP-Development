@@ -104,11 +104,7 @@ vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
     return SplitIntoWords(line);
 }
 
-struct docid_to_hitcount {
-    size_t docid;
-    size_t hitcount;
 
-};
 
 bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
     if (lhs.hitcount == rhs.hitcount) {
@@ -148,8 +144,13 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 
     // map<size_t, size_t> docid_count;
     // vector<pair<size_t, size_t>> search_results(50000);
+
     size_t doc_count = index.GetDocsCount();
     vector<docid_to_hitcount> search_results(doc_count);
+    // search_results.resize(doc_count);
+
+    // vector<doc_to_word_count_t> search_results;
+    // search_results.reserve(doc_count);
 
     for (string current_query; getline(query_input, current_query); ) {
 
@@ -163,13 +164,18 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             ADD_DURATION(Lookup_d);
             {
                 for (const auto& word : words) {
-                    
+                    for (const auto& doc_to_word_count : index.Lookup(word)) {
+
+                        search_results[doc_to_word_count.first].docid = doc_to_word_count.first;
+                        search_results[doc_to_word_count.first].hitcount += doc_to_word_count.second;
+
+                    }
                     // for (const size_t docid : index.Lookup(word)) {
                     //     // search_results[docid].first = docid;
                     //     // search_results[docid].second++;
                     //     search_results[docid].docid = docid;
                     //     search_results[docid].hitcount++;
-                    }
+                    // }
                 }
             }
         }
@@ -202,9 +208,10 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                 //         return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
                 //     }
                 // );
+                size_t offset = doc_count>5? 5:doc_count;
                 partial_sort(
                     begin(search_results),
-                    begin(search_results) + 5,
+                    begin(search_results) + offset,
                     end(search_results),
                     [](const docid_to_hitcount& lhs, const docid_to_hitcount& rhs) {
                         return lhs > rhs;

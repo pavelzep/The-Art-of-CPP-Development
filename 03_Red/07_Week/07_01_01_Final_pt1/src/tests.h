@@ -327,11 +327,11 @@ inline void TestAll() {
     TestRunner tr;
 
 #ifdef STD_TESTS
-    // RUN_TEST(tr, TestSerpFormat);
-    // RUN_TEST(tr, TestTop5);
+    RUN_TEST(tr, TestSerpFormat);
+    RUN_TEST(tr, TestTop5);
     RUN_TEST(tr, TestHitcount);
-    // RUN_TEST(tr, TestRanking);
-    // RUN_TEST(tr, TestBasicSearch);
+    RUN_TEST(tr, TestRanking);
+    RUN_TEST(tr, TestBasicSearch);
 #endif
 
 #ifdef MY_TEST
