@@ -104,8 +104,6 @@ vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
     return SplitIntoWords(line);
 }
 
-
-
 bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
     if (lhs.hitcount == rhs.hitcount) {
         if (-(int64_t)lhs.docid > -(int64_t)rhs.docid)
@@ -124,6 +122,7 @@ bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
 // #define pt3
 #define pt4
 #define pt5
+// #define pt6
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
 #ifdef pt1
@@ -141,18 +140,22 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #ifdef pt5
     TotalDuration Output_d("Output Duration");
 #endif
+#ifdef pt6
+    TotalDuration Clean_d("Clean Duration");
+#endif
 
     // map<size_t, size_t> docid_count;
     // vector<pair<size_t, size_t>> search_results(50000);
 
     size_t doc_count = index.GetDocsCount();
-    vector<docid_to_hitcount> search_results(doc_count);
+    // vector<docid_to_hitcount> search_results(doc_count);
     // search_results.resize(doc_count);
 
     // vector<doc_to_word_count_t> search_results;
     // search_results.reserve(doc_count);
 
     for (string current_query; getline(query_input, current_query); ) {
+        vector<docid_to_hitcount> search_results(doc_count);
 
 #ifdef pt1
         const auto words = Split(current_query, Split_d);
@@ -208,7 +211,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                 //         return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
                 //     }
                 // );
-                size_t offset = doc_count>5? 5:doc_count;
+                size_t offset = doc_count > 5 ? 5 : doc_count;
                 partial_sort(
                     begin(search_results),
                     begin(search_results) + offset,
@@ -249,10 +252,15 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
         }
         search_results_output << endl;
 #endif
-        for (auto& item : search_results) {
-            item.docid = 0;
-            item.hitcount = 0;
+#ifdef pt6
+        {
+            ADD_DURATION(Clean_d);
+            for (auto& item : search_results) {
+                item.docid = 0;
+                item.hitcount = 0;
+            }
         }
+#endif    
         // search_results.clear();
     }
 }
