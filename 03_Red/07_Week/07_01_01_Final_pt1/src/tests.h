@@ -326,11 +326,19 @@ void TestBasicSearch() {
 inline void TestAll() {
     TestRunner tr;
 
-#ifdef STD_TESTS
+#ifdef STD_TEST1
     RUN_TEST(tr, TestSerpFormat);
+#endif
+#ifdef STD_TEST2
     RUN_TEST(tr, TestTop5);
+#endif
+#ifdef STD_TEST3
     RUN_TEST(tr, TestHitcount);
+#endif
+#ifdef STD_TEST4
     RUN_TEST(tr, TestRanking);
+#endif
+#ifdef STD_TEST5
     RUN_TEST(tr, TestBasicSearch);
 #endif
 

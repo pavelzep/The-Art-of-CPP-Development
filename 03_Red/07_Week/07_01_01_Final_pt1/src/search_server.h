@@ -18,13 +18,14 @@
 #include "profile.h"
 
 using namespace std;
-using docid_t = size_t;
-using word_count_t = size_t;
+using docid_t = uint32_t;
+using word_count_t = uint32_t;
+using hitcount_t = uint32_t;
 using doc_to_word_count_t = map <docid_t, word_count_t>;
 
 struct docid_to_hitcount {
-    size_t docid;
-    size_t hitcount;
+    docid_t docid;
+    hitcount_t hitcount;
 };
 
 vector<string> SplitIntoWords(const string& line);
@@ -64,8 +65,6 @@ private:
 #ifdef USE_STRING_VIEW
     vector<string_view> Split(string_view line, TotalDuration& dest);
 #endif
-
     vector<string> Split(string& line, TotalDuration& dest);
-
 };
 #endif

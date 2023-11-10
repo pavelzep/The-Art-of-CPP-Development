@@ -80,13 +80,9 @@ SearchServer::SearchServer(istream& document_input) {
 
 void SearchServer::UpdateDocumentBase(istream& document_input) {
     InvertedIndex new_index;
-    // size_t docid = 0;
+
     for (string current_document; getline(document_input, current_document); ) {
-
-        // new_index.Add(move(current_document), docid++);
         new_index.Add(move(current_document));
-
-
     }
 
     index = move(new_index);
@@ -106,7 +102,7 @@ vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
 
 bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
     if (lhs.hitcount == rhs.hitcount) {
-        if (-(int64_t)lhs.docid > -(int64_t)rhs.docid)
+        if (-(int32_t)lhs.docid > -(int32_t)rhs.docid)
             return true;
         else
             return false;
@@ -119,10 +115,11 @@ bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
 
 #define pt1
 #define pt2
-// #define pt3
+#define pt3
 #define pt4
 #define pt5
 // #define pt6
+#define pt7
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
 #ifdef pt1
@@ -143,11 +140,16 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #ifdef pt6
     TotalDuration Clean_d("Clean Duration");
 #endif
+#ifdef pt7
+    TotalDuration Resize_d("Resize Duration");
+#endif
 
     // map<size_t, size_t> docid_count;
     // vector<pair<size_t, size_t>> search_results(50000);
 
     size_t doc_count = index.GetDocsCount();
+    vector<docid_to_hitcount> docid_count;
+    // docid_count.resize(doc_count);
     // vector<docid_to_hitcount> search_results(doc_count);
     // search_results.resize(doc_count);
 
@@ -155,7 +157,14 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
     // search_results.reserve(doc_count);
 
     for (string current_query; getline(query_input, current_query); ) {
-        vector<docid_to_hitcount> search_results(doc_count);
+#ifdef pt7
+        {
+            ADD_DURATION(Resize_d);
+            docid_count.resize(0);
+            docid_count.resize(doc_count);
+        }
+#endif
+
 
 #ifdef pt1
         const auto words = Split(current_query, Split_d);
@@ -167,29 +176,37 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             ADD_DURATION(Lookup_d);
             {
                 for (const auto& word : words) {
+
                     for (const auto& doc_to_word_count : index.Lookup(word)) {
-
-                        search_results[doc_to_word_count.first].docid = doc_to_word_count.first;
-                        search_results[doc_to_word_count.first].hitcount += doc_to_word_count.second;
-
+                        // if (doc_to_word_count.second) {
+                        //     search_results.push_back({doc_to_word_count.first,doc_to_word_count.second});
+                        docid_count[doc_to_word_count.first].docid = doc_to_word_count.first;
+                        docid_count[doc_to_word_count.first].hitcount += doc_to_word_count.second;
                     }
-                    // for (const size_t docid : index.Lookup(word)) {
-                    //     // search_results[docid].first = docid;
-                    //     // search_results[docid].second++;
-                    //     search_results[docid].docid = docid;
-                    //     search_results[docid].hitcount++;
-                    // }
                 }
+                // for (const size_t docid : index.Lookup(word)) {
+                //     // search_results[docid].first = docid;
+                //     // search_results[docid].second++;
+                //     search_results[docid].docid = docid;
+                //     search_results[docid].hitcount++;
+                // }
             }
         }
+
 #endif
 
 #ifdef pt3    
-        vector<pair<size_t, size_t>> search_results;
+        vector<docid_to_hitcount> search_results;
+        search_results.reserve(docid_count.size());
         {
             ADD_DURATION(GetRes_d);
+
+
             {
-                search_results = vector<pair<size_t, size_t>>(docid_count.begin(), docid_count.end());
+                for (auto& item : docid_count) {
+                    if (item.hitcount) search_results.push_back(move(item));
+                }
+
             }
         }
 #endif
@@ -211,7 +228,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                 //         return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
                 //     }
                 // );
-                size_t offset = doc_count > 5 ? 5 : doc_count;
+                size_t offset = search_results.size() > 5 ? 5 : search_results.size();
                 partial_sort(
                     begin(search_results),
                     begin(search_results) + offset,
