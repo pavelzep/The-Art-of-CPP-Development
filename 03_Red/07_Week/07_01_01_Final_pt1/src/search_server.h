@@ -26,6 +26,10 @@ using doc_to_word_count_t = map <docid_t, word_count_t>;
 struct docid_to_hitcount {
     docid_t docid;
     hitcount_t hitcount;
+
+    // docid_to_hitcount(const docid_to_hitcount&) = delete;
+    // void operator=(const docid_to_hitcount& other) = delete;
+
 };
 
 vector<string> SplitIntoWords(const string& line);

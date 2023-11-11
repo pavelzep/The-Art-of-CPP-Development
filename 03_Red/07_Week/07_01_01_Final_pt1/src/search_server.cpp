@@ -118,7 +118,7 @@ bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
 #define pt3
 #define pt4
 #define pt5
-// #define pt6
+#define pt6
 #define pt7
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
@@ -155,6 +155,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 
     // vector<doc_to_word_count_t> search_results;
     // search_results.reserve(doc_count);
+    vector<docid_to_hitcount> search_results;
 
     for (string current_query; getline(query_input, current_query); ) {
 #ifdef pt7
@@ -196,12 +197,10 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #endif
 
 #ifdef pt3    
-        vector<docid_to_hitcount> search_results;
+        // vector<docid_to_hitcount> search_results;
         search_results.reserve(docid_count.size());
         {
             ADD_DURATION(GetRes_d);
-
-
             {
                 for (auto& item : docid_count) {
                     if (item.hitcount) search_results.push_back(move(item));
@@ -253,7 +252,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             ADD_DURATION(Output_d);
             {
                 search_results_output << current_query << ':';
-                for (auto [docid, hitcount] : Head(search_results, 5)) {
+                for (auto& [docid, hitcount] : Head(search_results, 5)) {
                     if (!hitcount) { break; }
                     search_results_output << " {"
                         << "docid: " << docid << ", "
@@ -271,11 +270,12 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #endif
 #ifdef pt6
         {
-            ADD_DURATION(Clean_d);
-            for (auto& item : search_results) {
-                item.docid = 0;
-                item.hitcount = 0;
-            }
+            search_results.resize(0);
+            // ADD_DURATION(Clean_d);
+            // for (auto& item : search_results) {
+            //     item.docid = 0;
+            //     item.hitcount = 0;
+            // }
         }
 #endif    
         // search_results.clear();
