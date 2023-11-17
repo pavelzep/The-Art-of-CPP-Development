@@ -1,10 +1,9 @@
 // #include <fstream>
+
 #include <random>
 #include <vector>
 #include <sstream>
 #include <iostream>
-
-using namespace std;
 
 #define FIRST_CHAR 97 // 'a'
 #define LAST_CHAR 122 // 'z'
@@ -24,7 +23,6 @@ using namespace std;
 #define MAX_QUERY_SIZE 10
 #define QUERY_COUNT 50000 
 
-
 // vector <string> generateWords(
 //     size_t min_word_lenth, size_t max_word_lent,
 //     size_t first_char, size_t last_char,
@@ -40,6 +38,7 @@ using namespace std;
 //     size_t min_doc_size, size_t max_doc_size,
 //     size_t min_word_number, size_t max_word_number);
 
+using namespace std;
 
 vector <string> generateWords(
     size_t min_word_lenth, size_t max_word_lent,
