@@ -20,7 +20,7 @@
 
 InvertedIndex::InvertedIndex() {
     // docs.resize(50000);
-    docs.reserve(50000);
+    // docs.reserve(50000);
 }
 
 // void InvertedIndex::Add(const string& document, size_t docid) {
@@ -31,22 +31,22 @@ InvertedIndex::InvertedIndex() {
 // }
 
 void InvertedIndex::Add(const string& document) {
-    docs.push_back(document);
+    // docs.push_back(document);
 
-    const size_t docid = docs.size() - 1;
+    const size_t docid = docs_count;
     for (const auto& word : SplitIntoWords(document)) {
         // doc_to_count_t doc_to_count;
         // doc_to_count[]
         index[word][docid]++;
     }
+    docs_count++;
 }
 
-size_t InvertedIndex::GetDocsCount() {
-    return docs.size();
+size_t InvertedIndex::GetDocsCount() const {
+    return docs_count;
 }
 
-/*list<size_t>*/
-doc_to_word_count_t InvertedIndex::Lookup(const string& word) const {
+const doc_to_word_count_t InvertedIndex::Lookup(const string& word) const {
     if (auto it = index.find(word); it != index.end()) {
         return it->second;
     } else {
@@ -58,6 +58,7 @@ vector<string> SplitIntoWords(const string& line) {
     istringstream words_input(line);
     return { istream_iterator<string>(words_input), istream_iterator<string>() };
 }
+
 #ifdef USE_STRING_VIEW
 vector <string_view> SplitIntoWordsView(string_view str) {
     vector <string_view > result;
@@ -80,11 +81,9 @@ SearchServer::SearchServer(istream& document_input) {
 
 void SearchServer::UpdateDocumentBase(istream& document_input) {
     InvertedIndex new_index;
-
     for (string current_document; getline(document_input, current_document); ) {
         new_index.Add(move(current_document));
     }
-
     index = move(new_index);
 }
 
@@ -100,6 +99,7 @@ vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
     return SplitIntoWords(line);
 }
 
+#ifndef USE_PAIR
 bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
     if (lhs.hitcount == rhs.hitcount) {
         if (-(int32_t)lhs.docid > -(int32_t)rhs.docid)
@@ -112,6 +112,7 @@ bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
         else
             return false;
 }
+#endif
 
 #define pt1
 #define pt2
@@ -152,10 +153,9 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #ifdef pt7
         {
             ADD_DURATION(Resize_d);
-            docid_count.resize(doc_count);
+            docid_count.reserve(doc_count);
         }
 #endif
-
 
 #ifdef pt1
         const auto words = Split(current_query, Split_d);
@@ -168,8 +168,14 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                 for (const auto& word : words) {
 
                     for (const auto& doc_to_word_count : index.Lookup(word)) {
+#ifdef USE_PAIR 
+                        docid_count[doc_to_word_count.first].first = doc_to_word_count.first;
+                        docid_count[doc_to_word_count.first].second += doc_to_word_count.second;
+#else 
+                        // docid_count.push_back
                         docid_count[doc_to_word_count.first].docid = doc_to_word_count.first;
                         docid_count[doc_to_word_count.first].hitcount += doc_to_word_count.second;
+#endif
                     }
                 }
             }
@@ -183,9 +189,12 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             ADD_DURATION(GetRes_d);
             {
                 for (auto& item : docid_count) {
+#ifdef USE_PAIR 
+                    if (item.second) search_results.push_back(move(item));
+#else
                     if (item.hitcount) search_results.push_back(move(item));
+#endif
                 }
-
             }
         }
 #endif
@@ -200,10 +209,17 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                     begin(search_results) + offset,
                     end(search_results),
                     [](const docid_to_hitcount& lhs, const docid_to_hitcount& rhs) {
+#ifdef USE_PAIR
+                        int64_t lhs_docid = lhs.first;
+                        auto lhs_hit_count = lhs.second;
+                        int64_t rhs_docid = rhs.first;
+                        auto rhs_hit_count = rhs.second;
+                        return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
+#else
                         return lhs > rhs;
+#endif
                     }
                 );
-
             }
         }
 #endif

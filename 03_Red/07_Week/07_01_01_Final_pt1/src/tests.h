@@ -321,10 +321,6 @@ inline void TestAll() {
     RUN_TEST(tr, TestBasicSearch);
 #endif
 
-#ifdef MY_TEST
-    RUN_TEST(tr, MyTest);
-#endif
-
 #ifdef BIG_TEST
     BigTest();
 #endif
@@ -334,8 +330,6 @@ inline void TestAll() {
 #endif
 
 
-#ifdef EMPTY_TEST
-    EmptyTest();
-#endif
+
 
 }
