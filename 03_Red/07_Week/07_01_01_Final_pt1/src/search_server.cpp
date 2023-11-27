@@ -19,25 +19,21 @@
 
 
 InvertedIndex::InvertedIndex() {
-    // docs.resize(50000);
-    // docs.reserve(50000);
+
+
 }
 
-// void InvertedIndex::Add(const string& document, size_t docid) {
-//     for (const auto word : SplitIntoWords(document)) {
-//         docs[docid] = word;
-//         index[docs[docid]].push_back(docid);
-//     }
-// }
-
 void InvertedIndex::Add(const string& document) {
-    // docs.push_back(document);
-
-    const size_t docid = docs_count;
+    const docid_t docid = docs_count;
     for (const auto& word : SplitIntoWords(document)) {
-        // doc_to_count_t doc_to_count;
-        // doc_to_count[]
-        index[word][docid]++;
+        // index[word][docid]++;
+        if (index.count(word)) {
+            index[word][docid] = { docid, index[word][docid].hitcount + 1 };
+        } else {
+            vector <docid_to_hitcount> word_hit(50000);
+            word_hit[docid] = { docid,1 };
+            index[word] = move(word_hit);
+        }
     }
     docs_count++;
 }
@@ -46,11 +42,11 @@ size_t InvertedIndex::GetDocsCount() const {
     return docs_count;
 }
 
-const doc_to_word_count_t InvertedIndex::Lookup(const string& word) const {
+const docsid_to_hitcounts_t& InvertedIndex::Lookup(const string& word, const docsid_to_hitcounts_t& res) const {
     if (auto it = index.find(word); it != index.end()) {
         return it->second;
     } else {
-        return {};
+        return res;
     }
 }
 
@@ -146,6 +142,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #endif
 
     size_t doc_count = index.GetDocsCount();
+
     vector<docid_to_hitcount> docid_count;
     vector<docid_to_hitcount> search_results;
 
@@ -166,16 +163,27 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
             ADD_DURATION(Lookup_d);
             {
                 for (const auto& word : words) {
+                    docid_t count = doc_count;
+                    for (const auto& docsid_to_hitcounts : index.Lookup(word, docsid_to_hitcounts_t{})) {
+                        if (!count) break;
 
-                    for (const auto& doc_to_word_count : index.Lookup(word)) {
 #ifdef USE_PAIR 
                         docid_count[doc_to_word_count.first].first = doc_to_word_count.first;
                         docid_count[doc_to_word_count.first].second += doc_to_word_count.second;
 #else 
                         // docid_count.push_back
-                        docid_count[doc_to_word_count.first].docid = doc_to_word_count.first;
-                        docid_count[doc_to_word_count.first].hitcount += doc_to_word_count.second;
+                        // docid_count[doc_to_word_count.first].docid = doc_to_word_count.first;
+                        // docid_count[doc_to_word_count.first].hitcount += doc_to_word_count.second;
 #endif
+                        docid_to_hitcount docid_to_hitcount_temp{ docsid_to_hitcounts.docid, 0 };
+
+                        if (docid_count[docsid_to_hitcounts.docid].docid == docsid_to_hitcounts.docid) {
+                            docid_count[docsid_to_hitcounts.docid].hitcount += docsid_to_hitcounts.hitcount;
+                        } else {
+                            docid_count[docsid_to_hitcounts.docid].docid = docsid_to_hitcounts.docid;
+                            docid_count[docsid_to_hitcounts.docid].hitcount = docsid_to_hitcounts.hitcount;
+                        }
+                        count--;
                     }
                 }
             }
