@@ -21,20 +21,18 @@ using namespace std;
 using docid_t = uint32_t;
 using hitcount_t = uint32_t;
 
-
-
-
 #ifdef USE_PAIR
-using docid_to_hitcount = pair <docid_t, hitcount_t>;
+using docid_to_hitcount_t = pair <docid_t, hitcount_t>;
 #else
-struct docid_to_hitcount {
+
+struct docid_to_hitcount_t {
     docid_t docid;
     hitcount_t hitcount;
 };
 #endif
 
 // using doc_to_word_count_t = map <docid_t, hitcount_t>;
-using docsid_to_hitcounts_t = vector <docid_to_hitcount>;
+// using docsid_to_hitcounts_t = vector <docid_to_hitcount>;
 
 vector<string> SplitIntoWords(const string& line);
 
@@ -46,12 +44,12 @@ class InvertedIndex {
 public:
     InvertedIndex();
     void Add(const string& document);
-    const docsid_to_hitcounts_t& Lookup(const string& word, const docsid_to_hitcounts_t& res) const;
+    const vector <docid_to_hitcount_t>& Lookup(const string& word, const vector <docid_to_hitcount_t>& res) const;
     size_t GetDocsCount()const;
 
 private:
     //map <string, map <docid_t, hitcount_t>> index;
-    map <string, docsid_to_hitcounts_t> index;
+    map <string, vector <docid_to_hitcount_t>> index;
 
     docid_t docs_count = 0;
 };

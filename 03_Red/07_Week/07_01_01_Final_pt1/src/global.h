@@ -1,6 +1,6 @@
 #pragma once
 
-#define BASE_TEST
+// #define BASE_TEST
 // #define USE_PAIR
 
 #ifndef BASE_TEST
@@ -15,10 +15,10 @@
 
 #ifdef BASE_TEST
 #define STD_TEST1
-// #define STD_TEST2
-// #define STD_TEST3
-// #define STD_TEST4
-// #define STD_TEST5
+#define STD_TEST2
+#define STD_TEST3
+#define STD_TEST4
+#define STD_TEST5
 #endif
 
 // #define BIG_TEST
