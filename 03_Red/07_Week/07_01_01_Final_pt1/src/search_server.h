@@ -31,9 +31,6 @@ struct docid_to_hitcount_t {
 };
 #endif
 
-// using doc_to_word_count_t = map <docid_t, hitcount_t>;
-// using docsid_to_hitcounts_t = vector <docid_to_hitcount>;
-
 vector<string> SplitIntoWords(const string& line);
 
 #ifdef USE_STRING_VIEW
@@ -44,7 +41,7 @@ class InvertedIndex {
 public:
     InvertedIndex();
     void Add(const string& document);
-    const vector <docid_to_hitcount_t>& Lookup(const string& word, const vector <docid_to_hitcount_t>& res) const;
+    const vector <docid_to_hitcount_t>& Lookup(const string& word,  TotalDuration& dest) const;
     size_t GetDocsCount()const;
 
 private:
@@ -52,6 +49,7 @@ private:
     map <string, vector <docid_to_hitcount_t>> index;
 
     docid_t docs_count = 0;
+    vector <docid_to_hitcount_t> empty_res;
 };
 
 class SearchServer {
@@ -64,6 +62,7 @@ public:
 private:
     InvertedIndex index;
     vector<string> Split(string& line, TotalDuration& dest);
+
 
 #ifdef USE_STRING_VIEW
     vector<string_view> Split(string_view line, TotalDuration& dest);

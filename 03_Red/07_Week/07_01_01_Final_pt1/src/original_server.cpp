@@ -87,6 +87,6 @@ list<size_t> InvertedIndex::Lookup(const string& word) const {
     if (auto it = index.find(word); it != index.end()) {
         return it->second;
     } else {
-        return {};
+        return empty_res;
     }
 }

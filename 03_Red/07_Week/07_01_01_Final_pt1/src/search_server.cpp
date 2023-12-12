@@ -42,12 +42,16 @@ size_t InvertedIndex::GetDocsCount() const {
     return docs_count;
 }
 
-const vector <docid_to_hitcount_t>& InvertedIndex::Lookup(const string& word, const vector <docid_to_hitcount_t>& res) const {
+const vector <docid_to_hitcount_t>& InvertedIndex::Lookup(const string& word, TotalDuration& dest) const {
     if (auto it = index.find(word); it != index.end()) {
+        ADD_DURATION(dest);
         return it->second;
+
     } else {
-        return res;
+        ADD_DURATION(dest);
+        return empty_res;
     }
+
 }
 
 vector<string> SplitIntoWords(const string& line) {
@@ -117,6 +121,8 @@ bool operator > (const docid_to_hitcount_t& lhs, const  docid_to_hitcount_t& rhs
 #define pt5
 #define pt6
 #define pt7
+#define pt8
+#define pt9
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
 #ifdef pt1
@@ -140,6 +146,12 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #ifdef pt7
     TotalDuration Resize_d("Resize Duration");
 #endif
+#ifdef pt8
+    TotalDuration Lookup_d1("Lookup1 Duration");
+#endif
+#ifdef pt9
+    TotalDuration Lookup_d2("Lookup2 Duration");
+#endif
 
     size_t doc_count = index.GetDocsCount();
 
@@ -162,11 +174,15 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #ifdef pt2
         {
             ADD_DURATION(Lookup_d);
+
             {
                 for (const auto& word : words) {
                     docid_t count = 0;
-                    for (const auto& docid_to_hitcount : index.Lookup(word, vector <docid_to_hitcount_t>{})) {
-                        if (count == doc_count) break;
+                    for (const auto& docid_to_hitcount : index.Lookup(word, Lookup_d1)) {
+                        if (count == doc_count) {
+                            ADD_DURATION(Lookup_d2);
+                            break;
+                        }
 
 #ifdef USE_PAIR 
                         docid_count[doc_to_word_count.first].first = doc_to_word_count.first;
@@ -187,6 +203,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                             }
                         }
                         count++;
+                        ADD_DURATION(Lookup_d2);
                     }
                 }
             }
