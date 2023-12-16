@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(01_02_01_PriorityCollection VERSION 0.1.0 LANGUAGES CXX)
+project(01_03_14_HashSet VERSION 0.1.0 LANGUAGES CXX)
 
 set(SOURCE_PATH src)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
