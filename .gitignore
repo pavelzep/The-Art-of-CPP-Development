@@ -160,4 +160,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Others
+*.pdf
+
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,c++,windows
