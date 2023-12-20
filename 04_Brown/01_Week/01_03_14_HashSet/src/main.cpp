@@ -3,6 +3,7 @@
 #include <forward_list>
 #include <iterator>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -25,20 +26,37 @@ public:
 
 private:
     vector<BucketList> baskets;
+    size_t _num_buckets;
+    Hasher _hasher;
+    BucketList emptyList = {};
+    size_t Hash(const Type& value) {
+        return _hasher(value) % _num_buckets;
+    };
 };
 
 template<typename Type, typename Hasher>
-HashSet<Type, Hasher>::HashSet(size_t num_buckets, const Hasher& hasher) {
-
+HashSet<Type, Hasher>::HashSet(size_t num_buckets, const Hasher& hasher) :
+    _hasher(hasher),
+    _num_buckets(num_buckets) {
+    baskets.resize(num_buckets);
 }
 
 template<typename Type, typename Hasher>
 void HashSet<Type, Hasher>::Add(const Type& value) {
+    size_t bucketListNumber = Hash(value);
+    baskets[bucketListNumber].push_front(value);
 }
 
 template<typename Type, typename Hasher>
 bool HashSet<Type, Hasher>::Has(const Type& value) const {
-    return false;
+    if (baskets.size() == 0) return 0;
+    else return 1;
+
+
+    // if (baskets.at(_hasher(value))) return 0;
+
+    // if (find(baskets[_hasher(value)].begin(), baskets[_hasher(value)].end(), baskets[_hasher(value)]) != baskets[_hasher(value)].end()) return true;
+    // else return false;
 }
 
 template<typename Type, typename Hasher>
@@ -46,9 +64,9 @@ void HashSet<Type, Hasher>::Erase(const Type& value) {
 }
 
 template<typename Type, typename Hasher>
-const HashSet::BucketList& HashSet<Type, Hasher>::GetBucket(const Type& value) const {
+const typename HashSet<Type, Hasher>::BucketList& HashSet<Type, Hasher>::GetBucket(const Type& value) const {
+    return emptyList;
 
-    // TODO: вставьте здесь оператор return
 }
 
 
