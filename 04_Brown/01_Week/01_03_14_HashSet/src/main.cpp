@@ -23,13 +23,14 @@ public:
     void Erase(const Type& value);
     const BucketList& GetBucket(const Type& value) const;
 
-
 private:
+    BucketList& _GetBucket(const Type& value);
     vector<BucketList> baskets;
     size_t _num_buckets;
     Hasher _hasher;
     BucketList emptyList = {};
-    size_t Hash(const Type& value) {
+    
+    size_t Hash(const Type& value) const {
         return _hasher(value) % _num_buckets;
     };
 };
@@ -43,32 +44,36 @@ HashSet<Type, Hasher>::HashSet(size_t num_buckets, const Hasher& hasher) :
 
 template<typename Type, typename Hasher>
 void HashSet<Type, Hasher>::Add(const Type& value) {
-    size_t bucketListNumber = Hash(value);
-    baskets[bucketListNumber].push_front(value);
+    if (!Has(value)) {
+        _GetBucket(value).push_front(value);
+    }
 }
 
 template<typename Type, typename Hasher>
 bool HashSet<Type, Hasher>::Has(const Type& value) const {
     if (baskets.size() == 0) return 0;
-    else return 1;
 
+    const typename HashSet<Type, Hasher>::BucketList& temp_Bucket = GetBucket(value);
+    auto it = find(temp_Bucket.begin(), temp_Bucket.end(), value);
+    if (it != temp_Bucket.end()) return 1;
 
-    // if (baskets.at(_hasher(value))) return 0;
-
-    // if (find(baskets[_hasher(value)].begin(), baskets[_hasher(value)].end(), baskets[_hasher(value)]) != baskets[_hasher(value)].end()) return true;
-    // else return false;
+    else return 0;
 }
 
 template<typename Type, typename Hasher>
 void HashSet<Type, Hasher>::Erase(const Type& value) {
+    _GetBucket(value).remove(value);
 }
 
 template<typename Type, typename Hasher>
 const typename HashSet<Type, Hasher>::BucketList& HashSet<Type, Hasher>::GetBucket(const Type& value) const {
-    return emptyList;
-
+    return baskets[Hash(value)];
 }
 
+template<typename Type, typename Hasher>
+typename  HashSet<Type, Hasher>::BucketList& HashSet<Type, Hasher>::_GetBucket(const Type& value) {
+    return baskets[Hash(value)];
+}
 
 struct IntHasher {
     size_t operator()(int value) const {
