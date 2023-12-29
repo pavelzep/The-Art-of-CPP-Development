@@ -40,12 +40,19 @@ public:
         return me->right;
     }
 
+
 private:
     deque<Node> nodes;
 };
 
 
 Node* Next(Node* me) {
+    if (me->parent == nullptr) {
+        return Next(me->right);
+    }
+    if (me->parent->left==me){
+        return Next(me->parent->right)
+    }
 
 }
 
