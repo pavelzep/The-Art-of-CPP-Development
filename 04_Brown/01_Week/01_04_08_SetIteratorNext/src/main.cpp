@@ -45,13 +45,32 @@ private:
     deque<Node> nodes;
 };
 
-
 Node* Next(Node* me) {
-    if (me->parent == nullptr) {
-        return Next(me->right);
-    }
-    if (me->parent->left==me){
-        return Next(me->parent->right)
+
+    if (me->right != nullptr) {//если есть правая ветвь
+        //найдем самый левый лист в правой ветви
+        auto res = me->right;
+        while (res->left != nullptr) {
+            res = res->left;
+        }
+        return res;
+
+    } else if (me->parent == nullptr) {
+        return nullptr;
+    } else if (me->parent->left == me) {//если нет правой ветви, но сам левый
+        //следующий - родитель
+        return me->parent;
+
+    } else {//если нет правой ветви, но сам правый
+        //вверх пока не окажемся в левой ветви, и вернем родителя 
+        auto res = me;
+
+        while (res->parent->left != res) {
+            res = res->parent;
+            if (res->parent == nullptr)
+                return nullptr;
+        }
+        return res->parent;
     }
 
 }
