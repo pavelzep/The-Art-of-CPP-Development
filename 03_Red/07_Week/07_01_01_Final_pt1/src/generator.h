@@ -17,11 +17,11 @@
 
 #define MIN_DOC_SIZE 1
 #define MAX_DOC_SIZE 50
-#define DOC_COUNT 5000
+#define DOC_COUNT 50000
 
 #define MIN_QUERY_SIZE 1
 #define MAX_QUERY_SIZE 10
-#define QUERY_COUNT 5000 
+#define QUERY_COUNT 50000 
 
 // vector <string> generateWords(
 //     size_t min_word_lenth, size_t max_word_lent,
