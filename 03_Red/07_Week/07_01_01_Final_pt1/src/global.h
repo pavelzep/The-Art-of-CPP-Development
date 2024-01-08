@@ -1,17 +1,16 @@
 #pragma once
 
 // #define BASE_TEST
-// #define USE_PAIR
 
 #ifndef BASE_TEST
 #define SHOW_TOTAL_DURATION_INFO
-#endif
 
-#define SHOW_LOG_DURATION_INFO
+#endif
+// #define DURATION_PARTS
+// #define SHOW_LOG_DURATION_INFO
 
 // #define ORIGIN
-
-// #define USE_STRING_VIEW
+// #define SS2
 
 #ifdef BASE_TEST
 #define STD_TEST1
@@ -19,13 +18,11 @@
 #define STD_TEST3
 #define STD_TEST4
 #define STD_TEST5
+#define MY_SIMPLE_TEST
 #endif
-
-// #define BIG_TEST
 
 #ifndef BASE_TEST
-#define BIG_TEST2
+#define BIG_TEST
 #endif
 
-// #define MY_TEST
-// #define EMPTY_TEST
+// #define BIG_TEST_EXTERN

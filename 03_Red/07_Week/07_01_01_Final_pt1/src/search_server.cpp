@@ -1,8 +1,9 @@
 #include "global.h"
 #ifdef ORIGIN
 #include"original_server.cpp"
-
-#else 
+#elif defined SS2
+#include"search_server2.cpp"
+#else
 
 #include "search_server.h"
 #include "iterator_range.h"
@@ -13,67 +14,41 @@
 #include <iterator>
 #include <sstream>
 #include <iostream>
-#ifdef USE_STRING_VIEW
-#include <string_view>
-#endif
 
+InvertedIndex::InvertedIndex() {}
 
-InvertedIndex::InvertedIndex() {
-
-
-}
-
-void InvertedIndex::Add(const string& document) {
-    const docid_t docid = docs_count;
-    for (const auto& word : SplitIntoWords(document)) {
-        // index[word][docid]++;
-        if (index.count(word)) {
-            index[word][docid] = { docid, index[word][docid].hitcount + 1 };
-        } else {
-            vector <docid_to_hitcount_t> word_hit(50000);
-            word_hit[docid] = { docid,1 };
-            index[word] = move(word_hit);
-        }
-    }
-    docs_count++;
-}
-
-size_t InvertedIndex::GetDocsCount() const {
+const docid_t InvertedIndex::GetDocsCount() const {
     return docs_count;
 }
 
-const vector <docid_to_hitcount_t>& InvertedIndex::Lookup(const string& word, TotalDuration& dest) const {
-    if (auto it = index.find(word); it != index.end()) {
-        ADD_DURATION(dest);
-        return it->second;
 
-    } else {
-        ADD_DURATION(dest);
-        return empty_res;
+void InvertedIndex::Add(const string& document) {
+    for (const auto& word : SplitIntoWords(document)) {
+        vector<docid_to_hitcount>& word_docs = index[word];
+        if (word_docs.empty()) {
+            word_docs.push_back({ docs_count, 1 });
+        } else if (word_docs.back().docid == docs_count) {
+            ++word_docs.back().hitcount;
+        } else {
+            word_docs.push_back({ docs_count, 1 });
+        }
     }
+    ++docs_count;
+}
 
+const vector<docid_to_hitcount>& InvertedIndex::Lookup(const string& word) const {
+    static vector<docid_to_hitcount> empty;
+    if (auto it = index.find(word); it != index.end()) {
+        return it->second;
+    } else {
+        return empty;
+    }
 }
 
 vector<string> SplitIntoWords(const string& line) {
     istringstream words_input(line);
     return { istream_iterator<string>(words_input), istream_iterator<string>() };
 }
-
-#ifdef USE_STRING_VIEW
-vector <string_view> SplitIntoWordsView(string_view str) {
-    vector <string_view > result;
-    while (true) {
-        size_t space = str.find(' ');
-        result.push_back(str.substr(0, space));
-        if (space == str.npos) {
-            break;
-        } else {
-            str.remove_prefix(space + 1);
-        }
-    }
-    return result;
-}
-#endif
 
 SearchServer::SearchServer(istream& document_input) {
     UpdateDocumentBase(document_input);
@@ -87,20 +62,7 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
     index = move(new_index);
 }
 
-#ifdef USE_STRING_VIEW
-vector<string_view> SearchServer::Split(string_view line, TotalDuration& dest) {
-    ADD_DURATION(dest);
-    return SplitIntoWordsView(line);
-}
-#endif
-
-vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
-    ADD_DURATION(dest);
-    return SplitIntoWords(line);
-}
-
-#ifndef USE_PAIR
-bool operator > (const docid_to_hitcount_t& lhs, const  docid_to_hitcount_t& rhs) {
+bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
     if (lhs.hitcount == rhs.hitcount) {
         if (-(int32_t)lhs.docid > -(int32_t)rhs.docid)
             return true;
@@ -112,19 +74,20 @@ bool operator > (const docid_to_hitcount_t& lhs, const  docid_to_hitcount_t& rhs
         else
             return false;
 }
-#endif
+
+#ifdef DURATION_PARTS
 
 #define pt1
 #define pt2
 #define pt3
 #define pt4
 #define pt5
-#define pt6
-#define pt7
-#define pt8
-#define pt9
+
+#endif
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
+
+#ifdef DURATION_PARTS
 #ifdef pt1
     TotalDuration Split_d("Split Duration");
 #endif
@@ -140,141 +103,91 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #ifdef pt5
     TotalDuration Output_d("Output Duration");
 #endif
-#ifdef pt6
-    TotalDuration Clean_d("Clean Duration");
-#endif
-#ifdef pt7
-    TotalDuration Resize_d("Resize Duration");
-#endif
-#ifdef pt8
-    TotalDuration Lookup_d1("Lookup1 Duration");
-#endif
-#ifdef pt9
-    TotalDuration Lookup_d2("Lookup2 Duration");
+
 #endif
 
-    size_t doc_count = index.GetDocsCount();
+    docid_t doc_count = index.GetDocsCount();
+    vector<hitcount_t> doc_hitcounts(doc_count, 0);
+    vector<docid_to_hitcount> search_results;
+    docid_t min_id = doc_count;
+    docid_t max_id = 0;
 
-    vector<docid_to_hitcount_t> docid_count;
-    // docid_count.resize(doc_count);
-    vector<docid_to_hitcount_t> search_results;
 
     for (string current_query; getline(query_input, current_query); ) {
-#ifdef pt7
-        {
-            ADD_DURATION(Resize_d);
-            docid_count.resize(doc_count);
-        }
-#endif
 
+
+        vector<string> words;
+        {
 #ifdef pt1
-        const auto words = Split(current_query, Split_d);
+            ADD_DURATION(Split_d);
 #endif
+            words = SplitIntoWords(current_query);
+        }
 
+
+
+        {
 #ifdef pt2
-        {
             ADD_DURATION(Lookup_d);
-
-            {
-                for (const auto& word : words) {
-                    docid_t count = 0;
-                    for (const auto& docid_to_hitcount : index.Lookup(word, Lookup_d1)) {
-                        if (count == doc_count) {
-                            ADD_DURATION(Lookup_d2);
-                            break;
-                        }
-
-#ifdef USE_PAIR 
-                        docid_count[doc_to_word_count.first].first = doc_to_word_count.first;
-                        docid_count[doc_to_word_count.first].second += doc_to_word_count.second;
-#else 
-
-                        // docid_count[doc_to_word_count.first].docid = doc_to_word_count.first;
-                        // docid_count[doc_to_word_count.first].hitcount += doc_to_word_count.second;
 #endif
-                        // docid_to_hitcount docid_to_hitcount_temp{ docsid_to_hitcounts.docid, 0 };
-
-                        if (docid_to_hitcount.docid == count) {
-                            if (docid_count[count].hitcount) {
-                                docid_count[count].hitcount += docid_to_hitcount.hitcount;
-                            } else {
-                                docid_count[count].docid = count;
-                                docid_count[count].hitcount = docid_to_hitcount.hitcount;
-                            }
-                        }
-                        count++;
-                        ADD_DURATION(Lookup_d2);
+            for (const auto& word : words) {
+                for (const auto doc_hitcount : index.Lookup(word)) {
+                    if (doc_hitcount.hitcount) {
+                        doc_hitcounts[doc_hitcount.docid] += doc_hitcount.hitcount;
+                        min_id = min(min_id, doc_hitcount.docid);
+                        max_id = max(max_id, doc_hitcount.docid);
                     }
                 }
             }
         }
 
-#endif
-
-#ifdef pt3    
-        search_results.reserve(docid_count.size());
         {
+#ifdef pt3   
             ADD_DURATION(GetRes_d);
+#endif
+            search_results.clear();
             {
-                for (auto& item : docid_count) {
-#ifdef USE_PAIR 
-                    if (item.second) search_results.push_back(move(item));
-#else
-                    if (item.hitcount) search_results.push_back(move(item));
-#endif
-                }
-            }
-        }
-#endif
-
-#ifdef pt4
-        {
-            ADD_DURATION(Sort_d);
-            {
-                size_t offset = search_results.size() > 5 ? 5 : search_results.size();
-                partial_sort(
-                    begin(search_results),
-                    begin(search_results) + offset,
-                    end(search_results),
-                    [](const docid_to_hitcount_t& lhs, const docid_to_hitcount_t& rhs) {
-#ifdef USE_PAIR
-                        int64_t lhs_docid = lhs.first;
-                        auto lhs_hit_count = lhs.second;
-                        int64_t rhs_docid = rhs.first;
-                        auto rhs_hit_count = rhs.second;
-                        return make_pair(lhs_hit_count, -lhs_docid) > make_pair(rhs_hit_count, -rhs_docid);
-#else
-                        return lhs > rhs;
-#endif
+                for (docid_t id = min_id; id <= max_id; ++id) {
+                    if (doc_hitcounts[id]) {
+                        search_results.push_back({ id, doc_hitcounts[id] });
+                        doc_hitcounts[id] = 0;
                     }
-                );
-            }
-        }
-#endif
-
-#ifdef pt5
-        {
-            ADD_DURATION(Output_d);
-            {
-                search_results_output << current_query << ':';
-                for (auto& [docid, hitcount] : Head(search_results, 5)) {
-                    if (!hitcount) { break; }
-                    search_results_output << " {"
-                        << "docid: " << docid << ", "
-                        << "hitcount: " << hitcount << '}';
                 }
+            }
+            max_id = 0;
+            min_id = doc_count;
+        }
+
+        {
+#ifdef pt4
+            ADD_DURATION(Sort_d);
+#endif
+            size_t offset = search_results.size() > 5 ? 5 : search_results.size();
+            partial_sort(
+                begin(search_results),
+                begin(search_results) + offset,
+                end(search_results),
+                [](const docid_to_hitcount& lhs, const docid_to_hitcount& rhs) {
+                    return lhs > rhs;
+                }
+            );
+        }
+
+
+
+        {
+#ifdef pt5
+            ADD_DURATION(Output_d);
+#endif
+            search_results_output << current_query << ':';
+            for (auto& [docid, hitcount] : Head(search_results, 5)) {
+                if (!hitcount) { break; }
+                search_results_output << " {"
+                    << "docid: " << docid << ", "
+                    << "hitcount: " << hitcount << '}';
             }
         }
         search_results_output << endl;
-#endif
-#ifdef pt6
-        {
-            ADD_DURATION(Clean_d);
-            search_results.resize(0);
-            docid_count.resize(0);
-        }
-#endif    
-
     }
 }
 

@@ -18,10 +18,9 @@ void TestHitcount();
 void TestRanking();
 void TestBasicSearch();
 
-void MyTest();
+void MySimpleTest();
+void BigTestExtern();
 void BigTest();
-void BigTest2();
-void EmptyTest();
 
 void TestFunctionality(
     const vector<string>& docs,
@@ -46,14 +45,7 @@ void TestFunctionality(
 
 }
 
-void EmptyTest() {
-    const vector<string> docs = {};
-    const vector<string> queries = {};
-    const vector<string> expected = {};
-    TestFunctionality(docs, queries, expected);
-}
-
-void MyTest() {
+void MySimpleTest() {
     const vector<string> docs = {
          "q w e r t y w w ",
          "q w e r r r t w e e",
@@ -85,7 +77,7 @@ void MyTest() {
     TestFunctionality(docs, queries, expected);
 }
 
-inline void BigTest() {
+inline void BigTestExtern() {
 
     SearchServer srv;
     ifstream document_in_stream("../documents.txt");
@@ -93,22 +85,22 @@ inline void BigTest() {
     stringstream out;
     {
 
-        LOG_DURATION("BigTest");
+        LOG_DURATION("BigTestExtern");
 
         {
-            LOG_DURATION("BigTest: UpdateDocumentBase");
+            LOG_DURATION("BigTestExtern: UpdateDocumentBase");
             srv.UpdateDocumentBase(document_in_stream);
         }
 
         {
-            LOG_DURATION("BigTest: AddQueriesStream");
+            LOG_DURATION("BigTestExtern: AddQueriesStream");
             srv.AddQueriesStream(query_in_stream, out);
         }
 
     }
 }
 
-inline void BigTest2() {
+inline void BigTest() {
 
     SearchServer srv;
 
@@ -120,14 +112,14 @@ inline void BigTest2() {
 
     {
 
-        LOG_DURATION("BigTest2");
+        LOG_DURATION("BigTest");
         {
-            LOG_DURATION("BigTest2: UpdateDocumentBase");
+            LOG_DURATION("BigTest: UpdateDocumentBase");
             srv.UpdateDocumentBase(document_in_stream);
         }
 
         {
-            LOG_DURATION("BigTest2: AddQueriesStream");
+            LOG_DURATION("BigTest: AddQueriesStream");
             srv.AddQueriesStream(query_in_stream, out);
         }
 
@@ -320,13 +312,14 @@ inline void TestAll() {
 #ifdef STD_TEST5
     RUN_TEST(tr, TestBasicSearch);
 #endif
-
-#ifdef BIG_TEST
-    BigTest();
+#ifdef MY_SIMPLE_TEST
+    RUN_TEST(tr, MySimpleTest);
 #endif
-
-#ifdef BIG_TEST2
-    BigTest2();
+#ifdef BIG_TEST
+    RUN_TEST(tr, BigTest);
+#endif
+#ifdef BIG_TEST_EXTERN
+    RUN_TEST(tr, BigTestExtern);
 #endif
 
 

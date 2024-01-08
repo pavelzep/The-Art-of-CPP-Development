@@ -4,52 +4,38 @@
 
 #ifdef ORIGIN
 #include"original_server.h"
-#else 
+#elif defined SS2
+#include"search_server2.h"
+#else
 
 #include <istream>
 #include <ostream>
 #include <set>
-#include <list>
 #include <vector>
 #include <map>
 #include <string>
-#include <string_view>
-
-#include "profile.h"
 
 using namespace std;
-using docid_t = uint32_t;
-using hitcount_t = uint32_t;
+using docid_t = size_t;
+using hitcount_t = size_t;
 
-#ifdef USE_PAIR
-using docid_to_hitcount_t = pair <docid_t, hitcount_t>;
-#else
-
-struct docid_to_hitcount_t {
+struct docid_to_hitcount {
     docid_t docid;
     hitcount_t hitcount;
 };
-#endif
 
 vector<string> SplitIntoWords(const string& line);
-
-#ifdef USE_STRING_VIEW
-vector<string_view> SplitIntoWordsView(string_view line);
-#endif
 
 class InvertedIndex {
 public:
     InvertedIndex();
     void Add(const string& document);
-    const vector <docid_to_hitcount_t>& Lookup(const string& word,  TotalDuration& dest) const;
-    size_t GetDocsCount()const;
+    const vector<docid_to_hitcount>& Lookup(const string& word) const;
+    const docid_t GetDocsCount() const;
 
 private:
-    //map <string, map <docid_t, hitcount_t>> index;
-    map <string, vector <docid_to_hitcount_t>> index;
-
+    map <string, vector <docid_to_hitcount>> index;
     docid_t docs_count = 0;
-    vector <docid_to_hitcount_t> empty_res;
 };
 
 class SearchServer {
@@ -61,12 +47,5 @@ public:
 
 private:
     InvertedIndex index;
-    vector<string> Split(string& line, TotalDuration& dest);
-
-
-#ifdef USE_STRING_VIEW
-    vector<string_view> Split(string_view line, TotalDuration& dest);
-#endif
-
 };
 #endif
