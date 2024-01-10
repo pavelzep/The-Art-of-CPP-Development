@@ -2,12 +2,6 @@
 
 #include "global.h"
 
-#ifdef ORIGIN
-#include"original_server.h"
-#elif defined SS2
-#include"search_server2.h"
-#else
-
 #include <istream>
 #include <ostream>
 #include <set>
@@ -48,4 +42,3 @@ public:
 private:
     InvertedIndex index;
 };
-#endif

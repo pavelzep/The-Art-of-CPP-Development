@@ -1,9 +1,5 @@
 #include "global.h"
-#ifdef ORIGIN
-#include"original_server.cpp"
-#elif defined SS2
-#include"search_server2.cpp"
-#else
+
 
 #include "search_server.h"
 #include "iterator_range.h"
@@ -190,5 +186,3 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
         search_results_output << endl;
     }
 }
-
-#endif

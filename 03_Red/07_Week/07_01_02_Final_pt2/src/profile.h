@@ -18,13 +18,15 @@ public:
     }
 
     ~LogDuration() {
-        
-#ifdef SHOW_LOG_DURATION_INFO
         auto finish = steady_clock::now();
         auto dur = finish - start;
-        cerr << message
+        ostringstream os;
+        os << message
             << duration_cast<milliseconds>(dur).count()
             << " ms" << endl;
+
+#ifdef SHOW_LOG_DURATION_INFO
+        cerr << os.str();
 #endif
     }
 private:
@@ -40,11 +42,12 @@ struct TotalDuration {
         , value(0) {
     }
     ~TotalDuration() {
-#ifdef SHOW_TOTAL_DURATION_INFO
         ostringstream os;
         os << message
             << duration_cast<milliseconds>(value).count()
             << " ms" << endl;
+
+#ifdef SHOW_TOTAL_PARTS_DURATION_INFO
         cerr << os.str();
 #endif
     }

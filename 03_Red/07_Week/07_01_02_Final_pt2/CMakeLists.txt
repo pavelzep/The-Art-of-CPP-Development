@@ -15,5 +15,4 @@ add_executable(${PROJECT_NAME}
     ${SOURCE_PATH}/main.cpp
     ${SOURCE_PATH}/parse.cpp
     ${SOURCE_PATH}/search_server.cpp
-    ${SOURCE_PATH}/synchronized.cpp
     )
