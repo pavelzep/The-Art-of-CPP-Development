@@ -1,12 +1,5 @@
-#include "test_runner.h"
-
-#include <numeric>
-#include <vector>
-#include <string>
 #include <future>
 #include <mutex>
-#include <queue>
-#include <thread>
 
 using namespace std;
 
@@ -29,6 +22,3 @@ private:
     T value;
     mutex m;
 };
-
-vector<int> Consume(Synchronized<deque<int>>& common_queue) ;
-
