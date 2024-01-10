@@ -3,8 +3,6 @@
 #include"original_server.cpp"
 #elif defined SS2
 #include"search_server2.cpp"
-#elif defined SS3
-#include"search_server3.cpp"
 #else
 
 #include "search_server.h"
@@ -64,12 +62,6 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
     index = move(new_index);
 }
 
-
-vector<string> SearchServer::Split(string& line, TotalDuration& dest) {
-    ADD_DURATION(dest);
-    return SplitIntoWords(line);
-}
-
 bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
     if (lhs.hitcount == rhs.hitcount) {
         if (-(int32_t)lhs.docid > -(int32_t)rhs.docid)
@@ -115,38 +107,44 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #endif
 
     docid_t doc_count = index.GetDocsCount();
-    vector<hitcount_t> doc_hitcounts(50000, 0);
+    vector<hitcount_t> doc_hitcounts(doc_count, 0);
     vector<docid_to_hitcount> search_results;
-    docid_t min_id = 50'000;
+    docid_t min_id = doc_count;
     docid_t max_id = 0;
 
 
     for (string current_query; getline(query_input, current_query); ) {
-#ifdef pt1
-        const auto& words = Split(current_query, Split_d);
-#endif
 
-#ifdef pt2
+
+        vector<string> words;
+        {
+#ifdef pt1
+            ADD_DURATION(Split_d);
+#endif
+            words = SplitIntoWords(current_query);
+        }
+
+
 
         {
+#ifdef pt2
             ADD_DURATION(Lookup_d);
-            {
-                for (const auto& word : words) {
-                    for (const auto doc_hitcount : index.Lookup(word)) {
-                        if (doc_hitcount.hitcount) {
-                            doc_hitcounts[doc_hitcount.docid] += doc_hitcount.hitcount;
-                            min_id = min(min_id, doc_hitcount.docid);
-                            max_id = max(max_id, doc_hitcount.docid);
-                        }
+#endif
+            for (const auto& word : words) {
+                for (const auto doc_hitcount : index.Lookup(word)) {
+                    if (doc_hitcount.hitcount) {
+                        doc_hitcounts[doc_hitcount.docid] += doc_hitcount.hitcount;
+                        min_id = min(min_id, doc_hitcount.docid);
+                        max_id = max(max_id, doc_hitcount.docid);
                     }
                 }
             }
         }
-#endif
 
-#ifdef pt3    
         {
+#ifdef pt3   
             ADD_DURATION(GetRes_d);
+#endif
             search_results.clear();
             {
                 for (docid_t id = min_id; id <= max_id; ++id) {
@@ -154,47 +152,42 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
                         search_results.push_back({ id, doc_hitcounts[id] });
                         doc_hitcounts[id] = 0;
                     }
-
                 }
             }
             max_id = 0;
-            min_id = 50'000;
+            min_id = doc_count;
         }
-#endif
 
+        {
 #ifdef pt4
-        {
             ADD_DURATION(Sort_d);
-            {
-                size_t offset = search_results.size() > 5 ? 5 : search_results.size();
-                partial_sort(
-                    begin(search_results),
-                    begin(search_results) + offset,
-                    end(search_results),
-                    [](const docid_to_hitcount& lhs, const docid_to_hitcount& rhs) {
-                        return lhs > rhs;
-                    }
-                );
-
-            }
-        }
 #endif
-
-#ifdef pt5
-        {
-            ADD_DURATION(Output_d);
-            {
-                search_results_output << current_query << ':';
-                for (auto& [docid, hitcount] : Head(search_results, 5)) {
-                    if (!hitcount) { break; }
-                    search_results_output << " {"
-                        << "docid: " << docid << ", "
-                        << "hitcount: " << hitcount << '}';
+            size_t offset = search_results.size() > 5 ? 5 : search_results.size();
+            partial_sort(
+                begin(search_results),
+                begin(search_results) + offset,
+                end(search_results),
+                [](const docid_to_hitcount& lhs, const docid_to_hitcount& rhs) {
+                    return lhs > rhs;
                 }
+            );
+        }
+
+
+
+        {
+#ifdef pt5
+            ADD_DURATION(Output_d);
+#endif
+            search_results_output << current_query << ':';
+            for (auto& [docid, hitcount] : Head(search_results, 5)) {
+                if (!hitcount) { break; }
+                search_results_output << " {"
+                    << "docid: " << docid << ", "
+                    << "hitcount: " << hitcount << '}';
             }
         }
         search_results_output << endl;
-#endif
     }
 }
 

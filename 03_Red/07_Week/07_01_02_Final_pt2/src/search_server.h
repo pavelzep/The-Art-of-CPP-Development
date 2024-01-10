@@ -6,8 +6,6 @@
 #include"original_server.h"
 #elif defined SS2
 #include"search_server2.h"
-#elif defined SS3
-#include"search_server3.h"
 #else
 
 #include <istream>
@@ -16,8 +14,6 @@
 #include <vector>
 #include <map>
 #include <string>
-
-#include "profile.h"
 
 using namespace std;
 using docid_t = size_t;
@@ -51,6 +47,5 @@ public:
 
 private:
     InvertedIndex index;
-    vector<string> Split(string& line, TotalDuration& dest);
 };
 #endif
