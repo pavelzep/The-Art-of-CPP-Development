@@ -55,7 +55,7 @@ void SearchServer::UpdateDocumentBase(istream& document_input) {
     for (string current_document; getline(document_input, current_document); ) {
         new_index.Add(move(current_document));
     }
-    index = move(new_index);
+    s_index.GetAccess().ref_to_value = move(new_index);
 }
 
 bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
@@ -101,7 +101,7 @@ void SearchServer::AddQueriesStream(istream& query_input, ostream& search_result
 #endif
 
 #endif
-
+    auto& index = s_index.GetAccess().ref_to_value;
     docid_t doc_count = index.GetDocsCount();
     vector<hitcount_t> doc_hitcounts(doc_count, 0);
     vector<docid_to_hitcount> search_results;

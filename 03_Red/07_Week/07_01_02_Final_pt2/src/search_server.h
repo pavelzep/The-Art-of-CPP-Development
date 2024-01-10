@@ -1,6 +1,7 @@
 #pragma once
 
 #include "global.h"
+#include "synchronized.h"
 
 #include <istream>
 #include <ostream>
@@ -40,5 +41,6 @@ public:
     void AddQueriesStream(istream& query_input, ostream& search_results_output);
 
 private:
-    InvertedIndex index;
+    Synchronized<InvertedIndex> s_index;
+    // InvertedIndex index;
 };

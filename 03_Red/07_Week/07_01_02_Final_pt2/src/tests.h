@@ -21,6 +21,7 @@ void TestBasicSearch();
 void MySimpleTest();
 void BigTestExtern();
 void BigTest();
+void SynchTest();
 
 void TestFunctionality(
     const vector<string>& docs,
@@ -111,21 +112,49 @@ inline void BigTest() {
     stringstream out;
 
     {
-
         LOG_DURATION("BigTest");
         {
             LOG_DURATION("BigTest: UpdateDocumentBase");
             srv.UpdateDocumentBase(document_in_stream);
         }
-
         {
             LOG_DURATION("BigTest: AddQueriesStream");
             srv.AddQueriesStream(query_in_stream, out);
         }
+    }
+}
+
+inline void SynchTest() {SearchServer srv;
+
+    vector<string> words1 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    vector<string> words2 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    vector<string> words3 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    stringstream document_in_stream1 = generateDocuments(DOC_COUNT, words1, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream document_in_stream2 = generateDocuments(DOC_COUNT, words2, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream document_in_stream3 = generateDocuments(DOC_COUNT, words3, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream query_in_stream1 = generateQueries(QUERY_COUNT, words1, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream query_in_stream2 = generateQueries(QUERY_COUNT, words2, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream query_in_stream3 = generateQueries(QUERY_COUNT, words3, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+
+    stringstream out;
+
+    {
+        LOG_DURATION("SynchTest");
+        srv.UpdateDocumentBase(document_in_stream1);
+        srv.AddQueriesStream(query_in_stream1, out);
+        srv.AddQueriesStream(query_in_stream2, out);
+        srv.AddQueriesStream(query_in_stream3, out);
+        srv.UpdateDocumentBase(document_in_stream2);
+        srv.AddQueriesStream(query_in_stream1, out);
+        srv.AddQueriesStream(query_in_stream2, out);
+        srv.AddQueriesStream(query_in_stream3, out);
+        srv.UpdateDocumentBase(document_in_stream3);
+        srv.AddQueriesStream(query_in_stream1, out);
+        srv.AddQueriesStream(query_in_stream2, out);
+        srv.AddQueriesStream(query_in_stream3, out);
+
 
     }
-
-
 }
 
 void TestSerpFormat() {
@@ -322,6 +351,9 @@ inline void TestAll() {
 #endif
 #ifdef BIG_TEST_EXTERN
     BigTestExtern();
+#endif
+#ifdef SYNCH_TEST
+    SynchTest();
 #endif
 
 
