@@ -1,6 +1,7 @@
 #pragma once
 
 #include "global.h"
+
 #include "synchronized.h"
 
 #include <istream>
@@ -23,7 +24,8 @@ vector<string> SplitIntoWords(const string& line);
 
 class InvertedIndex {
 public:
-    InvertedIndex();
+    InvertedIndex() = default;
+    explicit InvertedIndex(istream& document_input);
     void Add(const string& document);
     const vector<docid_to_hitcount>& Lookup(const string& word) const;
     const docid_t GetDocsCount() const;
@@ -40,7 +42,9 @@ public:
     void UpdateDocumentBase(istream& document_input);
     void AddQueriesStream(istream& query_input, ostream& search_results_output);
 
+
 private:
     Synchronized<InvertedIndex> s_index;
-    // InvertedIndex index;
+    void AddQueriesStream_SingleThread(istream& query_input, ostream& search_results_output);
+    vector <future <void >> futures;
 };

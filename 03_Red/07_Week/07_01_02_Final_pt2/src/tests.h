@@ -2,12 +2,15 @@
 
 #include "test_runner.h"
 #include "profile.h"
+#include "iterator_range.h"
 
 #include "search_server.h"
 #include "parse.h"
 #include "generator.h"
 
 #include <fstream>
+#include <chrono>
+#include <thread>
 
 void TestAll();
 void TestFunctionality(const vector<string>& docs, const vector<string>& queries, const vector<string>& expected);
@@ -124,34 +127,85 @@ inline void BigTest() {
     }
 }
 
-inline void SynchTest() {SearchServer srv;
+// void TestSearchServer(vector<pair<istream, ostream*>> streams) {
+//     // IteratorRange — шаблон из задачи Paginator
+//     // random_time() — функция, которая возвращает случайный промежуток времени
+
+
+//     LOG_DURATION("Total");
+//     SearchServer srv(streams.front().first);
+//     for (auto& [input, output] :
+//         IteratorRange(begin(streams) + 1, end(streams))) {
+//         this_thread::sleep_for(random_time());
+//         if (!output) {
+//             srv.UpdateDocumentBase(input);
+//         } else {
+//             srv.AddQueriesStream(input, *output);
+//         }
+//     }
+// }
+
+inline void SynchTest() {
 
     vector<string> words1 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
-    vector<string> words2 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
-    vector<string> words3 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
     stringstream document_in_stream1 = generateDocuments(DOC_COUNT, words1, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
-    stringstream document_in_stream2 = generateDocuments(DOC_COUNT, words2, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
-    stringstream document_in_stream3 = generateDocuments(DOC_COUNT, words3, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
     stringstream query_in_stream1 = generateQueries(QUERY_COUNT, words1, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out1;
+
+    vector<string> words2 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
     stringstream query_in_stream2 = generateQueries(QUERY_COUNT, words2, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream document_in_stream2 = generateDocuments(DOC_COUNT, words2, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out2;
+
+    vector<string> words3 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
     stringstream query_in_stream3 = generateQueries(QUERY_COUNT, words3, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream document_in_stream3 = generateDocuments(DOC_COUNT, words3, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out3;
 
-    stringstream out;
+    vector<string> words4 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    stringstream query_in_stream4 = generateQueries(QUERY_COUNT, words3, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream document_in_stream4 = generateDocuments(DOC_COUNT, words3, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out4;
 
+    vector<string> words5 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    stringstream query_in_stream5 = generateQueries(QUERY_COUNT, words3, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream document_in_stream5 = generateDocuments(DOC_COUNT, words3, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out5;
+
+    vector<string> words6 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    stringstream query_in_stream6 = generateQueries(QUERY_COUNT, words3, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream document_in_stream6 = generateDocuments(DOC_COUNT, words3, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out6;
+
+
+
+    SearchServer srv;
     {
         LOG_DURATION("SynchTest");
+        // {
+        // LOG_DURATION("UpdateDocumentBase1");
         srv.UpdateDocumentBase(document_in_stream1);
-        srv.AddQueriesStream(query_in_stream1, out);
-        srv.AddQueriesStream(query_in_stream2, out);
-        srv.AddQueriesStream(query_in_stream3, out);
+        // }
+        // {
+        //     LOG_DURATION("AddQueriesStream1");
+        srv.AddQueriesStream(query_in_stream1, out1);
+        // }
+
         srv.UpdateDocumentBase(document_in_stream2);
-        srv.AddQueriesStream(query_in_stream1, out);
-        srv.AddQueriesStream(query_in_stream2, out);
-        srv.AddQueriesStream(query_in_stream3, out);
+        srv.AddQueriesStream(query_in_stream2, out2);
+
         srv.UpdateDocumentBase(document_in_stream3);
-        srv.AddQueriesStream(query_in_stream1, out);
-        srv.AddQueriesStream(query_in_stream2, out);
-        srv.AddQueriesStream(query_in_stream3, out);
+        srv.AddQueriesStream(query_in_stream3, out3);
+
+        srv.UpdateDocumentBase(document_in_stream4);
+        srv.AddQueriesStream(query_in_stream4, out4);
+
+        srv.UpdateDocumentBase(document_in_stream5);
+        srv.AddQueriesStream(query_in_stream5, out5);
+
+        srv.UpdateDocumentBase(document_in_stream6);
+        srv.AddQueriesStream(query_in_stream6, out6);
+
 
 
     }
@@ -321,7 +375,7 @@ void TestBasicSearch() {
       "about: {docid: 3, hitcount: 2}",
     };
     TestFunctionality(docs, queries, expected);
-}
+    }
 
 inline void TestAll() {
     TestRunner tr;
@@ -343,17 +397,17 @@ inline void TestAll() {
 #endif
 
 #ifdef MY_SIMPLE_TEST
-    MySimpleTest();
+    RUN_TEST(tr, MySimpleTest);
 #endif
 
 #ifdef BIG_TEST
-    BigTest();
+    RUN_TEST(tr, BigTest);
 #endif
 #ifdef BIG_TEST_EXTERN
-    BigTestExtern();
+    RUN_TEST(tr, BigTestExtern);
 #endif
 #ifdef SYNCH_TEST
-    SynchTest();
+    RUN_TEST(tr, SynchTest);
 #endif
 
 
