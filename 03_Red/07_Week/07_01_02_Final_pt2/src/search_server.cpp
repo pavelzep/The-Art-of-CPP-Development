@@ -2,12 +2,6 @@
 
 #include "search_server.h"
 
-#include "iterator_range.h"
-#include "profile.h"
-
-
-
-
 #include <algorithm>
 #include <iterator>
 #include <sstream>
@@ -54,18 +48,19 @@ SearchServer::SearchServer(istream& document_input) {
     UpdateDocumentBase(document_input);
 }
 
-void SearchServer::UpdateDocumentBase(istream& document_input) {
+void UpdateDocumentBase_SingleThread(istream& document_input, Synchronized<InvertedIndex>& s_index) {
     InvertedIndex new_index(document_input);
-
     swap(s_index.GetAccess().ref_to_value, new_index);
-    // s_index.GetAccess().ref_to_value = move(new_index);
 }
 
-
+void SearchServer::UpdateDocumentBase(istream& document_input) {
+    // futures.push_back(async(UpdateDocumentBase_SingleThread, ref(document_input), ref(s_index)));
+    UpdateDocumentBase_SingleThread(document_input, s_index);
+}
 
 bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
     if (lhs.hitcount == rhs.hitcount) {
-        if (-(int32_t)lhs.docid > -(int32_t)rhs.docid)
+        if (-(int64_t)lhs.docid > -(int64_t)rhs.docid)
             return true;
         else
             return false;
@@ -87,14 +82,11 @@ bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
 #endif
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
-    futures.push_back(
-        async([this, &query_input, &search_results_output] {
-            this->AddQueriesStream_SingleThread(query_input, search_results_output);
-            }
-        )
-    );
+    AddQueriesStream_SingleThread(query_input, search_results_output, s_index);
+    // futures.push_back(async(AddQueriesStream_SingleThread, ref(query_input), ref(search_results_output), ref(s_index)));
 }
-void SearchServer::AddQueriesStream_SingleThread(istream& query_input, ostream& search_results_output) {
+
+void AddQueriesStream_SingleThread(istream& query_input, ostream& search_results_output, Synchronized<InvertedIndex>& s_index) {
 
 #ifdef DURATION_PARTS
 #ifdef pt1
@@ -114,13 +106,14 @@ void SearchServer::AddQueriesStream_SingleThread(istream& query_input, ostream& 
 #endif
 
 #endif
-    // auto& index = s_index.GetAccess().ref_to_value;
-    // docid_t doc_count = s_index.GetAccess().ref_to_value.GetDocsCount();
 
-    vector<hitcount_t> doc_hitcounts(50'000, 0);
+    auto access = s_index.GetAccess();
+    auto doc_count = access.ref_to_value.GetDocsCount();
+
+    vector<hitcount_t> doc_hitcounts(doc_count, 0);
     vector<docid_to_hitcount> search_results;
-    // docid_t min_id = doc_count;
-    // docid_t max_id = 0;
+    docid_t min_id = doc_count;
+    docid_t max_id = 0;
 
     for (string current_query; getline(query_input, current_query); ) {
 
@@ -138,13 +131,11 @@ void SearchServer::AddQueriesStream_SingleThread(istream& query_input, ostream& 
             ADD_DURATION(Lookup_d);
 #endif
             for (const auto& word : words) {
-                // for (auto it = begin(s_index.GetAccess().ref_to_value.Lookup(word)) ;it != end(s_index.GetAccess().ref_to_value.Lookup(word));++it)
-
-                for (const auto doc_hitcount : s_index.GetAccess().ref_to_value.Lookup(word)) {
+                for (const auto doc_hitcount : access.ref_to_value.Lookup(word)) {
                     if (doc_hitcount.hitcount) {
                         doc_hitcounts[doc_hitcount.docid] += doc_hitcount.hitcount;
-                        // min_id = min(min_id, doc_hitcount.docid);
-                        // max_id = max(max_id, doc_hitcount.docid);
+                        min_id = min(min_id, doc_hitcount.docid);
+                        max_id = max(max_id, doc_hitcount.docid);
                     }
                 }
             }
@@ -157,15 +148,15 @@ void SearchServer::AddQueriesStream_SingleThread(istream& query_input, ostream& 
             search_results.clear();
 
             {
-                for (docid_t id = 0 /*min_id; id <= max_id && */;id < doc_hitcounts.size(); ++id) {
+                for (docid_t id = min_id; id <= max_id ; ++id) {
                     if (doc_hitcounts[id]) {
                         search_results.push_back({ id, doc_hitcounts[id] });
                         doc_hitcounts[id] = 0;
                     }
                 }
             }
-            // max_id = 0;
-            // min_id = doc_count;
+            max_id = 0;
+            min_id = doc_count;
         }
 
         {

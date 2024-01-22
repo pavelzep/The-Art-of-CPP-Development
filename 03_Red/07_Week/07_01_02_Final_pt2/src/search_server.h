@@ -2,6 +2,8 @@
 
 #include "global.h"
 
+#include "iterator_range.h"
+#include "profile.h"
 #include "synchronized.h"
 
 #include <istream>
@@ -45,6 +47,8 @@ public:
 
 private:
     Synchronized<InvertedIndex> s_index;
-    void AddQueriesStream_SingleThread(istream& query_input, ostream& search_results_output);
     vector <future <void >> futures;
 };
+
+void AddQueriesStream_SingleThread(istream& query_input, ostream& search_results_output, Synchronized<InvertedIndex>& s_index);
+void UpdateDocumentBase_SingleThread(istream& document_input, Synchronized<InvertedIndex>& s_index);
