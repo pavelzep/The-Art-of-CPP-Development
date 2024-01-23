@@ -6,7 +6,7 @@
 
 #ifndef BASE_TEST
     #define SHOW_LOG_DURATION_INFO
-    #define SHOW_TOTAL_PARTS_DURATION_INFO
+    // #define SHOW_TOTAL_PARTS_DURATION_INFO
 #endif
 
 #ifdef SHOW_TOTAL_PARTS_DURATION_INFO
@@ -25,8 +25,8 @@
 #endif
 
 #ifndef BASE_TEST
-    #define BIG_TEST
-    // #define SYNCH_TEST
+    // #define BIG_TEST
+    #define SYNCH_TEST
 
 #endif
 

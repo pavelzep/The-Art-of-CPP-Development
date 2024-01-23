@@ -137,20 +137,20 @@ inline void SynchTest() {
     stringstream query_in_stream1 = generateQueries(QUERY_COUNT, words1, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
     stringstream out1;
 
-    // vector<string> words2 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
-    // stringstream document_in_stream2 = generateDocuments(DOC_COUNT, words2, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
-    // stringstream query_in_stream2 = generateQueries(QUERY_COUNT, words2, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
-    // stringstream out2;
+    vector<string> words2 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    stringstream document_in_stream2 = generateDocuments(DOC_COUNT, words2, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream query_in_stream2 = generateQueries(QUERY_COUNT, words2, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out2;
 
-    // vector<string> words3 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
-    // stringstream document_in_stream3 = generateDocuments(DOC_COUNT, words3, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
-    // stringstream query_in_stream3 = generateQueries(QUERY_COUNT, words3, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
-    // stringstream out3;
+    vector<string> words3 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    stringstream document_in_stream3 = generateDocuments(DOC_COUNT, words3, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream query_in_stream3 = generateQueries(QUERY_COUNT, words3, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out3;
 
-    // vector<string> words4 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
-    // stringstream document_in_stream4 = generateDocuments(DOC_COUNT, words4, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
-    // stringstream query_in_stream4 = generateQueries(QUERY_COUNT, words4, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
-    // stringstream out4;
+    vector<string> words4 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
+    stringstream document_in_stream4 = generateDocuments(DOC_COUNT, words4, MIN_DOC_SIZE, MAX_DOC_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream query_in_stream4 = generateQueries(QUERY_COUNT, words4, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
+    stringstream out4;
 
     // vector<string> words5 = generateWords(MIN_WORD_LENTH, MAX_WORD_LENTH, FIRST_CHAR, LAST_CHAR, WORD_COUNT);
     // stringstream query_in_stream5 = generateQueries(QUERY_COUNT, words3, MIN_QUERY_SIZE, MAX_QUERY_SIZE, MIN_WORD_NUMBER, MAX_WORD_NUMBER);
@@ -181,26 +181,26 @@ inline void SynchTest() {
             //     LOG_DURATION("UpdateDocumentBase2");
             //     srv.UpdateDocumentBase(document_in_stream2);
             // }
-            // {
-            //     LOG_DURATION("AddQueriesStream2");
-            //     srv.AddQueriesStream(query_in_stream2, out2);
-            // }
+            {
+                LOG_DURATION("AddQueriesStream2");
+                srv.AddQueriesStream(query_in_stream2, out2);
+            }
             // {
             //     LOG_DURATION("UpdateDocumentBase3");
             //     srv.UpdateDocumentBase(document_in_stream3);
             // }
-            // {
-            //     LOG_DURATION("AddQueriesStream3");
-            //     srv.AddQueriesStream(query_in_stream3, out3);
-            // }
+            {
+                LOG_DURATION("AddQueriesStream3");
+                srv.AddQueriesStream(query_in_stream3, out3);
+            }
             // {
             //     LOG_DURATION("UpdateDocumentBase4");
             //     srv.UpdateDocumentBase(document_in_stream4);
             // }
-            // {
-            //     LOG_DURATION("AddQueriesStream4");
-            //     srv.AddQueriesStream(query_in_stream4, out4);
-            // }
+            {
+                LOG_DURATION("AddQueriesStream4");
+                srv.AddQueriesStream(query_in_stream4, out4);
+            }
             // srv.UpdateDocumentBase(document_in_stream5);
             // srv.AddQueriesStream(query_in_stream5, out5);
 

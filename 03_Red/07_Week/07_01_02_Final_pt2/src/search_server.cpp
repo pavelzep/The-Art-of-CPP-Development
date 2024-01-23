@@ -82,8 +82,8 @@ bool operator > (const docid_to_hitcount& lhs, const  docid_to_hitcount& rhs) {
 #endif
 
 void SearchServer::AddQueriesStream(istream& query_input, ostream& search_results_output) {
-    AddQueriesStream_SingleThread(query_input, search_results_output, s_index);
-    // futures.push_back(async(AddQueriesStream_SingleThread, ref(query_input), ref(search_results_output), ref(s_index)));
+    // AddQueriesStream_SingleThread(query_input, search_results_output, s_index);
+    futures.push_back(async(AddQueriesStream_SingleThread, ref(query_input), ref(search_results_output), ref(s_index)));
 }
 
 void AddQueriesStream_SingleThread(istream& query_input, ostream& search_results_output, Synchronized<InvertedIndex>& s_index) {
@@ -107,17 +107,18 @@ void AddQueriesStream_SingleThread(istream& query_input, ostream& search_results
 
 #endif
 
-    auto access = s_index.GetAccess();
-    auto doc_count = access.ref_to_value.GetDocsCount();
+    docid_t doc_count;
 
-    vector<hitcount_t> doc_hitcounts(doc_count, 0);
+    vector<hitcount_t> doc_hitcounts(50000, 0);
     vector<docid_to_hitcount> search_results;
-    docid_t min_id = doc_count;
-    docid_t max_id = 0;
+    docid_t min_id;
+    docid_t max_id;
 
     for (string current_query; getline(query_input, current_query); ) {
 
-
+        search_results;
+        min_id = s_index.GetAccess().ref_to_value.GetDocsCount();
+        max_id = 0;
         vector<string> words;
         {
 #ifdef pt1
@@ -127,11 +128,13 @@ void AddQueriesStream_SingleThread(istream& query_input, ostream& search_results
         }
 
         {
+
 #ifdef pt2
             ADD_DURATION(Lookup_d);
 #endif
+
             for (const auto& word : words) {
-                for (const auto doc_hitcount : access.ref_to_value.Lookup(word)) {
+                for (const auto doc_hitcount : s_index.GetAccess().ref_to_value.Lookup(word)) {
                     if (doc_hitcount.hitcount) {
                         doc_hitcounts[doc_hitcount.docid] += doc_hitcount.hitcount;
                         min_id = min(min_id, doc_hitcount.docid);
@@ -148,15 +151,15 @@ void AddQueriesStream_SingleThread(istream& query_input, ostream& search_results
             search_results.clear();
 
             {
-                for (docid_t id = min_id; id <= max_id ; ++id) {
+                for (docid_t id = min_id; id <= max_id; ++id) {
                     if (doc_hitcounts[id]) {
                         search_results.push_back({ id, doc_hitcounts[id] });
                         doc_hitcounts[id] = 0;
                     }
                 }
             }
-            max_id = 0;
-            min_id = doc_count;
+            // max_id = 0;
+            // min_id = doc_count;
         }
 
         {
