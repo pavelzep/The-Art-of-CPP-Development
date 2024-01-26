@@ -23,19 +23,8 @@ bool operator < (const Record& l, const Record& r) {
 class Database {
 
     deque<Record> store;
+    map<string, Record*> id_to_Rec;
 
-    map<string, Record> id_to_Rec;
-    
-    // multimap <int, map<string, Record>::iterator> stamps;
-    multimap <int, pair<const string*, Record*>> stamps;
-    multimap <int, pair<const string*, Record*>> karmas;
-    multimap <string*, pair<const string*, Record*>> users;
-
-    void Test(){
-        auto it = store.begin();
-        auto r = *it;
-        auto t = &r;
-    };
 
 public:
     bool Put(const Record& record);
@@ -53,7 +42,8 @@ public:
 };
 
 bool Database::Put(const Record& record) {
- return false;
+
+    return false;
 }
 
 const Record* Database::GetById(const string& id) const {
