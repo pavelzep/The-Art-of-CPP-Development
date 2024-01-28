@@ -70,7 +70,6 @@ void TestLoadFromJson() {
 }
 
 void TestJsonLibrary() {
-    // РўРµСЃС‚ РґРµРјРѕРЅСЃС‚СЂРёСЂСѓРµС‚, РєР°Рє РїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ Р±РёР±Р»РёРѕС‚РµРєРѕР№ РёР· С„Р°Р№Р»Р° json.h
 
     istringstream json_input(R"([
     {"amount": 2500, "category": "food"},
