@@ -11,5 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(${PROJECT_NAME} 
     ${SOURCE_PATH}/main.cpp
-    ${SOURCE_PATH}/spending.cpp
+    ${SOURCE_PATH}/xml.cpp
+    # ${SOURCE_PATH}/spending.cpp
+    ${SOURCE_PATH}/solution.cpp
     )
