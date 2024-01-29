@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(02_01_03_LoadFromJson VERSION 0.1.0 LANGUAGES CXX)
+project(02_02_01_LoadFromIni VERSION 0.1.0 LANGUAGES CXX)
 
 set(SOURCE_PATH src)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(${PROJECT_NAME} 
     ${SOURCE_PATH}/main.cpp
-    ${SOURCE_PATH}/json.cpp
+    ${SOURCE_PATH}/ini.cpp
     # ${SOURCE_PATH}/spending.cpp
-    ${SOURCE_PATH}/solution.cpp
+    # ${SOURCE_PATH}/solution.cpp
     )
