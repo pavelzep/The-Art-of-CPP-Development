@@ -41,10 +41,7 @@ string MostExpensiveCategory(
         compare_by_amount)->category;
 }
 
-vector<Spending> LoadFromJson(istream& input) {
-    vector<Spending>  result;
-    return result;
-}
+vector<Spending> LoadFromJson(istream& input);
 
 void TestLoadFromJson() {
     istringstream json_input(R"([

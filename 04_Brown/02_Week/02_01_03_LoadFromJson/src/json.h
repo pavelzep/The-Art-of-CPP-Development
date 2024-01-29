@@ -29,7 +29,7 @@ private:
 class Document {
 public:
   explicit Document(Node root);
-
+  
   const Node& GetRoot() const;
 
 private:
