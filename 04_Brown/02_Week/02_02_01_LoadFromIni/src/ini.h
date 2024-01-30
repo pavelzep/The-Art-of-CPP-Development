@@ -2,6 +2,8 @@
 
 #include <unordered_map>
 #include <string>
+#include <istream>
+// #include <sstream>
 
 using namespace std;
 
@@ -17,6 +19,7 @@ namespace Ini {
 
     private:
         unordered_map<string, Section> sections;
+        
     };
 
     Document Load(istream& input);
