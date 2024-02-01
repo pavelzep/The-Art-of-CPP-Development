@@ -3,7 +3,6 @@
 #include "json.h"
 #include "xml.h"
 
-
 using namespace std;
 
 Json::Document XmlToJson(const Xml::Document& doc) {
@@ -26,7 +25,7 @@ Xml::Document JsonToXml(const Json::Document& doc, string root_name) {
     for (const auto& n : doc.GetRoot().AsArray()) {
         root.AddChild(Xml::Node("spend", {
           {"category", n.AsMap().at("category").AsString()},
-          {"amount", n.AsMap().at("amount").AsInt()},
+          {"amount", to_string(n.AsMap().at("amount").AsInt())},
             }));
     }
     return Xml::Document(root);
