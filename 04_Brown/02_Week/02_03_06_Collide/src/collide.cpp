@@ -1,4 +1,3 @@
-
 #include "geo2d.h"
 #include "game_object.h"
 
@@ -9,88 +8,55 @@
 
 using namespace std;
 
-template <typename T>
-struct Collider : GameObject {
-    bool Collide(const GameObject& that) const final {
-        return that.CollideWith(static_cast<const T&>(*this));
-    }
-};
-
-class Unit final : public Collider<Unit> {
-public:
-    Unit(geo2d::Point geo) : geo_(geo) {}
-    geo2d::Point GetGeo() const { return geo_; }
-
-    bool CollideWith(const Unit& that) const override;
-    bool CollideWith(const Building& that) const override;
-    bool CollideWith(const Tower& that) const override;
-    bool CollideWith(const Fence& that) const override;
-private:
-    geo2d::Point geo_;
-};
-
-class Building : public Collider<Building> {
-public:
-    explicit Building(geo2d::Rectangle geo) :geo_(geo) {}
-    geo2d::Rectangle GetGeo() const { return geo_; }
-
-    bool CollideWith(const Unit& that) const override;
-    bool CollideWith(const Building& that) const override;
-    bool CollideWith(const Tower& that) const override;
-    bool CollideWith(const Fence& that) const override;
-private:
-    geo2d::Rectangle geo_;
-};
-
-class Tower : public Collider<Tower> {
-public:
-    explicit Tower(geo2d::Circle geo) :geo_(geo) {}
-    geo2d::Circle GetGeo() const { return geo_; }
-
-    bool CollideWith(const Unit& that) const override;
-    bool CollideWith(const Building& that) const override;
-    bool CollideWith(const Tower& that) const override;
-    bool CollideWith(const Fence& that) const override;
-private:
-    geo2d::Circle geo_;
-};
-
-class Fence : public Collider<Fence> {
-public:
-    explicit Fence(geo2d::Segment geo) :geo_(geo) {}
-    geo2d::Segment GetGeo() const { return geo_; }
-
-    bool CollideWith(const Unit& that) const override;
-    bool CollideWith(const Building& that) const override;
-    bool CollideWith(const Tower& that) const override;
-    bool CollideWith(const Fence& that) const override;
-private:
-    geo2d::Segment geo_;
-};
-
 bool Collide(const GameObject& first, const GameObject& second) {
     return first.Collide(second);
 }
 
-#define COLLIDE_WITH(A, B)                      \
-    bool A::CollideWith(const B& that) const {  \
+template <typename T, typename G>
+struct Collider : GameObject {
+    explicit Collider(G geo);
+    const G& GetGeo() const;
+    bool Collide(const GameObject& that) const final;
+    bool CollideWith(const Unit& that) const override;
+    bool CollideWith(const Building& that) const override;
+    bool CollideWith(const Tower& that) const override;
+    bool CollideWith(const Fence& that) const override;
+protected:
+    G geo_;
+};
+
+template<typename T, typename G>
+Collider<T, G>::Collider(G geo) : geo_(geo) {}
+
+template<typename T, typename G>
+const G& Collider<T, G>::GetGeo() const { return geo_; }
+
+template <typename T, typename G>
+bool Collider<T, G>::Collide(const GameObject& that) const {
+    return that.CollideWith(static_cast<const T&>(*this));
+}
+
+#define GAME_OBJECT(OBJ_t,GEO_t)                            \
+class OBJ_t: public Collider <OBJ_t, geo2d::GEO_t> {        \
+    public:                                                 \
+    explicit OBJ_t(geo2d::GEO_t geo) :Collider(geo) {}      \
+};
+
+GAME_OBJECT(Unit, Point);
+GAME_OBJECT(Building, Rectangle);
+GAME_OBJECT(Tower, Circle);
+GAME_OBJECT(Fence, Segment);
+
+#define COLLIDE_WITH(OBJ_t)                      \
+template <typename T, typename G>               \
+bool Collider<T, G>::CollideWith(const OBJ_t& that) const {  \
     return geo2d::Collide(geo_,that.GetGeo());  \
     }                                  
 
-
-#define COLLIDE_WITH_(A)         \
-    COLLIDE_WITH(A, Unit) ;       \
-    COLLIDE_WITH(A, Building);    \
-    COLLIDE_WITH(A, Tower)  ;     \
-    COLLIDE_WITH(A, Fence);
-
-COLLIDE_WITH_(Unit)
-COLLIDE_WITH_(Building)
-COLLIDE_WITH_(Tower)
-COLLIDE_WITH_(Fence)
-
-
-
+COLLIDE_WITH(Unit)
+COLLIDE_WITH(Building)
+COLLIDE_WITH(Tower)
+COLLIDE_WITH(Fence)
 
 
 
