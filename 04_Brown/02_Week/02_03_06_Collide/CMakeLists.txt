@@ -10,7 +10,6 @@ set(CMAKE_CXX_STANDARD 17)
 #set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wsign-conversion")
 
 add_executable(${PROJECT_NAME} 
-    ${SOURCE_PATH}/main.cpp
     ${SOURCE_PATH}/collide.cpp
     ${SOURCE_PATH}/geo2d.cpp
     )
