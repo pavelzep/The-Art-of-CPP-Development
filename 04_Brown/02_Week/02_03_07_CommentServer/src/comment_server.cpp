@@ -1,10 +1,10 @@
 #include "comment_server.h"
 
 using namespace std;
+using namespace Comment_Server;
 
 
-
-pair<string, string> SplitBy(const string& what, const string& by) {
+pair<string, string> Comment_Server::SplitBy(const string& what, const string& by) {
     size_t pos = what.find(by);
     if (by.size() < what.size() && pos < what.size() - by.size()) {
         return { what.substr(0, pos), what.substr(pos + by.size()) };
@@ -80,15 +80,15 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
 }
 
 
-ostream& operator<<(ostream& output, const HttpHeader& h) {
+ostream& Comment_Server::operator<<(ostream& output, const HttpHeader& h) {
     return output << h.name << ": " << h.value;
 }
 
-bool operator==(const HttpHeader& lhs, const HttpHeader& rhs) {
+bool Comment_Server::operator==(const HttpHeader& lhs, const HttpHeader& rhs) {
     return lhs.name == rhs.name && lhs.value == rhs.value;
 }
 
-istream& operator >>(istream& input, ParsedResponse& r) {
+istream& Comment_Server::operator >>(istream& input, ParsedResponse& r) {
     string line;
     getline(input, line);
 

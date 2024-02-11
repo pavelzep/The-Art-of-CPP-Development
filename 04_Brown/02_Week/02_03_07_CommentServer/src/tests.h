@@ -3,6 +3,7 @@
 #include "comment_server.h"
 
 using namespace std;
+using namespace Comment_Server;
 
 void Test(CommentServer& srv, const HttpRequest& request, const ParsedResponse& expected) {
   stringstream ss;
