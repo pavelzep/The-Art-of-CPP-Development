@@ -1,10 +1,18 @@
 #include "comment_server.h"
 
-using namespace std;
-using namespace Comment_Server;
+    using std::string;
+    using std::map;
+    using std::pair;
+    using std::vector;
+    using std::optional;
+    using std::istream;
+    using std::ostream;
+    using std::unordered_set;
+    using std::istringstream;
 
 
-pair<string, string> Comment_Server::SplitBy(const string& what, const string& by) {
+
+pair<string, string> SplitBy(const string& what, const string& by) {
     size_t pos = what.find(by);
     if (by.size() < what.size() && pos < what.size() - by.size()) {
         return { what.substr(0, pos), what.substr(pos + by.size()) };
@@ -30,7 +38,7 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
     if (req.method == "POST") {
         if (req.path == "/add_user") {
             comments_.emplace_back();
-            auto response = to_string(comments_.size() - 1);
+            auto response = std::to_string(comments_.size() - 1);
             os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << "\n" << "\n"
                 << response;
         } else if (req.path == "/add_comment") {
@@ -79,16 +87,15 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
     }
 }
 
-
-ostream& Comment_Server::operator<<(ostream& output, const HttpHeader& h) {
+ostream& operator<<(ostream& output, const HttpHeader& h) {
     return output << h.name << ": " << h.value;
 }
 
-bool Comment_Server::operator==(const HttpHeader& lhs, const HttpHeader& rhs) {
+bool operator==(const HttpHeader& lhs, const HttpHeader& rhs) {
     return lhs.name == rhs.name && lhs.value == rhs.value;
 }
 
-istream& Comment_Server::operator >>(istream& input, ParsedResponse& r) {
+istream& operator >>(istream& input, ParsedResponse& r) {
     string line;
     getline(input, line);
 
@@ -113,4 +120,29 @@ istream& Comment_Server::operator >>(istream& input, ParsedResponse& r) {
     r.content.resize(content_length);
     input.read(r.content.data(), r.content.size());
     return input;
+}
+
+HttpResponse::HttpResponse(HttpCode code) {
+
+}
+
+HttpResponse ServeRequest(const HttpRequest& req) {
+    static HttpResponse result = HttpResponse(HttpCode::NotFound);
+    return result;
+}
+
+HttpResponse& HttpResponse::AddHeader(string name, string value) {
+    return *this;
+}
+
+HttpResponse& HttpResponse::SetContent(string a_content) {
+    return *this;
+}
+
+HttpResponse& HttpResponse::SetCode(HttpCode a_code) {
+    return *this;
+}
+
+ostream& operator<<(ostream& output, const HttpResponse& resp) {
+    return output;
 }

@@ -9,57 +9,72 @@
 #include <optional>
 #include <unordered_set>
 
-namespace Comment_Server {
-    using namespace std;
-    // using std::string;
-    // using std::map;
-    // using std::pair;
-    // using std::vector;
-    // using std::optional;
-    // using std::istream;
-    // using std::ostream;
-    // using std::unordered_set;
+
+// using namespace std;
+using std::string;
+using std::map;
+using std::pair;
+using std::vector;
+using std::optional;
+using std::istream;
+using std::ostream;
+using std::unordered_set;
 
 
-    pair<string, string> SplitBy(const string& what, const string& by);
+pair<string, string> SplitBy(const string& what, const string& by);
 
-    struct HttpRequest {
-        using string = string;
+struct HttpRequest {
+    string method, path, body;
+    map<string, string> get_params;
+};
 
-        string method, path, body;
-        map<string, string> get_params;
-    };
+struct LastCommentInfo {
+    size_t user_id, consecutive_count;
+};
 
-    struct LastCommentInfo {
-        size_t user_id, consecutive_count;
-    };
+struct HttpHeader {
+    string name, value;
+};
 
-    struct HttpHeader {
-        string name, value;
-    };
+struct ParsedResponse {
+    int code;
+    vector<HttpHeader> headers;
+    string content;
+};
 
-    struct ParsedResponse {
-        int code;
-        vector<HttpHeader> headers;
-        string content;
-    };
 
-    class CommentServer {
+enum class HttpCode {
+    Ok = 200,
+    NotFound = 404,
+    Found = 302,
+};
 
-    private:
+class HttpResponse {
+public:
+    explicit HttpResponse(HttpCode code);
 
-        vector<vector<string>> comments_;
-        optional<LastCommentInfo> last_comment;
-        unordered_set<size_t> banned_users;
+    HttpResponse& AddHeader(string name, string value);
+    HttpResponse& SetContent(string a_content);
+    HttpResponse& SetCode(HttpCode a_code);
 
-    public:
-        void ServeRequest(const HttpRequest& req, std::ostream& os);
-        // HttpResponse ServeRequest(const HttpRequest& req);
-    };
+    friend ostream& operator << (ostream& output, const HttpResponse& resp);
+};
 
-    ostream& operator<<(ostream& output, const HttpHeader& h);
+class CommentServer {
 
-    bool operator==(const HttpHeader& lhs, const HttpHeader& rhs);
+private:
 
-    istream& operator >>(istream& input, ParsedResponse& r);
-}
+    vector<vector<string>> comments_;
+    optional<LastCommentInfo> last_comment;
+    unordered_set<size_t> banned_users;
+
+public:
+    void ServeRequest(const HttpRequest& req, std::ostream& os);
+    HttpResponse ServeRequest(const HttpRequest& req);
+};
+
+ostream& operator<<(ostream& output, const HttpHeader& h);
+
+bool operator==(const HttpHeader& lhs, const HttpHeader& rhs);
+
+istream& operator >>(istream& input, ParsedResponse& r);
