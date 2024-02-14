@@ -87,6 +87,11 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
     }
 }
 
+HttpResponse CommentServer::ServeRequest(const HttpRequest & req)
+{
+return HttpResponse(HttpCode::NotFound);
+}
+
 ostream& operator<<(ostream& output, const HttpHeader& h) {
     return output << h.name << ": " << h.value;
 }

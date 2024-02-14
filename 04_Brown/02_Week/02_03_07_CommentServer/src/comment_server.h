@@ -20,14 +20,13 @@ using std::istream;
 using std::ostream;
 using std::unordered_set;
 
-
 pair<string, string> SplitBy(const string& what, const string& by);
 
 struct HttpRequest {
     string method, path, body;
     map<string, string> get_params;
 };
-
+ 
 struct LastCommentInfo {
     size_t user_id, consecutive_count;
 };
@@ -41,7 +40,6 @@ struct ParsedResponse {
     vector<HttpHeader> headers;
     string content;
 };
-
 
 enum class HttpCode {
     Ok = 200,
@@ -61,20 +59,15 @@ public:
 };
 
 class CommentServer {
-
 private:
-
     vector<vector<string>> comments_;
     optional<LastCommentInfo> last_comment;
     unordered_set<size_t> banned_users;
-
 public:
     void ServeRequest(const HttpRequest& req, std::ostream& os);
     HttpResponse ServeRequest(const HttpRequest& req);
 };
 
 ostream& operator<<(ostream& output, const HttpHeader& h);
-
 bool operator==(const HttpHeader& lhs, const HttpHeader& rhs);
-
 istream& operator >>(istream& input, ParsedResponse& r);
