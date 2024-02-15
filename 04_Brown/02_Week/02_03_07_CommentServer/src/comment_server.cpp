@@ -35,6 +35,7 @@ pair<size_t, string> ParseIdAndContent(const string& body) {
 }
 
 void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
+    std::stringstream test;
     if (req.method == "POST") {
         if (req.path == "/add_user") {
             comments_.emplace_back();
@@ -54,10 +55,9 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
                 comments_[user_id].push_back(string(comment));
                 os << "HTTP/1.1 200 OK\n\n";
             } else {
-                os << "HTTP/1.1 302 Found\n\n"
-                    "Location: /captcha\n"
-                    "\n";
+                os << "HTTP/1.1 302 Found\n"<<"Location: /captcha\n\n";
             }
+
         } else if (req.path == "/checkcaptcha") {
             if (auto [id, response] = ParseIdAndContent(req.body); response == "42") {
                 banned_users.erase(id);
@@ -77,9 +77,9 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
                 response += c + '\n';
             }
 
-            os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << response;
+            os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() <<  "\n" << "\n" << response;
         } else if (req.path == "/captcha") {
-            os << "HTTP/1.1 200 OK\n" << "Content-Length: 80\n" << "\n"
+            os << "HTTP/1.1 200 OK\n" << "Content-Length: 82\n" << "\n"
                 << "What's the answer for The Ultimate Question of Life, the Universe, and Everything?";
         } else {
             os << "HTTP/1.1 404 Not found\n\n";
