@@ -1,14 +1,14 @@
 #include "comment_server.h"
 
-    using std::string;
-    // using std::map;
-    // using std::pair;
-    // using std::vector;
-    // using std::optional;
-    // using std::istream;
-    // using std::ostream;
-    // using std::unordered_set;
-    using std::istringstream;
+using std::string;
+// using std::map;
+// using std::pair;
+// using std::vector;
+// using std::optional;
+// using std::istream;
+// using std::ostream;
+// using std::unordered_set;
+using std::istringstream;
 
 
 
@@ -55,7 +55,7 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
                 comments_[user_id].push_back(string(comment));
                 os << "HTTP/1.1 200 OK\n\n";
             } else {
-                os << "HTTP/1.1 302 Found\n"<<"Location: /captcha\n\n";
+                os << "HTTP/1.1 302 Found\n" << "Location: /captcha\n\n";
             }
 
         } else if (req.path == "/checkcaptcha") {
@@ -65,6 +65,8 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
                     last_comment.reset();
                 }
                 os << "HTTP/1.1 200 OK\n\n";
+            } else {
+                os << "HTTP/1.1 302 Found\n" << "Location: /captcha\n\n";
             }
         } else {
             os << "HTTP/1.1 404 Not found\n\n";
@@ -77,7 +79,7 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
                 response += c + '\n';
             }
 
-            os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() <<  "\n" << "\n" << response;
+            os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << "\n" << "\n" << response;
         } else if (req.path == "/captcha") {
             os << "HTTP/1.1 200 OK\n" << "Content-Length: 82\n" << "\n"
                 << "What's the answer for The Ultimate Question of Life, the Universe, and Everything?";
@@ -87,9 +89,8 @@ void CommentServer::ServeRequest(const HttpRequest& req, ostream& os) {
     }
 }
 
-HttpResponse CommentServer::ServeRequest(const HttpRequest & req)
-{
-return HttpResponse(HttpCode::NotFound);
+HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
+    return HttpResponse(HttpCode::NotFound);
 }
 
 ostream& operator<<(ostream& output, const HttpHeader& h) {
