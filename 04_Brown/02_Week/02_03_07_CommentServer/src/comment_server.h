@@ -26,7 +26,7 @@ struct HttpRequest {
     string method, path, body;
     map<string, string> get_params;
 };
- 
+
 struct LastCommentInfo {
     size_t user_id, consecutive_count;
 };
@@ -40,6 +40,8 @@ struct ParsedResponse {
     vector<HttpHeader> headers;
     string content;
 };
+
+
 
 enum class HttpCode {
     Ok = 200,
@@ -56,6 +58,16 @@ public:
     HttpResponse& SetCode(HttpCode a_code);
 
     friend ostream& operator << (ostream& output, const HttpResponse& resp);
+
+private:
+    struct Response {
+        HttpCode code;
+        vector<HttpHeader> headers;
+        string content;
+    };
+    string CodeToString(HttpCode) const;
+    Response resp;
+
 };
 
 class CommentServer {
