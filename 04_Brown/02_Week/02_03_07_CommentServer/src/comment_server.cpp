@@ -8,7 +8,7 @@
 // using std::istream;
 // using std::ostream;
 // using std::unordered_set;
-using std::istringstream;
+// using std::istringstream;
 
 pair<string, string> SplitBy(const string& what, const string& by) {
     size_t pos = what.find(by);
@@ -132,7 +132,6 @@ HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
                 auto response = std::to_string(comments_.size() - 1);
                 result.SetCode(HttpCode::Ok).AddHeader("Content-Length", std::to_string(response.size())).SetContent(response);
 
-
                 // os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << "\n" << "\n"
                 //     << response;
             } else if (req.path == "/add_comment") {
@@ -143,7 +142,6 @@ HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
                 } else if (++last_comment->consecutive_count > 3) {
                     banned_users.insert(user_id);
                 }
-
 
                 if (banned_users.count(user_id) == 0) {
                     comments_[user_id].push_back(string(comment));

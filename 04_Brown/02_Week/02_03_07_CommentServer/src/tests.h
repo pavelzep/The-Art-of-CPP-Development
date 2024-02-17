@@ -2,7 +2,6 @@
 
 #include "comment_server.h"
 
-
 using std::stringstream;
 
 // #define original
