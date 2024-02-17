@@ -1,6 +1,6 @@
 #include "comment_server.h"
 
-using std::string;
+// using std::string;
 // using std::map;
 // using std::pair;
 // using std::vector;
@@ -8,7 +8,7 @@ using std::string;
 // using std::istream;
 // using std::ostream;
 // using std::unordered_set;
-using std::istringstream;
+using std::istrsrv.ServeRequest(request);ingstream;
 
 
 
@@ -126,14 +126,14 @@ istream& operator >>(istream& input, ParsedResponse& r) {
 }
 
 HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
-    static HttpResponse result = HttpResponse(HttpCode::NotFound);
+    HttpResponse result = HttpResponse(HttpCode::NotFound);
     {
         if (req.method == "POST") {
             if (req.path == "/add_user") {
                 comments_.emplace_back();
                 auto response = std::to_string(comments_.size() - 1);
-                result.SetCode(HttpCode::Ok).AddHeader("Content-Length: ", std::to_string(response.size())).SetContent(response);
-                
+                result.SetCode(HttpCode::Ok).AddHeader("Content-Length", std::to_string(response.size())).SetContent(response);
+
 
                 // os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << "\n" << "\n"
                 //     << response;
@@ -146,13 +146,14 @@ HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
                     banned_users.insert(user_id);
                 }
 
+
                 if (banned_users.count(user_id) == 0) {
                     comments_[user_id].push_back(string(comment));
 
-                    
-                    os << "HTTP/1.1 200 OK\n\n";
+                    result.SetCode(HttpCode::Ok);
+                    // os << "HTTP/1.1 200 OK\n\n";
                 } else {
-                    os << "HTTP/1.1 302 Found\n" << "Location: /captcha\n\n";
+                    result.SetCode(HttpCode::Found).AddHeader("Location", "/captcha");
                 }
 
             } else if (req.path == "/checkcaptcha") {
@@ -161,12 +162,15 @@ HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
                     if (last_comment && last_comment->user_id == id) {
                         last_comment.reset();
                     }
-                    os << "HTTP/1.1 200 OK\n\n";
+                    result.SetCode(HttpCode::Ok);
+                    // os << "HTTP/1.1 200 OK\n\n";
                 } else {
-                    os << "HTTP/1.1 302 Found\n" << "Location: /captcha\n\n";
+                    result.SetCode(HttpCode::Found).AddHeader("Location", "/captcha");
+                    // os << "HTTP/1.1 302 Found\n" << "Location: /captcha\n\n";
                 }
             } else {
-                os << "HTTP/1.1 404 Not found\n\n";
+                result.SetCode(HttpCode::NotFound);
+                // os << "HTTP/1.1 404 Not found\n\n";
             }
         } else if (req.method == "GET") {
             if (req.path == "/user_comments") {
@@ -175,13 +179,15 @@ HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
                 for (const string& c : comments_[user_id]) {
                     response += c + '\n';
                 }
-
-                os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << "\n" << "\n" << response;
+                result.SetCode(HttpCode::Ok).AddHeader("Content-Length", std::to_string(response.size())).SetContent(response);
+                // os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << "\n" << "\n" << response;
             } else if (req.path == "/captcha") {
-                os << "HTTP/1.1 200 OK\n" << "Content-Length: 82\n" << "\n"
-                    << "What's the answer for The Ultimate Question of Life, the Universe, and Everything?";
+                result.SetCode(HttpCode::Ok).AddHeader("Content-Length", "82").SetContent("What's the answer for The Ultimate Question of Life, the Universe, and Everything?");
+                // os << "HTTP/1.1 200 OK\n" << "Content-Length: 82\n" << "\n"
+                    // << "What's the answer for The Ultimate Question of Life, the Universe, and Everything?";
             } else {
-                os << "HTTP/1.1 404 Not found\n\n";
+                result.SetCode(HttpCode::NotFound);
+                // os << "HTTP/1.1 404 Not found\n\n";
             }
         }
     }
@@ -226,12 +232,12 @@ HttpResponse& HttpResponse::SetContent(string a_content) {
     return *this;
 }
 
-ostream& operator<<(ostream& output, const HttpResponse& resp) {
-    output << "HTTP/1.1 " << (int)resp.resp.code << " " << resp.CodeToString(resp.resp.code) << '\n';
-    for (const auto [name, value] : resp.resp.headers) {
+ostream& operator<<(ostream& output, const HttpResponse& http_resp) {
+    output << "HTTP/1.1 " << (int)http_resp.resp.code << " " << http_resp.CodeToString(http_resp.resp.code) << '\n';
+    for (const auto [name, value] : http_resp.resp.headers) {
         output << name << ": " << value << "\n";
     }
     output << "\n";
-    output << resp.resp.content;
+    output << http_resp.resp.content;
     return output;
 }

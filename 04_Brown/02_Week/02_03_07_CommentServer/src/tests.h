@@ -5,9 +5,19 @@
 
 using std::stringstream;
 
+// #define original
+
 void Test(CommentServer& srv, const HttpRequest& request, const ParsedResponse& expected) {
     stringstream ss;
+#ifdef original
     srv.ServeRequest(request, ss);
+#else
+    // HttpResponse http_resp = srv.ServeRequest(request);
+    // ss << http_resp;
+    // string temp = ss.str();
+    ss << srv.ServeRequest(request);
+#endif
+
     ParsedResponse resp;
     ss >> resp;
     ASSERT_EQUAL(resp.code, expected.code);

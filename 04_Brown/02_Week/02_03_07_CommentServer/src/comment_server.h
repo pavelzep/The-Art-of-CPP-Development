@@ -76,7 +76,7 @@ private:
     optional<LastCommentInfo> last_comment;
     unordered_set<size_t> banned_users;
 public:
-    void ServeRequest(const HttpRequest& req, std::ostream& os);
+    void ServeRequest(const HttpRequest& req, ostream& os);
     HttpResponse ServeRequest(const HttpRequest& req);
 };
 
