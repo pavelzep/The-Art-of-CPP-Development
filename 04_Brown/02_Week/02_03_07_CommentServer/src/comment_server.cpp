@@ -8,9 +8,7 @@
 // using std::istream;
 // using std::ostream;
 // using std::unordered_set;
-using std::istrsrv.ServeRequest(request);ingstream;
-
-
+using std::istringstream;
 
 pair<string, string> SplitBy(const string& what, const string& by) {
     size_t pos = what.find(by);
@@ -219,7 +217,6 @@ string HttpResponse::CodeToString(HttpCode a_code) const {
             return "Not found";
             break;
     }
-
 }
 
 HttpResponse& HttpResponse::AddHeader(string name, string value) {

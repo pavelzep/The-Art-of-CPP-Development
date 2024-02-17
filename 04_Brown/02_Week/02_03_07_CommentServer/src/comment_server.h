@@ -9,7 +9,6 @@
 #include <optional>
 #include <unordered_set>
 
-
 // using namespace std;
 using std::string;
 using std::map;
@@ -40,8 +39,6 @@ struct ParsedResponse {
     vector<HttpHeader> headers;
     string content;
 };
-
-
 
 enum class HttpCode {
     Ok = 200,
