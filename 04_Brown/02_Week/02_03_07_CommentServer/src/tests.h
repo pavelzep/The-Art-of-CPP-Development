@@ -11,10 +11,10 @@ void Test(CommentServer& srv, const HttpRequest& request, const ParsedResponse& 
 #ifdef original
     srv.ServeRequest(request, ss);
 #else
-    // HttpResponse http_resp = srv.ServeRequest(request);
-    // ss << http_resp;
-    // string temp = ss.str();
-    ss << srv.ServeRequest(request);
+    HttpResponse http_resp = srv.ServeRequest(request);
+    ss << http_resp;
+    string temp = ss.str();
+    // ss << srv.ServeRequest(request);
 #endif
 
     ParsedResponse resp;

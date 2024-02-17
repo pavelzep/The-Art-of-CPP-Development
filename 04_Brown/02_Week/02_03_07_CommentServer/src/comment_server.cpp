@@ -1,4 +1,98 @@
-#include "comment_server.h"
+#define  solution 
+
+
+#ifndef solution 
+#include "comment_server.h" //start
+//#pragma once
+#else
+
+#include <vector>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <utility>
+#include <map>
+#include <optional>
+#include <unordered_set>
+#include <algorithm>
+
+using namespace std;
+
+using std::string;
+using std::map;
+using std::pair;
+using std::vector;
+using std::optional;
+using std::istream;
+using std::ostream;
+using std::unordered_set;
+using std::istringstream;
+
+pair<string, string> SplitBy(const string& what, const string& by);
+
+struct HttpRequest {
+    string method, path, body;
+    map<string, string> get_params;
+};
+
+struct LastCommentInfo {
+    size_t user_id, consecutive_count;
+};
+
+struct HttpHeader {
+    string name, value;
+};
+
+struct ParsedResponse {
+    int code;
+    vector<HttpHeader> headers;
+    string content;
+};
+
+enum class HttpCode {
+    Ok = 200,
+    NotFound = 404,
+    Found = 302,
+};
+
+class HttpResponse {
+public:
+    explicit HttpResponse(HttpCode code);
+
+    HttpResponse& AddHeader(string name, string value);
+    HttpResponse& SetContent(string a_content);
+    HttpResponse& SetCode(HttpCode a_code);
+
+    friend ostream& operator << (ostream& output, const HttpResponse& resp);
+
+private:
+    struct Response {
+        HttpCode code;
+        vector<HttpHeader> headers;
+        string content;
+    };
+    string CodeToString(HttpCode) const;
+    HttpResponse& SetHeader(string name, string value);
+    Response resp;
+};
+
+class CommentServer {
+private:
+    vector<vector<string>> comments_;
+    optional<LastCommentInfo> last_comment;
+    unordered_set<size_t> banned_users;
+public:
+    void ServeRequest(const HttpRequest& req, ostream& os);
+    HttpResponse ServeRequest(const HttpRequest& req);
+};
+
+ostream& operator<<(ostream& output, const HttpHeader& h);
+bool operator==(const HttpHeader& lhs, const HttpHeader& rhs);
+istream& operator >>(istream& input, ParsedResponse& r);
+
+//#include "comment_server.h" //end 
+
+#endif
 
 // using std::string;
 // using std::map;
@@ -130,7 +224,7 @@ HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
             if (req.path == "/add_user") {
                 comments_.emplace_back();
                 auto response = std::to_string(comments_.size() - 1);
-                result.SetCode(HttpCode::Ok).AddHeader("Content-Length", std::to_string(response.size())).SetContent(response);
+                result.SetCode(HttpCode::Ok)/*.AddHeader("Content-Length", std::to_string(response.size()))*/.SetContent(response);
 
                 // os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << "\n" << "\n"
                 //     << response;
@@ -175,10 +269,10 @@ HttpResponse CommentServer::ServeRequest(const HttpRequest& req) {
                 for (const string& c : comments_[user_id]) {
                     response += c + '\n';
                 }
-                result.SetCode(HttpCode::Ok).AddHeader("Content-Length", std::to_string(response.size())).SetContent(response);
+                result.SetCode(HttpCode::Ok)/*.AddHeader("Content-Length", std::to_string(response.size()))*/.SetContent(response);
                 // os << "HTTP/1.1 200 OK\n" << "Content-Length: " << response.size() << "\n" << "\n" << response;
             } else if (req.path == "/captcha") {
-                result.SetCode(HttpCode::Ok).AddHeader("Content-Length", "82").SetContent("What's the answer for The Ultimate Question of Life, the Universe, and Everything?");
+                result.SetCode(HttpCode::Ok)/*.AddHeader("Content-Length", "82")*/.SetContent("What's the answer for The Ultimate Question of Life, the Universe, and Everything?");
                 // os << "HTTP/1.1 200 OK\n" << "Content-Length: 82\n" << "\n"
                     // << "What's the answer for The Ultimate Question of Life, the Universe, and Everything?";
             } else {
@@ -217,13 +311,20 @@ string HttpResponse::CodeToString(HttpCode a_code) const {
     }
 }
 
+HttpResponse& HttpResponse::SetHeader(string name, string value) {
+    // auto it = std::find(this->resp.headers.begin(), this->resp.headers.end(), name);
+    this->resp.headers.push_back(HttpHeader{ std::move(name), std::move(value) });
+    return *this;
+}
+
 HttpResponse& HttpResponse::AddHeader(string name, string value) {
-    this->resp.headers.push_back(HttpHeader{ move(name), move(value) });
+    this->resp.headers.push_back(HttpHeader{ std::move(name), std::move(value) });
     return *this;
 }
 
 HttpResponse& HttpResponse::SetContent(string a_content) {
-    this->resp.content = move(a_content);
+    this->resp.content = std::move(a_content);
+    this->AddHeader("Content-Length", std::to_string(resp.content.size()));
     return *this;
 }
 

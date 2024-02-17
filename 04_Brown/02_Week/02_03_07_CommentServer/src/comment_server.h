@@ -64,6 +64,7 @@ private:
         string content;
     };
     string CodeToString(HttpCode) const;
+    HttpResponse& SetHeader(string name, string value);
     Response resp;
 };
 
