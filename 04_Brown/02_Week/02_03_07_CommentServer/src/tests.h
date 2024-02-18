@@ -6,6 +6,12 @@ using std::stringstream;
 
 // #define original
 
+void MyTest(){
+    CommentServer cs;
+    // string temp = (cs.ServeRequest("")).str();
+}
+
+
 void Test(CommentServer& srv, const HttpRequest& request, const ParsedResponse& expected) {
     stringstream ss;
 #ifdef original

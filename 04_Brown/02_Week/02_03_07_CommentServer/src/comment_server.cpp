@@ -1,7 +1,8 @@
-#define  solution 
+#define  MY_SOLUTION 
 
 
-#ifndef solution 
+#ifndef MY_SOLUTION 
+
 #include "comment_server.h" //start
 //#pragma once
 #else
@@ -312,8 +313,11 @@ string HttpResponse::CodeToString(HttpCode a_code) const {
 }
 
 HttpResponse& HttpResponse::SetHeader(string name, string value) {
-    // auto it = std::find(this->resp.headers.begin(), this->resp.headers.end(), name);
-    this->resp.headers.push_back(HttpHeader{ std::move(name), std::move(value) });
+    auto& vec = this->resp.headers;
+    auto it = std::find_if(vec.begin(), vec.end(), [&name](const HttpHeader& header) {return (header.name == name);});
+    if (it == vec.end()) {
+        this->resp.headers.push_back(HttpHeader{ std::move(name), std::move(value) });
+    } else it->value = value;
     return *this;
 }
 
@@ -324,7 +328,7 @@ HttpResponse& HttpResponse::AddHeader(string name, string value) {
 
 HttpResponse& HttpResponse::SetContent(string a_content) {
     this->resp.content = std::move(a_content);
-    this->AddHeader("Content-Length", std::to_string(resp.content.size()));
+    this->SetHeader("Content-Length", std::to_string(resp.content.size()));
     return *this;
 }
 

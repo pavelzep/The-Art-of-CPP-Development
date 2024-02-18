@@ -4,4 +4,5 @@
 int main() {
   TestRunner tr;
   RUN_TEST(tr, TestServer<CommentServer>);
+  RUN_TEST(tr, MyTest);
 }
