@@ -78,38 +78,78 @@ struct Person {
 
 // }
 
-int main() {
 
-    std::ifstream in("../src/input.txt");
-    std::ofstream out("../src/output.txt");
-    // const DataBase db = ReadPeople(in);
+enum class request_type {
+    AGE,
+    WEALTHY,
+    POPULAR_NAME_M,
+    POPULAR_NAME_F,
+};
 
-    isteam input = cin;
+struct StatisticResponse {
+    request_type type;
     int count;
-    input >> count;
-    vector<Person> sort_by_age(count);
+    int total_income;
+    string name;
+};
 
-    for (string command; cin >> command; ) {
-        if (command == "AGE") {
-            int adult_age;
-            cin >> adult_age;
+ostream& operator << (ostream& out, const StatisticResponse& resp) {
 
 
-        } else if (command == "WEALTHY") {
-            int count;
-            cin >> count;
 
-        } else if (command == "POPULAR_NAME") {
-            char gender;
-            cin >> gender;
+    return out;
+};
 
+
+StatisticResponse ServeRequest(string& command, string& request, vector<Person> sort_by_age) {
+    StatisticResponse result;
+    if (command == "AGE") {
+        result.type = request_type::AGE;
+        result.count = stoi(request);
+
+    } else if (command == "WEALTHY") {
+        result.type = request_type::WEALTHY;
+        result.count = stoi(request);
+
+    } else if (command == "POPULAR_NAME") {
+        result.count = 0;
+        if (request == "F") {
+            result.type = request_type::POPULAR_NAME_F;
+        } else {
+            result.type = request_type::POPULAR_NAME_M;
         }
 
     }
-    return 0;
+    return result;
+}
 
+
+int main() {
+    std::ifstream cin("../src/input.txt");
+    std::ofstream out("../src/output.txt");
+    // const DataBase db = ReadPeople(in);
+
+    int count;
+    cin >> count;
+    vector<Person> sort_by_age(count);
+    for (Person& p : sort_by_age) {
+        char gender;
+        cin >> p.name >> p.age >> p.income >> gender;
+        p.is_male = gender == 'M';
+    }
+    sort(begin(sort_by_age), end(sort_by_age), [](const Person& lhs, const Person& rhs) {
+        return lhs.age < rhs.age;
+        });
 
     for (string command; cin >> command; ) {
+        string request;
+        cin >> request;
+        StatisticResponse resp = ServeRequest(command, request, sort_by_age);
+    }
+    return 0;
+
+    /*
+        for (string command; cin >> command; ) {
         if (command == "AGE") {
             int adult_age;
             cin >> adult_age;
@@ -174,4 +214,5 @@ int main() {
             }
         }
     }
+    */
 }
