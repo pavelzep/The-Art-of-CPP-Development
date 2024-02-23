@@ -39,46 +39,6 @@ struct Person {
     bool is_male;
 };
 
-// struct DataBase {
-//     vector<Person> sort_by_age;
-//     // map<Person, string> male_names;
-//     // map<Person, string> female_names;
-//     vector<size_t> sort_by_income;
-// };
-
-// DataBase ReadPeople(istream& input) {
-//     int count;
-//     input >> count;
-
-//     DataBase result;
-//     vector<Person> sort_by_age(count);
-//     vector<size_t> sort_by_income(count);
-//     std::iota(sort_by_income.begin(), sort_by_income.end(), 0);
-
-//     for (Person& p : sort_by_age) {
-//         char gender;
-//         input >> p.name >> p.age >> p.income >> gender;
-//         p.is_male = gender == 'M';
-//     }
-
-//     sort(begin(sort_by_age), end(sort_by_age), [](const Person& lhs, const Person& rhs) {
-//         return lhs.age < rhs.age;
-//         });
-
-
-//     sort(begin(sort_by_income), end(sort_by_income), [& sort_by_age](size_t lhs, size_t rhs) {
-//         return sort_by_age[lhs].age < sort_by_age[rhs].age;
-
-//         });
-
-//     result.sort_by_age = move(sort_by_age);
-//     result.sort_by_income = move(sort_by_income);
-
-//     return result;
-
-// }
-
-
 enum class request_type {
     AGE,
     WEALTHY,
@@ -88,15 +48,13 @@ enum class request_type {
 
 struct StatisticResponse {
     request_type type;
-    int count;
+    int req;
+    int people_count;
     int total_income;
     string name;
 };
 
 ostream& operator << (ostream& out, const StatisticResponse& resp) {
-
-
-
     return out;
 };
 
@@ -105,20 +63,72 @@ StatisticResponse ServeRequest(string& command, string& request, vector<Person> 
     StatisticResponse result;
     if (command == "AGE") {
         result.type = request_type::AGE;
-        result.count = stoi(request);
+        result.req = stoi(request);
+        result.total_income = 0;
+
+        auto adult_begin = lower_bound(
+            begin(sort_by_age), end(sort_by_age), result.req, [](const Person& lhs, int age) {
+                return lhs.age < age;
+            }
+        );
+        result.people_count = std::distance(adult_begin, end(sort_by_age));
 
     } else if (command == "WEALTHY") {
         result.type = request_type::WEALTHY;
-        result.count = stoi(request);
+        result.req = stoi(request);
+        result.people_count = 0;
+
+        auto head = Head(sort_by_age, result.req);
+        partial_sort(
+            head.begin(), head.end(), end(sort_by_age), [](const Person& lhs, const Person& rhs) {
+                return lhs.income > rhs.income;
+            }
+        );
+
+        int total_income = accumulate(
+            head.begin(), head.end(), 0, [](int cur, Person& p) {
+                return p.income += cur;
+            });
+        result.total_income = total_income;
 
     } else if (command == "POPULAR_NAME") {
-        result.count = 0;
-        if (request == "F") {
-            result.type = request_type::POPULAR_NAME_F;
-        } else {
+        result.req = 0;
+        result.people_count = 0;
+        result.total_income = 0;
+        if (request == "M") {
             result.type = request_type::POPULAR_NAME_M;
+        } else {
+            result.type = request_type::POPULAR_NAME_F;
         }
-
+IteratorRange range{
+          begin(sort_by_age),
+          partition(begin(sort_by_age), end(sort_by_age), [request](Person& p) {
+            return p.is_male = (request == "M");
+          })
+        };
+        
+        if (range.begin() == range.end()) {
+            cout << "No people of gender " << request << '\n';
+        } else {
+            sort(range.begin(), range.end(), [](const Person& lhs, const Person& rhs) {
+                return lhs.name < rhs.name;
+                });
+            const string* most_popular_name = &range.begin()->name;
+            int count = 1;
+            for (auto i = range.begin(); i != range.end(); ) {
+                auto same_name_end = find_if_not(i, range.end(), [i](const Person& p) {
+                    return p.name == i->name;
+                    });
+                auto cur_name_count = std::distance(i, same_name_end);
+                if (cur_name_count > count) {
+                    count = cur_name_count;
+                    most_popular_name = &i->name;
+                }
+                i = same_name_end;
+            }
+            cout << "Most popular name among people of gender " << request << " is "
+                << *most_popular_name << '\n';
+        }
     }
     return result;
 }
@@ -127,7 +137,6 @@ StatisticResponse ServeRequest(string& command, string& request, vector<Person> 
 int main() {
     std::ifstream cin("../src/input.txt");
     std::ofstream out("../src/output.txt");
-    // const DataBase db = ReadPeople(in);
 
     int count;
     cin >> count;
@@ -148,71 +157,77 @@ int main() {
     }
     return 0;
 
-    /*
-        for (string command; cin >> command; ) {
-        if (command == "AGE") {
-            int adult_age;
-            cin >> adult_age;
 
-            auto adult_begin = lower_bound(
-                begin(people), end(people), adult_age, [](const Person& lhs, int age) {
-                    return lhs.age < age;
-                }
-            );
+#ifdef AGE
+    if (command == "AGE") {
+        int adult_age;
+        cin >> adult_age;
 
-            cout << "There are " << std::distance(adult_begin, end(people))
-                << " adult people for maturity age " << adult_age << '\n';
-        } else if (command == "WEALTHY") {
-            int count;
-            cin >> count;
-
-            auto head = Head(people, count);
-
-            partial_sort(
-                head.begin(), head.end(), end(people), [](const Person& lhs, const Person& rhs) {
-                    return lhs.income > rhs.income;
-                }
-            );
-
-            int total_income = accumulate(
-                head.begin(), head.end(), 0, [](int cur, Person& p) {
-                    return p.income += cur;
-                }
-            );
-            cout << "Top-" << count << " people have total income " << total_income << '\n';
-        } else if (command == "POPULAR_NAME") {
-            char gender;
-            cin >> gender;
-
-            IteratorRange range{
-              begin(people),
-              partition(begin(people), end(people), [gender](Person& p) {
-                return p.is_male = (gender == 'M');
-              })
-            };
-            if (range.begin() == range.end()) {
-                cout << "No people of gender " << gender << '\n';
-            } else {
-                sort(range.begin(), range.end(), [](const Person& lhs, const Person& rhs) {
-                    return lhs.name < rhs.name;
-                    });
-                const string* most_popular_name = &range.begin()->name;
-                int count = 1;
-                for (auto i = range.begin(); i != range.end(); ) {
-                    auto same_name_end = find_if_not(i, range.end(), [i](const Person& p) {
-                        return p.name == i->name;
-                        });
-                    auto cur_name_count = std::distance(i, same_name_end);
-                    if (cur_name_count > count) {
-                        count = cur_name_count;
-                        most_popular_name = &i->name;
-                    }
-                    i = same_name_end;
-                }
-                cout << "Most popular name among people of gender " << gender << " is "
-                    << *most_popular_name << '\n';
+        auto adult_begin = lower_bound(
+            begin(people), end(people), adult_age, [](const Person& lhs, int age) {
+                return lhs.age < age;
             }
+        );
+
+        cout << "There are " << std::distance(adult_begin, end(people))
+            << " adult people for maturity age " << adult_age << '\n';
+    }
+#endif
+#ifdef WEALTHY
+    else if (command == "WEALTHY") {
+        int count;
+        cin >> count;
+
+        auto head = Head(people, count);
+
+        partial_sort(
+            head.begin(), head.end(), end(people), [](const Person& lhs, const Person& rhs) {
+                return lhs.income > rhs.income;
+            }
+        );
+
+        int total_income = accumulate(
+            head.begin(), head.end(), 0, [](int cur, Person& p) {
+                return p.income += cur;
+            }
+        );
+        cout << "Top-" << count << " people have total income " << total_income << '\n';
+    }
+#endif
+#ifdef NAME
+    else if (command == "POPULAR_NAME") {
+        char gender;
+        cin >> gender;
+
+        IteratorRange range{
+          begin(people),
+          partition(begin(people), end(people), [gender](Person& p) {
+            return p.is_male = (gender == 'M');
+          })
+        };
+        if (range.begin() == range.end()) {
+            cout << "No people of gender " << gender << '\n';
+        } else {
+            sort(range.begin(), range.end(), [](const Person& lhs, const Person& rhs) {
+                return lhs.name < rhs.name;
+                });
+            const string* most_popular_name = &range.begin()->name;
+            int count = 1;
+            for (auto i = range.begin(); i != range.end(); ) {
+                auto same_name_end = find_if_not(i, range.end(), [i](const Person& p) {
+                    return p.name == i->name;
+                    });
+                auto cur_name_count = std::distance(i, same_name_end);
+                if (cur_name_count > count) {
+                    count = cur_name_count;
+                    most_popular_name = &i->name;
+                }
+                i = same_name_end;
+            }
+            cout << "Most popular name among people of gender " << gender << " is "
+                << *most_popular_name << '\n';
         }
     }
-    */
+#endif
+
 }
