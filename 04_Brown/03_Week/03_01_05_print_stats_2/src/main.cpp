@@ -201,28 +201,38 @@ StatisticResponse ServeRequest(const StatisticRequest& request, vector<Person> s
     return result;
 }
 
-int main() {
-    std::ifstream cin("../src/input.txt");
-    std::ofstream out("../src/output.txt");
-
+vector<Person> ReadPersons(istream& input) {
     int count;
-    cin >> count;
-    vector<Person> sort_by_age(count);
-    for (Person& p : sort_by_age) {
+    input >> count;
+
+    vector<Person> result(count);
+    for (Person& p : result) {
         char gender;
-        cin >> p.name >> p.age >> p.income >> gender;
+        input >> p.name >> p.age >> p.income >> gender;
         p.is_male = gender == 'M';
     }
-    sort(begin(sort_by_age), end(sort_by_age), [](const Person& lhs, const Person& rhs) {
-        return lhs.age < rhs.age;
-        });
 
-    for (string command; getline(cin, command);) {
-        if (!command.empty()) {
-            StatisticRequest request = PareseReqest(command);
-            StatisticResponse resp = ServeRequest(request, sort_by_age);
-            cout << resp;
+    return result;
+}
+
+int main() {
+    // std::ifstream cin("../src/input.txt");
+    // std::ofstream out("../src/output.txt");
+
+    const vector<Person> sort_by_age = [] {
+        vector<Person> sort_by_age = ReadPersons(cin);
+        sort(begin(sort_by_age), end(sort_by_age), [](const Person& lhs, const Person& rhs) {
+            return lhs.age < rhs.age;
+            });
+        return sort_by_age;
+        }();
+
+        for (string command; getline(cin, command);) {
+            if (!command.empty()) {
+                StatisticRequest request = PareseReqest(command);
+                StatisticResponse resp = ServeRequest(request, sort_by_age);
+                cout << resp;
+            }
         }
-    }
-    return 0;
+        return 0;
 }
