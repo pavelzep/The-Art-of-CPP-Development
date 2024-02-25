@@ -5,7 +5,9 @@
 #include <numeric>
 #include <fstream>
 #include <sstream>
+#include <optional>
 #include <istream>
+#include "test_runner.h"
 
 using namespace std;
 
@@ -23,6 +25,10 @@ public:
 
     Iterator end() const {
         return last;
+    }
+
+    Iterator value(size_t pos) {
+        return first + pos;
     }
 
 private:
@@ -90,6 +96,14 @@ ostream& operator << (ostream& out, const StatisticResponse& resp) {
     }
     return out;
 };
+
+struct StatisticDataBase {
+    optional<string> most_popular_male_name;
+    optional<string> most_popular_female_name;
+    vector<Person> sort_by_age;
+    vector<int64_t> accumulate_welthy;
+};
+
 
 StatisticRequest PareseReqest(string& line) {
 
@@ -192,7 +206,6 @@ StatisticResponse ServeRequest(const StatisticRequest& request, vector<Person> s
                 }
                 result.most_popular_name = *most_popular_name;
             }
-
             break;
         }
         default:
@@ -212,27 +225,43 @@ vector<Person> ReadPersons(istream& input) {
         p.is_male = gender == 'M';
     }
 
+    sort(begin(result), end(result), [](const Person& lhs, const Person& rhs) {
+        return lhs.age < rhs.age;
+        });
+
     return result;
+}
+
+
+StatisticDataBase createDataBase() {
+    StatisticDataBase db;
+    db.sort_by_age = ReadPersons(cin);
+
+    vector<Person> sort_by_welthy(db.sort_by_age.size());
+    std::partial_sort_copy(db.sort_by_age.begin(), db.sort_by_age.end(), sort_by_welthy.begin(), sort_by_welthy.end(), [](const Person& lhs, const Person& rhs) {
+        return lhs.income > rhs.income;
+        });
+
+    partial_sum(sort_by_welthy.begin(), sort_by_welthy.end(), db.accumulate_welthy.begin(), [](Person lhs, Person rhs) {
+        return lhs.income + rhs.income;
+
+        });
+
+
+
+    return db;
 }
 
 int main() {
     // std::ifstream cin("../src/input.txt");
-    // std::ofstream out("../src/output.txt");
+    const StatisticDataBase db = createDataBase();
 
-    const vector<Person> sort_by_age = [] {
-        vector<Person> sort_by_age = ReadPersons(cin);
-        sort(begin(sort_by_age), end(sort_by_age), [](const Person& lhs, const Person& rhs) {
-            return lhs.age < rhs.age;
-            });
-        return sort_by_age;
-        }();
-
-        for (string command; getline(cin, command);) {
-            if (!command.empty()) {
-                StatisticRequest request = PareseReqest(command);
-                StatisticResponse resp = ServeRequest(request, sort_by_age);
-                cout << resp;
-            }
+    for (string command; getline(cin, command);) {
+        if (!command.empty()) {
+            StatisticRequest request = PareseReqest(command);
+            StatisticResponse resp = ServeRequest(request, db.sort_by_age);
+            cout << resp;
         }
-        return 0;
+    }
+    return 0;
 }
