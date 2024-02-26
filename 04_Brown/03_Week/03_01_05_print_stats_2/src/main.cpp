@@ -27,10 +27,6 @@ public:
         return last;
     }
 
-    Iterator value(size_t pos) {
-        return first + pos;
-    }
-
 private:
     Iterator first, last;
 };
@@ -104,7 +100,6 @@ struct StatisticDataBase {
     vector<int64_t> accumulate_welthy;
 };
 
-
 StatisticRequest PareseReqest(string& line) {
 
     StatisticRequest req;
@@ -124,95 +119,6 @@ StatisticRequest PareseReqest(string& line) {
     }
 
     return req;
-}
-
-
-StatisticResponse ServeRequest(const StatisticRequest& request, vector<Person> sort_by_age) {
-    StatisticResponse result;
-
-    switch (request.type) {
-        case request_type::AGE:
-        {
-            result.type = response_type::AGE;
-            result.age = request.age;
-            result.total_income = 0;
-            result.most_popular_name = "";
-            result.gender = 0;
-
-            auto adult_begin = lower_bound(
-                begin(sort_by_age), end(sort_by_age), result.age, [](const Person& lhs, int age) {
-                    return lhs.age < age;
-                }
-            );
-            result.people_count = std::distance(adult_begin, end(sort_by_age));
-            break;
-        }
-        case request_type::WEALTHY:
-        {
-            result.type = response_type::WEALTHY;
-            result.age = 0;
-            result.most_popular_name = "";
-            result.gender = 0;
-            result.people_count = request.wealthy_people_count;
-
-            auto head = Head(sort_by_age, result.people_count);
-            partial_sort(
-                head.begin(), head.end(), end(sort_by_age), [](const Person& lhs, const Person& rhs) {
-                    return lhs.income > rhs.income;
-                }
-            );
-
-            int total_income = accumulate(
-                head.begin(), head.end(), 0, [](int cur, Person& p) {
-                    return p.income += cur;
-                });
-            result.total_income = total_income;
-
-            break;
-        }
-        case request_type::POPULAR_NAME:
-        {
-            result.type = response_type::POPULAR_NAME;
-            result.age = 0;
-            result.people_count = 0;
-            result.total_income = 0;
-            result.gender = request.gender;
-
-            IteratorRange range{
-                      begin(sort_by_age),
-                      partition(begin(sort_by_age), end(sort_by_age), [&result](Person& p) {
-                        return p.is_male == (result.gender == 'M');
-                      })
-            };
-
-            if (range.begin() == range.end()) {
-                result.type = response_type::NO_PEOPLE;
-
-            } else {
-                sort(range.begin(), range.end(), [](const Person& lhs, const Person& rhs) {
-                    return lhs.name < rhs.name;
-                    });
-                const string* most_popular_name = &range.begin()->name;
-                int count = 1;
-                for (auto i = range.begin(); i != range.end(); ) {
-                    auto same_name_end = find_if_not(i, range.end(), [i](const Person& p) {
-                        return p.name == i->name;
-                        });
-                    auto cur_name_count = std::distance(i, same_name_end);
-                    if (cur_name_count > count) {
-                        count = cur_name_count;
-                        most_popular_name = &i->name;
-                    }
-                    i = same_name_end;
-                }
-                result.most_popular_name = *most_popular_name;
-            }
-            break;
-        }
-        default:
-            break;
-    }
-    return result;
 }
 
 StatisticResponse ServeRequest(const StatisticRequest& request, const StatisticDataBase& db) {
@@ -259,15 +165,13 @@ StatisticResponse ServeRequest(const StatisticRequest& request, const StatisticD
                     result.type = response_type::POPULAR_NAME;
                     result.most_popular_name = db.most_popular_male_name.value();
                 }
-            } else{
-                 if (db.most_popular_female_name.has_value()) {
+            } else {
+                if (db.most_popular_female_name.has_value()) {
                     result.type = response_type::POPULAR_NAME;
                     result.most_popular_name = db.most_popular_female_name.value();
                 }
             }
-            
-
-                break;
+            break;
         }
         default:
             break;
@@ -298,9 +202,6 @@ StatisticDataBase createDataBase() {
             return lhs.age < rhs.age;
             });
     }
-
-    size_t a = db.sort_by_age.size();
-
     {
         vector<Person> sort_by_welthy(persons.size());
         std::partial_sort_copy(persons.begin(), persons.end(), sort_by_welthy.begin(), sort_by_welthy.end(), [](const Person& lhs, const Person& rhs) {
@@ -313,13 +214,16 @@ StatisticDataBase createDataBase() {
         }
         partial_sum(db.accumulate_welthy.begin(), db.accumulate_welthy.end(), db.accumulate_welthy.begin());
     }
-
-    size_t b = db.accumulate_welthy.size();
-
+    template <typename Iter>
+            auto foo = [](IteratorRange<Iter> range){
+                ////code;
+            };
     {
         auto it = partition(begin(persons), end(persons), [&persons](Person& p) {
             return p.is_male == true;
             });
+
+
 
         {
             IteratorRange range{ begin(persons),it };
@@ -374,13 +278,11 @@ StatisticDataBase createDataBase() {
 }
 
 int main() {
-    // std::ifstream cin("../src/input.txt");
     const StatisticDataBase db = createDataBase();
 
     for (string command; getline(cin, command);) {
         if (!command.empty()) {
             StatisticRequest request = PareseReqest(command);
-            // StatisticResponse resp = ServeRequest(request, db.sort_by_age);
             StatisticResponse resp = ServeRequest(request, db);
             cout << resp;
         }

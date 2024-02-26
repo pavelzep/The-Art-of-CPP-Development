@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(01_05_08_Secondary_Index VERSION 0.1.0 LANGUAGES CXX)
+project(03_01_05_print_stats_2 VERSION 0.1.0 LANGUAGES CXX)
 
 set(SOURCE_PATH src)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
