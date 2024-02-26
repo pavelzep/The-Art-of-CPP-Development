@@ -192,6 +192,32 @@ vector<Person> ReadPersons(istream& input) {
     return result;
 }
 
+template <typename Iter>
+std::optional<string> getMostPopularName(IteratorRange<Iter> range) {
+    if (range.begin() != range.end()) {
+        sort(range.begin(), range.end(), [](const Person& lhs, const Person& rhs) {
+            return lhs.name < rhs.name;
+            });
+
+        const string* most_popular_name = &range.begin()->name;
+        int count = 1;
+        for (auto i = range.begin(); i != range.end(); ) {
+            auto same_name_end = find_if_not(i, range.end(), [i](const Person& p) {
+                return p.name == i->name;
+                });
+            auto cur_name_count = std::distance(i, same_name_end);
+            if (cur_name_count > count) {
+                count = cur_name_count;
+                most_popular_name = &i->name;
+            }
+            i = same_name_end;
+        }
+        return *most_popular_name;
+    } else {
+        return std::nullopt;
+    }
+}
+
 StatisticDataBase createDataBase() {
     StatisticDataBase db;
     vector<Person> persons = ReadPersons(cin);
@@ -214,64 +240,19 @@ StatisticDataBase createDataBase() {
         }
         partial_sum(db.accumulate_welthy.begin(), db.accumulate_welthy.end(), db.accumulate_welthy.begin());
     }
-    template <typename Iter>
-            auto foo = [](IteratorRange<Iter> range){
-                ////code;
-            };
+
     {
         auto it = partition(begin(persons), end(persons), [&persons](Person& p) {
             return p.is_male == true;
             });
-
-
-
         {
             IteratorRange range{ begin(persons),it };
-
-            if (range.begin() != range.end()) {
-                sort(range.begin(), range.end(), [](const Person& lhs, const Person& rhs) {
-                    return lhs.name < rhs.name;
-                    });
-
-                const string* most_popular_name = &range.begin()->name;
-                int count = 1;
-                for (auto i = range.begin(); i != range.end(); ) {
-                    auto same_name_end = find_if_not(i, range.end(), [i](const Person& p) {
-                        return p.name == i->name;
-                        });
-                    auto cur_name_count = std::distance(i, same_name_end);
-                    if (cur_name_count > count) {
-                        count = cur_name_count;
-                        most_popular_name = &i->name;
-                    }
-                    i = same_name_end;
-                }
-                db.most_popular_male_name = *most_popular_name;
-            }
+            db.most_popular_male_name = getMostPopularName(range);
         }
+
         {
             IteratorRange range{ it, end(persons) };
-
-            if (range.begin() != range.end()) {
-                sort(range.begin(), range.end(), [](const Person& lhs, const Person& rhs) {
-                    return lhs.name < rhs.name;
-                    });
-
-                const string* most_popular_name = &range.begin()->name;
-                int count = 1;
-                for (auto i = range.begin(); i != range.end(); ) {
-                    auto same_name_end = find_if_not(i, range.end(), [i](const Person& p) {
-                        return p.name == i->name;
-                        });
-                    auto cur_name_count = std::distance(i, same_name_end);
-                    if (cur_name_count > count) {
-                        count = cur_name_count;
-                        most_popular_name = &i->name;
-                    }
-                    i = same_name_end;
-                }
-                db.most_popular_female_name = *most_popular_name;
-            }
+            db.most_popular_female_name = getMostPopularName(range);
         }
     }
     return db;
