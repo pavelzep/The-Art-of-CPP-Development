@@ -241,18 +241,47 @@ StatisticDataBase createDataBase() {
         partial_sum(db.accumulate_welthy.begin(), db.accumulate_welthy.end(), db.accumulate_welthy.begin());
     }
 
+
+
     {
         auto it = partition(begin(persons), end(persons), [&persons](Person& p) {
             return p.is_male == true;
             });
+
+
+        auto getMostPopularName_l = []<typename Iter>  (IteratorRange<Iter> range)-> std::optional<string> {
+            if (range.begin() != range.end()) {
+                sort(range.begin(), range.end(), [](const Person& lhs, const Person& rhs) {
+                    return lhs.name < rhs.name;
+                    });
+
+                const string* most_popular_name = &range.begin()->name;
+                int count = 1;
+                for (auto i = range.begin(); i != range.end(); ) {
+                    auto same_name_end = find_if_not(i, range.end(), [i](const Person& p) {
+                        return p.name == i->name;
+                        });
+                    auto cur_name_count = std::distance(i, same_name_end);
+                    if (cur_name_count > count) {
+                        count = cur_name_count;
+                        most_popular_name = &i->name;
+                    }
+                    i = same_name_end;
+                }
+                return *most_popular_name;
+            } else {
+                return std::nullopt;
+            }
+        };
+
         {
             IteratorRange range{ begin(persons),it };
-            db.most_popular_male_name = getMostPopularName(range);
+            db.most_popular_male_name = getMostPopularName_l(range);
         }
 
         {
             IteratorRange range{ it, end(persons) };
-            db.most_popular_female_name = getMostPopularName(range);
+            db.most_popular_female_name = getMostPopularName_l(range);
         }
     }
     return db;
