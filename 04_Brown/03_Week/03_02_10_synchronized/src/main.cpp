@@ -19,13 +19,17 @@ public:
         lock_guard <mutex> g;
         T& ref_to_value;
     };
+    struct ConstAccess {
+        lock_guard <mutex> g;
+        const T& ref_to_value;
+    };
 
     Access GetAccess() {
         return Access{ lock_guard(m), value };
     }
 
-    const Access GetAccess() const {
-        return Access{ lock_guard(m), value };
+    ConstAccess GetAccess() const {
+        return ConstAccess{ lock_guard(m), value };
     }
 
 private:
@@ -60,15 +64,6 @@ vector<int> Consume(Synchronized<deque<int>>& common_queue) {
         deque<int> q;
 
         {
-            // Мы специально заключили эти две строчки в операторные скобки, чтобы
-            // уменьшить размер критической секции. Поток-потребитель захватывает
-            // мьютекс, перемещает всё содержимое общей очереди в свою
-            // локальную переменную и отпускает мьютекс. После этого он обрабатывает
-            // объекты в очереди за пределами критической секции, позволяя
-            // потоку-производителю параллельно помещать в очередь новые объекты.
-            //
-            // Размер критической секции существенно влияет на быстродействие
-            // многопоточных программ.
             auto access = common_queue.GetAccess();
             q = move(access.ref_to_value);
         }
