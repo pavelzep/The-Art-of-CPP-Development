@@ -35,11 +35,12 @@ public:
 
     WriteAccess operator[](const K& key) {
         // return { lock_guard(*mutexes[Abs(key) % bucket_count]),storage[Abs(key) % bucket_count][key] };
-        
-        return { lock_guard(*mutexes[Abs(key) % bucket_count]),storage[Abs(key) % bucket_count][key] };
+        size_t bucket_number = hasher(key) % bucket_count;
+        return { lock_guard(*mutexes[bucket_number]),storage[bucket_number][key] };
     }
     ReadAccess At(const K& key) const {
-        return ReadAccess();
+        size_t bucket_number = hasher(key) % bucket_count;
+        return { lock_guard(*mutexes[bucket_number]),storage[bucket_number].at(key) };
     }
 
     bool Has(const K& key) const {
@@ -47,7 +48,25 @@ public:
     }
 
     MapType BuildOrdinaryMap() const {
-        return MapType();
+
+        // map<K, V> result;
+
+        // for (size_t i = 0; i < bucket_count; ++i) {
+        //     lock_guard g(*mutexes[i]);
+        //     result.merge(storage[i]);
+        // }
+        // return result;
+
+        MapType result;
+        auto m = storage[0];
+        for (size_t i = 0; i < bucket_count; ++i) {
+            lock_guard g(*mutexes[i]);
+            result.merge(storage[0]);
+        }
+        // result.merge(m);
+
+
+        return result;
     }
 
 private:
