@@ -90,17 +90,21 @@ public:
         return degree < coeffs_.size() ? coeffs_[degree] : 0;
     }
 
+
     T& operator [](size_t degree) {
-        T сoefficient = this->operator[](degree);
-        if (сoefficient0){
-            
-        }
+      if(degree < coeffs_.size()){
+          return coeffs_[degree];
+      }else {
+        
+      }
+        // auto deg = Degree(); 
+        // T сoefficient = this->operator[](degree);
+        // if (сoefficient){
+        // }
 
         static T t;
         return t;
     }
-
-    // Реализуйте неконстантную версию operator[]
 
     T operator ()(const T& x) const {
         T res = 0;
@@ -155,7 +159,7 @@ void TestCreation() {
     {
         Polynomial<double> from_vector({ 1.0, 2.0, 3.0, 4.0 });
         ASSERT_EQUAL(from_vector.Degree(), 3);
-        // ASSERT_EQUAL(from_vector[0], 1.0);
+        ASSERT_EQUAL(from_vector[0], 1.0);
         ASSERT_EQUAL(from_vector[1], 2.0);
         ASSERT_EQUAL(from_vector[2], 3.0);
         ASSERT_EQUAL(from_vector[3], 4.0);
