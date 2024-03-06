@@ -47,8 +47,16 @@ private:
         operator T() const {
             // Вызываем константную версию Polynomial::operator[]
             return std::as_const(poly_)[degree_];
-            // operator=
         }
+
+        void operator=(const size_t& degree) {
+
+        }
+
+        void operator=(size_t& degree) const {
+            
+        }
+
     private:
         Polynomial& poly_;
         size_t degree_;
@@ -104,20 +112,8 @@ public:
     }
 
 
-    T& operator [](size_t degree) {
-        if (degree < coeffs_.size()) {
-            return coeffs_[degree];
-        } else {
-            coeffs_.resize(degree + 1);
-            return coeffs_[degree];
-        }
-        // auto deg = Degree(); 
-        // T сoefficient = this->operator[](degree);
-        // if (сoefficient){
-        // }
-
-        static T t;
-        return t;
+    IndexProxy& operator [](size_t degree) {
+        return IndexProxy(*this, degree);
     }
 
     T operator ()(const T& x) const {
