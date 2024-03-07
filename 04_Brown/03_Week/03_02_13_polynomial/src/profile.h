@@ -9,6 +9,9 @@ using namespace std;
 using namespace std::chrono;
 
 
+#define SHOW_LOG_DURATION_INFO
+#define SHOW_TOTAL_DURATION_INFO
+
 
 class LogDuration {
 public:
