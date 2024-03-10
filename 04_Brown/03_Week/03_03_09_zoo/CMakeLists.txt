@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(03_02_13_polynomial VERSION 0.1.0 LANGUAGES CXX)
+project(03_03_09_zoo VERSION 0.1.0 LANGUAGES CXX)
 
 set(SOURCE_PATH src)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
