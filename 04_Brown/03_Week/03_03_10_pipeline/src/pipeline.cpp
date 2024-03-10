@@ -31,6 +31,7 @@ protected:
   void PassOn(unique_ptr<Email> email) const;
 
 public:
+    //метод SetNext должен принимать во владение следующий обработчик из цепочки
   void SetNext(unique_ptr<Worker> next);
 };
 
