@@ -10,125 +10,163 @@ using namespace std;
 
 
 struct Email {
-  string from;
-  string to;
-  string body;
+    string from;
+    string to;
+    string body;
 };
 
 
 class Worker {
 public:
-  virtual ~Worker() = default;
-  virtual void Process(unique_ptr<Email> email) = 0;
-  virtual void Run() {
-    // только первому worker-у в пайплайне нужно это имплементировать
-    throw logic_error("Unimplemented");
-  }
+    virtual ~Worker() = default;
+    virtual void Process(unique_ptr<Email> email) = 0;
+    virtual void Run() {
+        throw logic_error("Unimplemented");
+    }
 
 protected:
-  // реализации должны вызывать PassOn, чтобы передать объект дальше
-  // по цепочке обработчиков
-  void PassOn(unique_ptr<Email> email) const;
+    void PassOn(unique_ptr<Email> email) const {
+        nextWorker->Process(move(email));
+    };
+
+    unique_ptr<Worker> nextWorker;
 
 public:
-    //метод SetNext должен принимать во владение следующий обработчик из цепочки
-  void SetNext(unique_ptr<Worker> next);
+    void SetNext(unique_ptr<Worker> next) {
+        nextWorker = move(next);
+    };
 };
-
 
 class Reader : public Worker {
 public:
-  // реализуйте класс
-};
+    Reader(istream& in) {
 
+    }
+    void Process(unique_ptr<Email> email) override {
+
+    }
+    void Run() override {
+
+    }
+};
 
 class Filter : public Worker {
-public:
-  using Function = function<bool(const Email&)>;
+    void Process(unique_ptr<Email> email) override {
+
+    }
+    void Run() override {
+
+    }
 
 public:
-  // реализуйте класс
+    using Function = function<bool(const Email&)>;
+    Filter(Filter::Function func) {
+
+    }
 };
 
-
 class Copier : public Worker {
+    void Process(unique_ptr<Email> email) override {
+
+    }
+    void Run() override {
+
+    }
 public:
-  // реализуйте класс
+    Copier(string recipient) {
+
+    }
 };
 
 
 class Sender : public Worker {
+    void Process(unique_ptr<Email> email) override {
+
+    }
+    void Run() override {
+
+    }
 public:
-  // реализуйте класс
+    Sender(ostream& out) {
+    }
 };
 
-
-// реализуйте класс
 class PipelineBuilder {
 public:
-  // добавляет в качестве первого обработчика Reader
-  explicit PipelineBuilder(istream& in);
+    explicit PipelineBuilder(istream& in) {
+        current_worker = make_unique<Reader>(in);
+    };
 
-  // добавляет новый обработчик Filter
-  PipelineBuilder& FilterBy(Filter::Function filter);
+    PipelineBuilder& FilterBy(Filter::Function filter) {
+        current_worker->SetNext(make_unique<Filter>(filter));
+        return *this;
+    }
 
-  // добавляет новый обработчик Copier
-  PipelineBuilder& CopyTo(string recipient);
+    PipelineBuilder& CopyTo(string recipient) {
+        current_worker->SetNext(make_unique<Copier>(recipient));
+        return *this;
+    }
 
-  // добавляет новый обработчик Sender
-  PipelineBuilder& Send(ostream& out);
+    PipelineBuilder& Send(ostream& out) {
+        current_worker->SetNext(make_unique<Sender>(out));
+        return *this;
+    }
 
-  // возвращает готовую цепочку обработчиков
-  unique_ptr<Worker> Build();
+    unique_ptr<Worker> Build() {
+        return move(current_worker);
+    };
+
+private:
+    unique_ptr<Worker> current_worker;
 };
 
 
 void TestSanity() {
-  string input = (
-    "erich@example.com\n"
-    "richard@example.com\n"
-    "Hello there\n"
+    string input = (
+        "erich@example.com\n"
+        "richard@example.com\n"
+        "Hello there\n"
 
-    "erich@example.com\n"
-    "ralph@example.com\n"
-    "Are you sure you pressed the right button?\n"
+        "erich@example.com\n"
+        "ralph@example.com\n"
+        "Are you sure you pressed the right button?\n"
 
-    "ralph@example.com\n"
-    "erich@example.com\n"
-    "I do not make mistakes of that kind\n"
-  );
-  istringstream inStream(input);
-  ostringstream outStream;
+        "ralph@example.com\n"
+        "erich@example.com\n"
+        "I do not make mistakes of that kind\n"
+        );
+    istringstream inStream(input);
+    ostringstream outStream;
 
-  PipelineBuilder builder(inStream);
-  builder.FilterBy([](const Email& email) {
-    return email.from == "erich@example.com";
-  });
-  builder.CopyTo("richard@example.com");
-  builder.Send(outStream);
-  auto pipeline = builder.Build();
+    PipelineBuilder builder(inStream);
+    builder.FilterBy([](const Email& email) {
+        return email.from == "erich@example.com";
+        });
+    builder.CopyTo("richard@example.com");
+    builder.Send(outStream);
+    auto pipeline = builder.Build();
 
-  pipeline->Run();
+    pipeline->Run();
 
-  string expectedOutput = (
-    "erich@example.com\n"
-    "richard@example.com\n"
-    "Hello there\n"
+    string expectedOutput = (
+        "erich@example.com\n"
+        "richard@example.com\n"
+        "Hello there\n"
 
-    "erich@example.com\n"
-    "ralph@example.com\n"
-    "Are you sure you pressed the right button?\n"
+        "erich@example.com\n"
+        "ralph@example.com\n"
+        "Are you sure you pressed the right button?\n"
 
-    "erich@example.com\n"
-    "richard@example.com\n"
-    "Are you sure you pressed the right button?\n"
-  );
+        "erich@example.com\n"
+        "richard@example.com\n"
+        "Are you sure you pressed the right button?\n"
+        );
 
-  ASSERT_EQUAL(expectedOutput, outStream.str());
+    ASSERT_EQUAL(expectedOutput, outStream.str());
 }
 
 int main() {
-  TestRunner tr;
-  RUN_TEST(tr, TestSanity);
-  return 0;
+    TestRunner tr;
+    RUN_TEST(tr, TestSanity);
+    return 0;
 }
