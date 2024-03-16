@@ -46,15 +46,12 @@ public:
 
     }
     void Run() override {
-
+        // Process ();
     }
 };
 
 class Filter : public Worker {
     void Process(unique_ptr<Email> email) override {
-
-    }
-    void Run() override {
 
     }
 
@@ -94,30 +91,37 @@ public:
 class PipelineBuilder {
 public:
     explicit PipelineBuilder(istream& in) {
-        current_worker = make_unique<Reader>(in);
+        pipeline_store.push_back(make_unique<Reader>(in));
+
+
     };
 
     PipelineBuilder& FilterBy(Filter::Function filter) {
-        current_worker->SetNext(make_unique<Filter>(filter));
+        pipeline_store.push_back(make_unique<Filter>(filter));
         return *this;
     }
 
     PipelineBuilder& CopyTo(string recipient) {
-        current_worker->SetNext(make_unique<Copier>(recipient));
+        pipeline_store.push_back(make_unique<Copier>(recipient));
         return *this;
     }
 
     PipelineBuilder& Send(ostream& out) {
-        current_worker->SetNext(make_unique<Sender>(out));
+        pipeline_store.push_back(make_unique<Sender>(out));
         return *this;
     }
 
     unique_ptr<Worker> Build() {
-        return move(current_worker);
+        for (size_t i = pipeline_store.size()-1; i > 0 ; --i) {
+            pipeline_store[i-1].get()->SetNext(move(pipeline_store[i]));
+        }
+        return move(pipeline_store.at(0));
     };
 
 private:
-    unique_ptr<Worker> current_worker;
+    vector<unique_ptr<Worker>> pipeline_store;
+
+
 };
 
 
