@@ -38,54 +38,54 @@ public:
 };
 
 class Reader : public Worker {
+    istream& _in;
 public:
-    Reader(istream& in) {
-
-    }
+    Reader(istream& in) :_in(in) {}
     void Process(unique_ptr<Email> email) override {
 
     }
     void Run() override {
-        // Process ();
+        auto email = make_unique<Email>();
+        _in >> email.get()->from >> email.get()->to >> email.get()->body;
+        PassOn(move(email));
     }
 };
 
 class Filter : public Worker {
-    void Process(unique_ptr<Email> email) override {
-
-    }
-
 public:
     using Function = function<bool(const Email&)>;
-    Filter(Filter::Function func) {
+    Filter(Filter::Function func) :func_(move(func)) {
 
     }
+    void Process(unique_ptr<Email> email) override {
+
+        PassOn(move(email));
+    }
+private:
+    Function func_;
+
 };
 
 class Copier : public Worker {
-    void Process(unique_ptr<Email> email) override {
-
-    }
-    void Run() override {
-
-    }
+    string recipient_;
 public:
-    Copier(string recipient) {
-
+    Copier(string recipient) :recipient_(move(recipient)) {
+    }
+    void Process(unique_ptr<Email> email) override {
+        PassOn(move(email));
     }
 };
 
 
 class Sender : public Worker {
-    void Process(unique_ptr<Email> email) override {
-
-    }
-    void Run() override {
-
-    }
+    ostream& out_;
 public:
-    Sender(ostream& out) {
+    Sender(ostream& out) :out_(out) {
     }
+    void Process(unique_ptr<Email> email) override {
+        PassOn(move(email));
+    }
+
 };
 
 class PipelineBuilder {
@@ -112,14 +112,15 @@ public:
     }
 
     unique_ptr<Worker> Build() {
-        for (size_t i = pipeline_store.size()-1; i > 0 ; --i) {
-            pipeline_store[i-1].get()->SetNext(move(pipeline_store[i]));
+        for (size_t i = pipeline_store.size() - 1; i > 0; --i) {
+            pipeline_store[i - 1].get()->SetNext(move(pipeline_store[i]));
         }
         return move(pipeline_store.at(0));
     };
 
 private:
     vector<unique_ptr<Worker>> pipeline_store;
+    vector<unique_ptr<Email>> email_store;
 
 
 };
