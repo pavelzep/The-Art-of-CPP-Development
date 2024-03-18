@@ -26,7 +26,10 @@ public:
 
 protected:
     void PassOn(unique_ptr<Email> email) const {
-        nextWorker->Process(move(email));
+        if(nextWorker){
+             nextWorker->Process(move(email));
+        }
+       
     };
 
     unique_ptr<Worker> nextWorker;
@@ -45,9 +48,18 @@ public:
 
     }
     void Run() override {
-        auto email = make_unique<Email>();
-        _in >> email.get()->from >> email.get()->to >> email.get()->body;
-        PassOn(move(email));
+        
+        while (_in.peek() != char_traits<char>::eof()) {
+
+            auto email = make_unique<Email>();
+            getline(_in, email.get()->from);
+            getline(_in, email.get()->to);
+            getline(_in, email.get()->body);
+
+            PassOn(move(email));
+        }
+
+
     }
 };
 
@@ -58,7 +70,6 @@ public:
 
     }
     void Process(unique_ptr<Email> email) override {
-
         PassOn(move(email));
     }
 private:
