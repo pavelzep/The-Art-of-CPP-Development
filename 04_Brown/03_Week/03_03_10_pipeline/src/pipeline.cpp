@@ -26,10 +26,10 @@ public:
 
 protected:
     void PassOn(unique_ptr<Email> email) const {
-        if(nextWorker){
-             nextWorker->Process(move(email));
+        if (nextWorker) {
+            nextWorker->Process(move(email));
         }
-       
+
     };
 
     unique_ptr<Worker> nextWorker;
@@ -45,10 +45,9 @@ class Reader : public Worker {
 public:
     Reader(istream& in) :_in(in) {}
     void Process(unique_ptr<Email> email) override {
-
+        PassOn(move(email));
     }
     void Run() override {
-        
         while (_in.peek() != char_traits<char>::eof()) {
 
             auto email = make_unique<Email>();
@@ -56,10 +55,8 @@ public:
             getline(_in, email.get()->to);
             getline(_in, email.get()->body);
 
-            PassOn(move(email));
+            Process(move(email));
         }
-
-
     }
 };
 
@@ -67,10 +64,12 @@ class Filter : public Worker {
 public:
     using Function = function<bool(const Email&)>;
     Filter(Filter::Function func) :func_(move(func)) {
-
     }
     void Process(unique_ptr<Email> email) override {
-        PassOn(move(email));
+        // auto t = email.get();
+        if (func_(*email.get())) {
+            PassOn(move(email));
+        }
     }
 private:
     Function func_;
@@ -83,7 +82,19 @@ public:
     Copier(string recipient) :recipient_(move(recipient)) {
     }
     void Process(unique_ptr<Email> email) override {
-        PassOn(move(email));
+        if (email.get()->to == recipient_) {
+            PassOn(move(email));
+        } else {
+
+            unique_ptr<Email> copy_email = make_unique<Email>();
+            copy_email.get()->from = email.get()->from;
+            copy_email.get()->to = recipient_;
+            copy_email.get()->body = email.get()->body;
+            
+            PassOn(move(email));
+            PassOn(move(copy_email));
+
+        }
     }
 };
 
@@ -94,6 +105,9 @@ public:
     Sender(ostream& out) :out_(out) {
     }
     void Process(unique_ptr<Email> email) override {
+        out_ << email.get()->from << '\n' <<
+            email.get()->to << '\n' <<
+            email.get()->body << '\n';
         PassOn(move(email));
     }
 
