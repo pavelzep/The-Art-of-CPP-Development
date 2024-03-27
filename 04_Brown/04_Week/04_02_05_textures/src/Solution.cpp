@@ -6,8 +6,6 @@ inline bool IsPointInRectangle(Point p, Size size) {
     return ((p.x < size.width) && (p.y < size.height));
 }
 
-// using CheckFunction = bool(*)(Point, Size);
-
 class Figure : public IShape {
 public:
     void SetPosition(Point position) final { this->position_ = position; }
