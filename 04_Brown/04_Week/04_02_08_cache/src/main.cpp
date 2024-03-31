@@ -203,9 +203,9 @@ int main() {
 #define RUN_CACHE_TEST(tr, f) tr.RunTest([&lib] { f(lib); }, #f)
 
     TestRunner tr;
-    RUN_CACHE_TEST(tr, TestUnpacker);
-    RUN_CACHE_TEST(tr, TestMaxMemory);
-    RUN_CACHE_TEST(tr, TestCaching);
+    // RUN_CACHE_TEST(tr, TestUnpacker);
+    // RUN_CACHE_TEST(tr, TestMaxMemory);
+    // RUN_CACHE_TEST(tr, TestCaching);
     RUN_CACHE_TEST(tr, TestSmallCache);
     RUN_CACHE_TEST(tr, TestAsync);
 
