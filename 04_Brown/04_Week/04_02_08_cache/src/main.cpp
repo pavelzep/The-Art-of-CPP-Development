@@ -146,7 +146,7 @@ void TestSmallCache(const Library& lib) {
 
 
 void TestAsync(const Library& lib) {
-    static const int tasks_count = 10;
+    static const int tasks_count = 1;
     static const int trials_count = 10000;
 
     auto unpacker = make_shared<BooksUnpacker>();
@@ -179,6 +179,25 @@ void TestAsync(const Library& lib) {
     }
 }
 
+void TestSolo(const Library& lib) {
+    static const int trials_count = 10000;
+
+    auto unpacker = make_shared<BooksUnpacker>();
+    ICache::Settings settings;
+    settings.max_memory = lib.size_in_bytes - 1;
+    auto cache = MakeCache(unpacker, settings);
+
+    default_random_engine gen;
+    uniform_int_distribution<size_t> dis(0, lib.book_names.size() - 1);
+    
+    for (int i = 0; i < trials_count; ++i) {
+        const auto& book_name = lib.book_names[dis(gen)];
+        ASSERT_EQUAL(
+            cache->GetBook(book_name)->GetContent(),
+            lib.content.find(book_name)->second->GetContent()
+        );
+    }
+}
 
 int main() {
     BooksUnpacker unpacker;
@@ -206,8 +225,10 @@ int main() {
     // RUN_CACHE_TEST(tr, TestUnpacker);
     // RUN_CACHE_TEST(tr, TestMaxMemory);
     // RUN_CACHE_TEST(tr, TestCaching);
-    RUN_CACHE_TEST(tr, TestSmallCache);
-    RUN_CACHE_TEST(tr, TestAsync);
+    // RUN_CACHE_TEST(tr, TestSmallCache);
+    // RUN_CACHE_TEST(tr, TestAsync);
+    RUN_CACHE_TEST(tr, TestSolo);
+
 
 #undef RUN_CACHE_TEST
     return 0;

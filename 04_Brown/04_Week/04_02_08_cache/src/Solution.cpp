@@ -2,6 +2,7 @@
 #include <deque>
 #include <algorithm>
 #include <atomic>
+#include <mutex>
 
 using namespace std;
 
@@ -14,8 +15,10 @@ public:
     }
 
     BookPtr GetBook(const string& book_name) override {
-        auto it = findBook(book_name);
+        lock_guard<mutex> g(m);
+        std::deque<ICache::BookPtr>::iterator it = findBook(book_name);
         if (it != store.end()) {
+            BookPtr b_ptr_ = *it;
             store.push_front(*it);
             store.erase(it);
             return *it;
@@ -23,7 +26,6 @@ public:
 
         BookPtr b_ptr = books_unpacker_->UnpackBook(book_name);
         size_t b_size = b_ptr.get()->GetContent().size();
-        
 
         while (settings_.max_memory - memory_used_by_books_ < b_size) {
             if (!store.empty()) {
@@ -33,11 +35,12 @@ public:
             } else {
                 break;
             }
-            
         }
-        if()
-        memory_used_by_books_ += b_size;
-        store.push_front(b_ptr);
+
+        if (b_size <= settings_.max_memory) {
+            memory_used_by_books_ += b_size;
+            store.push_front(b_ptr);
+        }
         return b_ptr;
     }
 
@@ -52,7 +55,7 @@ private:
     shared_ptr<IBooksUnpacker> books_unpacker_;
     deque<BookPtr> store;
     atomic<size_t> memory_used_by_books_ = 0;
-
+    mutex m;
 };
 
 unique_ptr<ICache> MakeCache(
