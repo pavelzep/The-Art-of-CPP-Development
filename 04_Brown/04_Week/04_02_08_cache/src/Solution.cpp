@@ -1,7 +1,6 @@
 #include "Common.h"
 #include <deque>
 #include <algorithm>
-#include <atomic>
 #include <mutex>
 
 using namespace std;
@@ -19,9 +18,9 @@ public:
         std::deque<ICache::BookPtr>::iterator it = findBook(book_name);
         if (it != store.end()) {
             BookPtr b_ptr_ = *it;
-            store.push_front(*it);
             store.erase(it);
-            return *it;
+            store.push_front(b_ptr_);
+            return store.front();
         }
 
         BookPtr b_ptr = books_unpacker_->UnpackBook(book_name);
@@ -54,7 +53,7 @@ private:
     Settings settings_;
     shared_ptr<IBooksUnpacker> books_unpacker_;
     deque<BookPtr> store;
-    atomic<size_t> memory_used_by_books_ = 0;
+    size_t memory_used_by_books_ = 0;
     mutex m;
 };
 

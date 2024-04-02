@@ -146,7 +146,7 @@ void TestSmallCache(const Library& lib) {
 
 
 void TestAsync(const Library& lib) {
-    static const int tasks_count = 1;
+    static const int tasks_count = 10;
     static const int trials_count = 10000;
 
     auto unpacker = make_shared<BooksUnpacker>();
@@ -191,6 +191,9 @@ void TestSolo(const Library& lib) {
     uniform_int_distribution<size_t> dis(0, lib.book_names.size() - 1);
     
     for (int i = 0; i < trials_count; ++i) {
+        if(i == 162){
+            i=162;
+        }
         const auto& book_name = lib.book_names[dis(gen)];
         ASSERT_EQUAL(
             cache->GetBook(book_name)->GetContent(),
@@ -222,11 +225,11 @@ int main() {
 #define RUN_CACHE_TEST(tr, f) tr.RunTest([&lib] { f(lib); }, #f)
 
     TestRunner tr;
-    // RUN_CACHE_TEST(tr, TestUnpacker);
-    // RUN_CACHE_TEST(tr, TestMaxMemory);
-    // RUN_CACHE_TEST(tr, TestCaching);
-    // RUN_CACHE_TEST(tr, TestSmallCache);
-    // RUN_CACHE_TEST(tr, TestAsync);
+    RUN_CACHE_TEST(tr, TestUnpacker);
+    RUN_CACHE_TEST(tr, TestMaxMemory);
+    RUN_CACHE_TEST(tr, TestCaching);
+    RUN_CACHE_TEST(tr, TestSmallCache);
+    RUN_CACHE_TEST(tr, TestAsync);
     RUN_CACHE_TEST(tr, TestSolo);
 
 
