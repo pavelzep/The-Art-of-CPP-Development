@@ -38,10 +38,13 @@ public:
         delete ptr_;
         ptr_ = ptr;
     }
-    void Swap(UniquePtr& other) {}
+    void Swap(UniquePtr& other) {
+        auto temp = other.ptr_;
+        other.ptr_ = this->ptr_;
+        this->ptr_ = temp;
+    }
     T* Get() const { return ptr_; }
 };
-
 
 struct Item {
     static int counter;
@@ -58,7 +61,6 @@ struct Item {
 };
 
 int Item::counter = 0;
-
 
 void TestLifetime() {
     Item::counter = 0;
