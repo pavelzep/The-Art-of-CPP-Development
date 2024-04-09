@@ -14,15 +14,23 @@ public:
     UniquePtr(T* ptr) :ptr_(ptr) {}
     UniquePtr(const UniquePtr&) = delete;
     UniquePtr(UniquePtr&& other) {
-        this->ptr_ = other.ptr_;
+        if (this != &other)
+            this->ptr_ = other.ptr_;
         other.ptr_ = nullptr;
     }
     UniquePtr& operator = (const UniquePtr&) = delete;
-    UniquePtr& operator = (nullptr_t) { ptr_ = nullptr; }
-    UniquePtr& operator = (UniquePtr&& other) {
-        this->ptr_ = other.ptr_;
-        other.ptr_ = nullptr;
+    UniquePtr& operator = (nullptr_t) {
+        ptr_ = nullptr;
+        return *this;
     }
+    UniquePtr& operator = (UniquePtr&& other) {
+        if (this != &other) {
+            this->ptr_ = other.ptr_;
+            other.ptr_ = nullptr;
+        }
+        return *this;
+    }
+
     ~UniquePtr() {
         delete ptr_;
         ptr_ = nullptr;
@@ -32,6 +40,7 @@ public:
     T* Release() {
         auto result = ptr_;
         ptr_ = nullptr;
+
         return result;
     }
     void Reset(T* ptr) {
@@ -92,8 +101,19 @@ void TestGetters() {
     ASSERT_EQUAL((*ptr).value, 42);
     ASSERT_EQUAL(ptr->value, 42);
 }
+void foo() {
+    {
+        auto a = UniquePtr(new int(42));
+        a = std::move(a);
+    }
+    {
+        auto a = UniquePtr(new int(42));
+        auto b = UniquePtr(std::move(a));
+    }
+}
 
 int main() {
+    // foo();
     TestRunner tr;
     RUN_TEST(tr, TestLifetime);
     RUN_TEST(tr, TestGetters);
