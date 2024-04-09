@@ -15,23 +15,29 @@ public:
     UniquePtr(const UniquePtr&) = delete;
     UniquePtr(UniquePtr&& other) {
         this->ptr_ = other.ptr_;
+        other.ptr_ = nullptr;
     }
     UniquePtr& operator = (const UniquePtr&) = delete;
-    UniquePtr& operator = (nullptr_t) {
-
-    }
+    UniquePtr& operator = (nullptr_t) { ptr_ = nullptr; }
     UniquePtr& operator = (UniquePtr&& other) {
-
+        this->ptr_ = other.ptr_;
+        other.ptr_ = nullptr;
     }
     ~UniquePtr() {
         delete ptr_;
         ptr_ = nullptr;
     }
-
     T& operator * () const { return *ptr_; }
     T* operator -> () const { return ptr_; }
-    T* Release() {}
-    void Reset(T* ptr) {}
+    T* Release() {
+        auto result = ptr_;
+        ptr_ = nullptr;
+        return result;
+    }
+    void Reset(T* ptr) {
+        delete ptr_;
+        ptr_ = ptr;
+    }
     void Swap(UniquePtr& other) {}
     T* Get() const { return ptr_; }
 };
@@ -85,27 +91,9 @@ void TestGetters() {
     ASSERT_EQUAL(ptr->value, 42);
 }
 
-struct Test {
-    int a;
-    int b;
-    int c;
-};
-
-void MyTest() {
-    Test t{ 1,2,4 };
-    UniquePtr<Test> pTest(&t);
-    // auto x = pTest.Get();
-    // auto y = pTest->a;
-    // auto z = *pTest;
-
-
-    return;
-}
-
-int* m() {
+int main() {
     TestRunner tr;
-    // RUN_TEST(tr, TestLifetime);
-    // RUN_TEST(tr, TestGetters);
-    RUN_TEST(tr, MyTest);
-
+    RUN_TEST(tr, TestLifetime);
+    RUN_TEST(tr, TestGetters);
+    return 0;
 }
