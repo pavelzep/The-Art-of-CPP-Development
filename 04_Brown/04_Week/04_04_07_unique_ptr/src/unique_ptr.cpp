@@ -13,6 +13,7 @@ public:
     UniquePtr() { ptr_ = nullptr; }
     UniquePtr(T* ptr) :ptr_(ptr) {}
     UniquePtr(const UniquePtr&) = delete;
+    UniquePtr& operator = (const UniquePtr&) = delete;
 
     UniquePtr(UniquePtr&& other) {
         if (this != &other) {
@@ -20,7 +21,6 @@ public:
             other.ptr_ = nullptr;
         }
     }
-    UniquePtr& operator = (const UniquePtr&) = delete;
     UniquePtr& operator = (nullptr_t) {
         if (ptr_ != nullptr) {
             delete ptr_;
@@ -129,7 +129,6 @@ void TestOneDelete() {
             UniquePtr<Item> ptr1(new Item(42));
             UniquePtr<Item> ptr2 = move(ptr1);
         }
-
     }
     {
         {
@@ -163,7 +162,6 @@ void TestNullptr() {
         auto a = UniquePtr<int>();
         a.Reset(nullptr);
     }
-
     {
         auto a = (int*)nullptr;
         delete a;
