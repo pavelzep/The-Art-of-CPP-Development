@@ -17,6 +17,7 @@ public:
 
     UniquePtr(UniquePtr&& other) {
         if (this != &other) {
+            //  delete this->ptr_;
             this->ptr_ = other.ptr_;
             other.ptr_ = nullptr;
         }
@@ -29,6 +30,7 @@ public:
     }
     UniquePtr& operator = (UniquePtr&& other) {
         if (this != &other) {
+            delete this->ptr_;
             this->ptr_ = other.ptr_;
             other.ptr_ = nullptr;
         }
