@@ -1,22 +1,43 @@
 #pragma once
+#include <utility>
+
 
 namespace RAII {
 
-    template<typename T>
-    struct Booking {
-        T* provider;
-        int counter;
+    template<class Provider>
+    class Booking {
+    public:
+        Booking(Provider* provider, int id) : provider_(std::move(provider)), id_(id) {}
 
-        Booking() = default;
         Booking(const Booking&) = delete;
-        Booking(Booking&&) = default;
-
         Booking& operator=(const Booking&) = delete;
-        Booking& operator=(Booking&&) = default;
+
+        Booking(Booking&& other) = default;
+        // Booking(Booking&& other) 
+        // {
+        // 	provider_ = std::move(other.provider_);
+        // 	other.provider_ = nullptr;
+        // 	id_ = std::move(other.id_);
+        // }
+
+        Booking& operator=(Booking&& other) = default;
+
+        // Booking& operator=(Booking&& other) 
+        // {
+        // 	provider_ = std::move(other.provider_);
+        // 	other.provider_ = nullptr;
+        // 	id_ = std::move(other.id_);
+        // 	return *this;
+        // }
 
         ~Booking() {
-            --provider->counter;
+            if (provider_)
+            provider_->CancelOrComplete(*this);
         }
+
+    private:
+        Provider* provider_ = nullptr;
+        int id_;
     };
 
 }

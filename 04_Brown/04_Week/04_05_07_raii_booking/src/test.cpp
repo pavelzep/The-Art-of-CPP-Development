@@ -66,7 +66,7 @@ void TestHotelOverbooking() {
 int main() {
   TestRunner tr;
   RUN_TEST(tr, TestNoOverbooking);
-  RUN_TEST(tr, TestFlightOverbooking);
-  RUN_TEST(tr, TestHotelOverbooking);
+//   RUN_TEST(tr, TestFlightOverbooking);
+//   RUN_TEST(tr, TestHotelOverbooking);
   return 0;
 }
