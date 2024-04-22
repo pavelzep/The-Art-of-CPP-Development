@@ -1,7 +1,6 @@
 #pragma once
 #include <utility>
 
-
 namespace RAII {
 
     template<class Provider>
@@ -12,23 +11,23 @@ namespace RAII {
         Booking(const Booking&) = delete;
         Booking& operator=(const Booking&) = delete;
 
-        Booking(Booking&& other) = default;
-        // Booking(Booking&& other) 
-        // {
-        // 	provider_ = std::move(other.provider_);
-        // 	other.provider_ = nullptr;
-        // 	id_ = std::move(other.id_);
-        // }
+        // Booking(Booking&& other) = default;
+        Booking(Booking&& other) 
+        {
+        	provider_ = std::move(other.provider_);
+        	other.provider_ = nullptr;
+        	id_ = std::move(other.id_);
+        }
 
-        Booking& operator=(Booking&& other) = default;
+        // Booking& operator=(Booking&& other) = default;
 
-        // Booking& operator=(Booking&& other) 
-        // {
-        // 	provider_ = std::move(other.provider_);
-        // 	other.provider_ = nullptr;
-        // 	id_ = std::move(other.id_);
-        // 	return *this;
-        // }
+        Booking& operator=(Booking&& other) 
+        {
+        	provider_ = std::move(other.provider_);
+        	other.provider_ = nullptr;
+        	id_ = std::move(other.id_);
+        	return *this;
+        }
 
         ~Booking() {
             if (provider_)
