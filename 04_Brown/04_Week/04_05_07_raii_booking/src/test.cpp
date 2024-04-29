@@ -25,8 +25,7 @@ void TestNoOverbooking() {
     HotelProvider::counter = 0;
     {
         TripManager tm;
-        tm.Book({});
-        // auto trip = tm.Book({});
+        auto trip = tm.Book({});
     }
     ASSERT_EQUAL(FlightProvider::counter, 0);
     ASSERT_EQUAL(HotelProvider::counter, 0);

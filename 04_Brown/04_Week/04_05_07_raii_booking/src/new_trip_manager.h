@@ -35,18 +35,15 @@ public:
         Trip trip;
         {
             FlightProvider::BookingData data;
-            auto t1 = flight_provider.Book(data);
-            trip.flights.push_back(move(t1));
+            trip.flights.push_back(flight_provider.Book(data));
         }
         {
-            HotelProvider::BookingData data;
-            auto t1 = hotel_provider.Book(data);
-            trip.hotels.push_back(move(t1));
+            HotelProvider::BookingData data;         
+            trip.hotels.push_back(hotel_provider.Book(data));
         }
         {
             FlightProvider::BookingData data;
-            auto t1 = flight_provider.Book(data);
-            trip.flights.push_back(move(t1));
+            trip.flights.push_back(flight_provider.Book(data));
         }
         return trip;
     }
