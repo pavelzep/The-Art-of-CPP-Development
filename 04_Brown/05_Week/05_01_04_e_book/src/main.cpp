@@ -4,7 +4,7 @@
 #include <set>
 #include <vector>
 
-#define TEST_ON
+// #define TEST_ON
 
 #ifdef TEST_ON
 #include "test_runner.h"
