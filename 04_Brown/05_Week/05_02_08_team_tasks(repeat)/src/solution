@@ -1,0 +1,77 @@
+class TeamTasks {
+public:
+    // Получить статистику по статусам задач конкретного разработчика
+    const TasksInfo& GetPersonTasksInfo(const string& person) const {
+        /*if (store.count(person) == 0) {
+
+            return {};
+        }
+        */
+        return store.at(person);
+    };
+
+    // Добавить новую задачу (в статусе NEW) для конкретного разработчитка
+    void AddNewTask(const string& person) {
+        store.count(person) ? store[person][TaskStatus::NEW] = store[person][TaskStatus::NEW] + 1 : store[person][TaskStatus::NEW] = 1;
+    };
+
+    // Обновить статусы по данному количеству задач конкретного разработчика,
+    // подробности см. ниже
+    tuple<TasksInfo, TasksInfo> PerformPersonTasks(
+        const string& person, int task_count) {
+        if (store.count(person) == 0) return {};
+
+        auto old_task = store[person];
+        TasksInfo updatedTask;
+
+        while (task_count) {
+            if (old_task.count(TaskStatus::NEW) && old_task.at(TaskStatus::NEW)) {
+                store[person][TaskStatus::NEW] -= 1;
+                old_task[TaskStatus::NEW] -= 1;
+                updatedTask[TaskStatus::IN_PROGRESS] += 1;
+                store[person][TaskStatus::IN_PROGRESS] += 1;
+
+            } else if (old_task.count(TaskStatus::IN_PROGRESS) && old_task.at(TaskStatus::IN_PROGRESS)) {
+                store[person][TaskStatus::IN_PROGRESS] -= 1;
+                old_task[TaskStatus::IN_PROGRESS] -= 1;
+                updatedTask[TaskStatus::TESTING] += 1;
+                store[person][TaskStatus::TESTING] += 1;
+
+            } else if (old_task.count(TaskStatus::TESTING) && old_task.at(TaskStatus::TESTING)) {
+                store[person][TaskStatus::TESTING] -= 1;
+                old_task[TaskStatus::TESTING] -= 1;
+                updatedTask[TaskStatus::DONE] += 1;
+                store[person][TaskStatus::DONE] += 1;
+
+            }
+
+            task_count--;
+        }
+
+        ClearInfo(updatedTask);
+        ClearInfo(old_task);
+        ClearDone(old_task);
+
+        ClearInfo(store[person]);
+        return { updatedTask, old_task };
+
+    };
+
+    void ClearInfo(TasksInfo& info) {
+        for (int i = 0; i < static_cast<int>(TaskStatus::DONE); i++) {
+            if (info.count(static_cast<TaskStatus>(i)) && info[static_cast<TaskStatus>(i)] == 0) {
+                info.erase(static_cast<TaskStatus>(i));
+            }
+        }
+    };
+
+    void ClearDone(TasksInfo& info) {
+        if (info.count(TaskStatus::DONE)) {
+            info.erase(TaskStatus::DONE);
+        }
+    }
+
+private:
+    map<string, TasksInfo> store;
+
+};
