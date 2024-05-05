@@ -4,9 +4,6 @@
 #include <map>
 #include <string>
 #include <vector>
-// #include "profile.h"
-// #include "test_runner.h"
-// #include <fstream>
 #include <set>
 
 using namespace std;
@@ -22,24 +19,12 @@ public:
         if (reachable_lists_.count(start) < 1) {
             return result;
         }
-
         const set<int>& reachable_stations = reachable_lists_.at(start);
         if (!reachable_stations.empty()) {
 
             auto it = FindNearestElement(reachable_stations, finish);
             result = min(result, abs(*it - finish));
         }
-
-        // if (!reachable_stations.empty()) {
-        //     result = min(
-        //         result,
-        //         abs(finish - *min_element(
-        //             begin(reachable_stations), end(reachable_stations),
-        //             [finish](int lhs, int rhs) { return abs(lhs - finish) < abs(rhs - finish); }
-        //         ))
-        //     );
-        // }
-
         return result;
     }
 private:
@@ -60,7 +45,6 @@ private:
 
 
 int main() {
-    // LOG_DURATION("all time");
     RouteManager routes;
     int query_count;
     cin >> query_count;
