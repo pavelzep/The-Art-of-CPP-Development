@@ -39,6 +39,7 @@
 #include <numeric>
 #include <fstream>
 #include <exception>
+#include <cstdint>
 
 using namespace std;
 
