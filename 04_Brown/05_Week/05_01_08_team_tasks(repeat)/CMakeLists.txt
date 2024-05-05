@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(05_02_08_team_tasks VERSION 0.1.0)
+project(05_01_08_team_tasks VERSION 0.1.0)
 
 set(SOURCE_PATH src)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
