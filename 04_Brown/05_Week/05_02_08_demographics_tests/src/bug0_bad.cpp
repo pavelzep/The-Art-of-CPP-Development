@@ -5,7 +5,7 @@
 
 
 
-// #define BUG1
+#define BUG1
 // #define BUG2
 // #define BUG3
 // #define BUG4
