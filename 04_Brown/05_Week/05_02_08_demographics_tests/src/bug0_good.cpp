@@ -131,6 +131,8 @@ void PrintStats(const AgeStats& stats,
 }
 
 int main() {
+
+    
   PrintStats(ComputeStats(ReadPersons()));
   return 0;
 }

@@ -11,5 +11,5 @@ set(CMAKE_CXX_STANDARD 17)
 #set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wsign-conversion")
 
 add_executable(${PROJECT_NAME} 
-    ${SOURCE_PATH}/bug0_bad.cpp
+    ${SOURCE_PATH}/bug_all_bad.cpp
     )
