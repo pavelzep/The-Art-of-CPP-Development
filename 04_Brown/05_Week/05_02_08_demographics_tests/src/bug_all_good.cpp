@@ -137,7 +137,6 @@ AgeStats ComputeStats(vector<Person> persons) {
          ComputeMedianAge(employed_males_end, females_end),
   #endif
          ComputeMedianAge(employed_males_end, end(persons))
-
     };
 }
 
@@ -181,3 +180,6 @@ int main() {
     PrintStats(ComputeStats(ReadPersons()));
     return 0;
 }
+
+
+
