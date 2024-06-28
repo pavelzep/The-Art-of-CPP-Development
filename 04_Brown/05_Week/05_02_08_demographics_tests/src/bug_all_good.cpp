@@ -4,12 +4,33 @@
 #include <vector>
 
 
+#define TEST_ON
+
+#ifdef TEST_ON
+#include "test_runner.h"
+
+
+
 #define BUG1
 // #define BUG2
 // #define BUG3
 // #define BUG4
 // #define BUG5
 // #define BUG6
+
+void Test1();
+void Test2();
+void Test3();
+void Test4();
+void Test5();
+void Test6();
+void Test_All();
+
+
+#endif
+
+
+
 
 
 using namespace std;
@@ -58,6 +79,7 @@ int ComputeMedianAge(InputIt range_begin, InputIt range_end) {
         range_begin,
         range_end
     );
+
 #ifndef BUG2
     auto middle = begin(range_copy) + range_copy.size() / 2;
 #else 
@@ -145,7 +167,7 @@ void PrintStats(const AgeStats& stats,
     out_stream << "Median age = "
         << stats.total << endl
 
-        #ifndef BUG6
+#ifndef BUG6
         << "Median age for females = "
         << stats.females << endl
         << "Median age for males = "
@@ -158,7 +180,7 @@ void PrintStats(const AgeStats& stats,
         << stats.employed_males << endl
         << "Median age for unemployed males = "
         << stats.unemployed_males << endl;
-        #else
+#else
         << "Median age for males = "
         << stats.males << endl
         << "Median age for females = "
@@ -169,15 +191,69 @@ void PrintStats(const AgeStats& stats,
         << stats.employed_females << endl
         << "Median age for unemployed males = "
         << stats.unemployed_males << endl;
-        << "Median age for employed males = "
+    << "Median age for employed males = "
         << stats.employed_males << endl
-        #endif
+#endif
 }
+
+#ifdef TEST_ON
+void Test1() {
+
+    // vector<Person> __persons{
+    //     {25, Gender::FEMALE, true},
+    //     {11, Gender::MALE, true},
+    //     {78, Gender::MALE, false},
+    //     {44, Gender::FEMALE, false},
+    //     {66, Gender::FEMALE, false},
+    //     {14, Gender::MALE, true},
+    //     {29, Gender::FEMALE, true},
+    // };
+
+    {
+
+        vector<Person> _persons{{78, Gender::MALE, false}};
+        ASSERT_EQUAL(ComputeMedianAge(_persons.begin(), _persons.begin()), 0);
+    }
+}
+
+void Test2() {
+
+}
+void Test3() {
+
+}
+void Test4() {
+
+}
+void Test5() {
+
+}
+void Test6() {
+
+}
+
+void Test_All() {
+    TestRunner tr;
+
+
+    RUN_TEST(tr, Test1);
+    RUN_TEST(tr, Test2);
+    RUN_TEST(tr, Test3);
+    RUN_TEST(tr, Test4);
+    RUN_TEST(tr, Test5);
+    RUN_TEST(tr, Test6);
+
+
+}
+#endif
 
 int main() {
 
-
+#ifdef TEST_ON
+    Test_All();
+#else
     PrintStats(ComputeStats(ReadPersons()));
+#endif
     return 0;
 }
 
