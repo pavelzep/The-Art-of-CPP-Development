@@ -130,9 +130,9 @@ void PrintStats(const AgeStats& stats,
              << stats.unemployed_males   << endl;
 }
 
-int main() {
+// int main() {
 
     
-  PrintStats(ComputeStats(ReadPersons()));
-  return 0;
-}
+//   PrintStats(ComputeStats(ReadPersons()));
+//   return 0;
+// }

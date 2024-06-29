@@ -9,9 +9,7 @@
 #ifdef TEST_ON
 #include "test_runner.h"
 
-
-
-#define BUG1
+// #define BUG1
 // #define BUG2
 // #define BUG3
 // #define BUG4
@@ -102,10 +100,11 @@ vector<Person> ReadPersons(istream& in_stream = cin) {
     for (int i = 0; i < person_count; ++i) {
 #ifdef BUG3
         int age, is_employed, gender;
-        cin >> age >> is_employed >> gender;
+        in_stream >> age >> is_employed >> gender;
+
 #else 
         int age, gender, is_employed;
-        cin >> age >> gender >> is_employed;
+        in_stream >> age >> gender >> is_employed;
 #endif
         Person person{
             age,
@@ -190,51 +189,86 @@ void PrintStats(const AgeStats& stats,
         << "Median age for employed females = "
         << stats.employed_females << endl
         << "Median age for unemployed males = "
-        << stats.unemployed_males << endl;
-    << "Median age for employed males = "
-        << stats.employed_males << endl
+        << stats.unemployed_males << endl
+        << "Median age for employed males = "
+        << stats.employed_males << endl;
 #endif
 }
 
 #ifdef TEST_ON
 void Test1() {
-
-    // vector<Person> __persons{
-    //     {25, Gender::FEMALE, true},
-    //     {11, Gender::MALE, true},
-    //     {78, Gender::MALE, false},
-    //     {44, Gender::FEMALE, false},
-    //     {66, Gender::FEMALE, false},
-    //     {14, Gender::MALE, true},
-    //     {29, Gender::FEMALE, true},
-    // };
-
-    {
-
-        vector<Person> _persons{{78, Gender::MALE, false}};
-        ASSERT_EQUAL(ComputeMedianAge(_persons.begin(), _persons.begin()), 0);
-    }
+    vector<Person> _persons{ {78, Gender::MALE, false} };
+    ASSERT_EQUAL(ComputeMedianAge(_persons.begin(), _persons.begin()), 0);
 }
-
 void Test2() {
-
+    vector<Person> _persons{ {77, Gender::MALE, false},
+                            {78, Gender::MALE, false},
+                            {79, Gender::MALE, false} };
+    ASSERT_EQUAL(ComputeMedianAge(_persons.begin(), _persons.end()), 78);
 }
 void Test3() {
-
+    std::istringstream inbuf("1 23 0 1");
+    vector<Person> _persons = ReadPersons(inbuf);
+    Person   person = _persons[0];
+    ASSERT_EQUAL(person.age, 23);
+    ASSERT_EQUAL(static_cast<int>(person.gender), static_cast<int>(Gender::FEMALE));
+    ASSERT_EQUAL(person.is_employed, true);
 }
 void Test4() {
-
+    std::istringstream inbuf("1 23 0 1");
+    vector<Person> _persons = ReadPersons(inbuf);
+    Person   person = _persons[0];
+    ASSERT_EQUAL(person.age, 23);
+    ASSERT_EQUAL(static_cast<int>(person.gender), static_cast<int>(Gender::FEMALE));
+    ASSERT_EQUAL(person.is_employed, true);
 }
 void Test5() {
 
-}
-void Test6() {
+    vector<Person> __persons{
+        {25, Gender::FEMALE, true},
+        {11, Gender::MALE, true},
+        {78, Gender::MALE, false},
+        {44, Gender::FEMALE, false},
+        {66, Gender::FEMALE, false},
+        {14, Gender::MALE, true},
+        {29, Gender::FEMALE, true},
+    };
+
+    AgeStats as = ComputeStats(__persons);
 
 }
+void Test6() {
+    vector<Person> __persons{
+        {25, Gender::FEMALE, true},
+        {11, Gender::MALE, true},
+        {78, Gender::MALE, false},
+        {44, Gender::FEMALE, false},
+        {66, Gender::FEMALE, false},
+        {14, Gender::MALE, true},
+        {29, Gender::FEMALE, true},
+    };
+
+    ostringstream out;
+
+    PrintStats(ComputeStats(__persons), out);
+
+    string out_str = out.str();
+    string correct_str = "\
+Median age = 29\n\
+Median age for females = 44\n\
+Median age for males = 14\n\
+Median age for employed females = 29\n\
+Median age for unemployed females = 66\n\
+Median age for employed males = 14\n\
+Median age for unemployed males = 78\n\
+";
+
+    ASSERT_EQUAL(out_str, correct_str);
+}
+
 
 void Test_All() {
     TestRunner tr;
-
 
     RUN_TEST(tr, Test1);
     RUN_TEST(tr, Test2);
@@ -242,7 +276,6 @@ void Test_All() {
     RUN_TEST(tr, Test4);
     RUN_TEST(tr, Test5);
     RUN_TEST(tr, Test6);
-
 
 }
 #endif
@@ -256,6 +289,3 @@ int main() {
 #endif
     return 0;
 }
-
-
-
