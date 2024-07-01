@@ -18,7 +18,7 @@ void Test4();
 
 using namespace std;
 
-vector<string> ReadDomains(istream& in_stream = cin) {
+vector<string> ReadDomains(istream& in_stream = cin, bool isNeedSort=false) {
     size_t count;
     in_stream >> count;
     in_stream.ignore();
@@ -32,22 +32,27 @@ vector<string> ReadDomains(istream& in_stream = cin) {
         reverse(domain.begin(), domain.end());
         domains.push_back(move(domain));
     }
+    if(isNeedSort)
+        sort(begin(domains), end(domains));
     return domains;
 }
 
-bool isSubDomain(const string& check, const vector<string>& banned_domains) {
 
-    for (const auto& b_domain : banned_domains) {
-        if (check.find(b_domain) == 0) {
-            auto bad_size = b_domain.size();
-            auto check_size = check.size();
-            if (bad_size >= check_size)
-                return 1;
-            else if (check.at(bad_size) == '.')
-                return 1;
+bool isSubDomain(const string& check, const string& b_domain) {
+    if (check.find(b_domain) == 0) {
+        auto bad_size = b_domain.size();
+        auto check_size = check.size();
+        if (bad_size >= check_size)
+            return 1;
+        else if (check.at(bad_size) == '.')
+            return 1;
     }
+    return 0;
 }
-return 0;
+
+bool isSubDomain(const string& check, const vector<string>& banned_domains) {
+    auto it = upper_bound(banned_domains.begin(), banned_domains.end(), check);
+    return 0;
 }
 
 void printResult(const vector<bool>& result, ostream& out_stream = cout) {
@@ -73,7 +78,6 @@ int main() {
     test_all();
 #else
     const vector<string> banned_domains = ReadDomains();
-
     const vector<string> domains_to_check = ReadDomains();
     printResult(checkDomains(banned_domains, domains_to_check));
 #endif
@@ -107,8 +111,9 @@ void Test1() {
         "ya.ya\n"
     );
 
-    const vector<string> banned_domains = ReadDomains(banned_domains_ss);
+    const vector<string> banned_domains = ReadDomains(banned_domains_ss, true);
     const vector<string> domains_to_check = ReadDomains(domains_to_check_ss);
+    
 
     ostringstream out;
     printResult(checkDomains(banned_domains, domains_to_check), out);
