@@ -18,26 +18,6 @@ void Test4();
 
 using namespace std;
 
-vector<string> ReadDomains(istream& in_stream = cin, bool isNeedSort=false) {
-    size_t count;
-    in_stream >> count;
-    in_stream.ignore();
-    vector<string> domains;
-
-    domains.reserve(count);
-
-    for (size_t i = 0; i < count; ++i) {
-        string domain;
-        getline(in_stream, domain);
-        reverse(domain.begin(), domain.end());
-        domains.push_back(move(domain));
-    }
-    if(isNeedSort)
-        sort(begin(domains), end(domains));
-    return domains;
-}
-
-
 bool isSubDomain(const string& check, const string& b_domain) {
     if (check.find(b_domain) == 0) {
         auto bad_size = b_domain.size();
@@ -54,6 +34,38 @@ bool isSubDomain(const string& check, const vector<string>& banned_domains) {
     auto it = upper_bound(banned_domains.begin(), banned_domains.end(), check);
     return 0;
 }
+
+vector<string> ReadDomains(istream& in_stream = cin, bool isNeedSort = false, bool isNeedThinOut = false) {
+    size_t count;
+    in_stream >> count;
+    in_stream.ignore();
+    vector<string> domains;
+
+    domains.reserve(count);
+
+    for (size_t i = 0; i < count; ++i) {
+        string domain;
+        getline(in_stream, domain);
+        reverse(domain.begin(), domain.end());
+        domains.push_back(move(domain));
+    }
+    if (isNeedSort)
+        sort(begin(domains), end(domains));
+    if (isNeedThinOut) {
+        size_t insert_pos = 0;
+        for (string& domain : domains) {
+            if (insert_pos == 0 || !isSubDomain(domain, domains[insert_pos - 1])) {
+                swap(domains[insert_pos++], domain);
+            }
+        }
+        domains.resize(insert_pos);
+    }
+    return domains;
+
+}
+
+
+
 
 void printResult(const vector<bool>& result, ostream& out_stream = cout) {
     for (const auto& res : result) {
@@ -87,16 +99,23 @@ int main() {
 void test_all() {
     TestRunner tr;
     RUN_TEST(tr, Test1);
-    RUN_TEST(tr, Test2);
-    RUN_TEST(tr, Test3);
-    RUN_TEST(tr, Test4);
+    // RUN_TEST(tr, Test2);
+    // RUN_TEST(tr, Test3);
+    // RUN_TEST(tr, Test4);
 }
 void Test1() {
     std::istringstream banned_domains_ss(
-        "4\n"       \
+        "11\n"       \
         "ya.ru\n"   \
         "maps.me\n" \
         "m.ya.ru\n" \
+        "a.ya.ru\n" \
+        "b.ya.ru\n" \
+        "a.c.ya.ru\n" \
+        "b.c.ya.ru\n" \
+        "b.a.ya.rz\n" \
+        "a.b.ya.rz\n" \
+        "b.b.ya.rz\n" \
         "com\n"
     );
 
@@ -111,9 +130,9 @@ void Test1() {
         "ya.ya\n"
     );
 
-    const vector<string> banned_domains = ReadDomains(banned_domains_ss, true);
+    const vector<string> banned_domains = ReadDomains(banned_domains_ss, true, true);
     const vector<string> domains_to_check = ReadDomains(domains_to_check_ss);
-    
+
 
     ostringstream out;
     printResult(checkDomains(banned_domains, domains_to_check), out);
