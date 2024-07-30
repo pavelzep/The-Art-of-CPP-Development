@@ -8,13 +8,11 @@
 
 #define TEST
 
+
 #ifdef TEST
-void test_all();
-void Test0();
-void Test1();
-void Test2();
-void Test3();
-void Test4();
+
+    extern void test_all();
+    // #include "tests.h"
 #endif
 
 using namespace std;
@@ -65,9 +63,6 @@ vector<string> ReadDomains(istream& in_stream = cin, bool isNeedSort = false, bo
 
 }
 
-
-
-
 void printResult(const vector<bool>& result, ostream& out_stream = cout) {
     for (const auto& res : result) {
         res ? out_stream << "Bad" : out_stream << "Good";
@@ -96,126 +91,3 @@ int main() {
 #endif
     return 0;
 }
-#ifdef TEST
-void test_all() {
-    TestRunner tr;
-    RUN_TEST(tr, Test0);
-    // RUN_TEST(tr, Test1);
-    // RUN_TEST(tr, Test2);
-    // RUN_TEST(tr, Test3);
-    // RUN_TEST(tr, Test4);
-}
-void Test0() {
-    std::istringstream banned_domains_ss(
-        "4\n"       \
-        "ya.ru\n"   \
-        "maps.me\n" \
-        "m.ya.ru\n" \
-        "com\n"
-    );
-
-    std::istringstream domains_to_check_ss(
-        "7\n"               \
-        "ya.ru\n"           \
-        "ya.com\n"          \
-        "m.maps.me\n"       \
-        "moscow.m.ya.ru\n"  \
-        "maps.com\n"        \
-        "maps.ru\n"         \
-        "ya.ya\n"
-    );
-
-    const vector<string> banned_domains = ReadDomains(banned_domains_ss);
-    const vector<string> domains_to_check = ReadDomains(domains_to_check_ss);
-
-    ostringstream out;
-    printResult(checkDomains(banned_domains, domains_to_check), out);
-    string right_res(
-        "Bad\n"     \
-        "Bad\n"     \
-        "Bad\n"     \
-        "Bad\n"     \
-        "Bad\n"     \
-        "Good\n"    \
-        "Good\n"
-    );
-    ASSERT_EQUAL(out.str(), right_res);
-
-}
-void Test1() {
-    std::istringstream banned_domains_ss(
-        "11\n"       \
-        "ya.ru\n"   \
-        "maps.me\n" \
-        "m.ya.ru\n" \
-        "a.ya.ru\n" \
-        "b.ya.ru\n" \
-        "a.c.ya.ru\n" \
-        "b.c.ya.ru\n" \
-        "b.a.ya.rz\n" \
-        "a.b.ya.rz\n" \
-        "b.b.ya.rz\n" \
-        "com\n"
-    );
-
-    std::istringstream domains_to_check_ss(
-        "7\n"               \
-        "ya.ru\n"           \
-        "ya.com\n"          \
-        "m.maps.me\n"       \
-        "moscow.m.ya.ru\n"  \
-        "maps.com\n"        \
-        "maps.ru\n"         \
-        "ya.ya\n"
-    );
-
-    const vector<string> banned_domains = ReadDomains(banned_domains_ss, true, true);
-    const vector<string> domains_to_check = ReadDomains(domains_to_check_ss);
-
-
-    ostringstream out;
-    printResult(checkDomains(banned_domains, domains_to_check), out);
-    string right_res(
-        "Bad\n"     \
-        "Bad\n"     \
-        "Bad\n"     \
-        "Bad\n"     \
-        "Bad\n"     \
-        "Good\n"    \
-        "Good\n"
-    );
-    ASSERT_EQUAL(out.str(), right_res);
-
-}
-void Test2() {
-    std::istringstream banned_domains_ss(
-        "1\n"       \
-        "com\n"
-    );
-
-    std::istringstream domains_to_check_ss(
-        "2\n"               \
-        "ya.com\n"          \
-        "rrr.scom\n"       \
-    );
-
-    const vector<string> banned_domains = ReadDomains(banned_domains_ss);
-    const vector<string> domains_to_check = ReadDomains(domains_to_check_ss);
-
-    ostringstream out;
-    printResult(checkDomains(banned_domains, domains_to_check), out);
-    string right_res(
-        "Bad\n"     \
-        "Good\n"    \
-    );
-    ASSERT_EQUAL(out.str(), right_res);
-}
-void Test3() {
-
-
-}
-void Test4() {
-
-
-}
-#endif
