@@ -4,13 +4,9 @@
 #include <vector>
 #include <sstream>
 
-#include "test_runner.h"
-
-#define TEST
-
+#include "global.h"
 
 #ifdef TEST
-
     extern void test_all();
     // #include "tests.h"
 #endif
@@ -30,8 +26,11 @@ bool isSubDomain(const string& check, const string& b_domain) {
 }
 
 bool isSubDomain(const string& check, const vector<string>& banned_domains) {
-    auto it = upper_bound(banned_domains.begin(), banned_domains.end(), check);
-    return 0;
+    //TO DO
+    auto find_flag = binary_search(banned_domains.begin(), banned_domains.end(), check);
+    // auto it2 = upper_bound(banned_domains.begin(), banned_domains.end(), check);
+
+    return !find_flag;
 }
 
 vector<string> ReadDomains(istream& in_stream = cin, bool isNeedSort = false, bool isNeedThinOut = false) {
@@ -59,6 +58,7 @@ vector<string> ReadDomains(istream& in_stream = cin, bool isNeedSort = false, bo
         }
         domains.resize(insert_pos);
     }
+
     return domains;
 
 }
