@@ -7,8 +7,8 @@
 #include "global.h"
 
 #ifdef TEST
-    extern void test_all();
-    // #include "tests.h"
+extern void test_all();
+// #include "tests.h"
 #endif
 
 using namespace std;
@@ -27,10 +27,13 @@ bool isSubDomain(const string& check, const string& b_domain) {
 
 bool isSubDomain(const string& check, const vector<string>& banned_domains) {
     //TO DO
-    auto find_flag = binary_search(banned_domains.begin(), banned_domains.end(), check);
-    // auto it2 = upper_bound(banned_domains.begin(), banned_domains.end(), check);
 
-    return find_flag;
+    // auto find_flag = binary_search(banned_domains.begin(), banned_domains.end(), check);
+    // return find_flag;
+
+    auto up = upper_bound(banned_domains.begin(), banned_domains.end(), check);
+    if(*prev(up))
+
 }
 
 vector<string> ReadDomains(istream& in_stream = cin, bool isNeedSort = false, bool isNeedThinOut = false) {
