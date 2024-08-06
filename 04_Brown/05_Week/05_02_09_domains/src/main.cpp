@@ -30,7 +30,7 @@ bool isSubDomain(const string& check, const vector<string>& banned_domains) {
     auto find_flag = binary_search(banned_domains.begin(), banned_domains.end(), check);
     // auto it2 = upper_bound(banned_domains.begin(), banned_domains.end(), check);
 
-    return !find_flag;
+    return find_flag;
 }
 
 vector<string> ReadDomains(istream& in_stream = cin, bool isNeedSort = false, bool isNeedThinOut = false) {
