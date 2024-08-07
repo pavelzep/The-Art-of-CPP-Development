@@ -85,8 +85,9 @@ int main() {
 
 #ifdef TEST
     test_all();
+
 #else
-    const vector<string> banned_domains = ReadDomains();
+    const vector<string> banned_domains = ReadDomains(cin, true, true);
     const vector<string> domains_to_check = ReadDomains();
     printResult(checkDomains(banned_domains, domains_to_check));
 #endif
