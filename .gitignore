@@ -1,5 +1,3 @@
-# Created by https://www.toptal.com/developers/gitignore/api/eclipse,c++,windows
-# Edit at https://www.toptal.com/developers/gitignore?templates=eclipse,c++,windows
 
 makefile
 .project
@@ -162,5 +160,3 @@ $RECYCLE.BIN/
 
 # Others
 *.pdf
-
-# End of https://www.toptal.com/developers/gitignore/api/eclipse,c++,windows
